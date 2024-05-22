@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,12 +10,12 @@ class Task extends Model
 
     protected $fillable = [
         'user_id',
+        'project_id',
         'title',
         'description',
         'due_date',
         'priority',
         'status',
-        'type'
     ];
 
     public function user()
@@ -24,8 +23,22 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function tags()
+    public function project()
     {
-        return $this->morphToMany(Tag::class, 'taggable');
+        return $this->belongsTo(Project::class);
+    }
+
+    public function getStatusColorAttribute()
+    {
+        switch ($this->status) {
+            case 'to_do':
+                return 'primary';
+            case 'in_progress':
+                return 'warning';
+            case 'completed':
+                return 'success';
+            default:
+                return 'secondary';
+        }
     }
 }
