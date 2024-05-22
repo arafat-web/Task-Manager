@@ -9,9 +9,17 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Auth::user()->projects()->get();
+        $projects = Auth::user()->projects()->withCount(['tasks as to_do_tasks' => function ($query) {
+            $query->where('status', 'to_do');
+        }, 'tasks as in_progress_tasks' => function ($query) {
+            $query->where('status', 'in_progress');
+        }, 'tasks as completed_tasks' => function ($query) {
+            $query->where('status', 'completed');
+        }])->get();
+
         return view('projects.index', compact('projects'));
     }
+
     public function create()
     {
         return view('projects.create');
@@ -31,11 +39,6 @@ class ProjectController extends Controller
         Auth::user()->projects()->create($request->all());
 
         return redirect()->route('projects.index')->with('success', 'Project created successfully.');
-    }
-
-    public function show(Project $project)
-    {
-        return view('projects.show', compact('project'));
     }
 
     public function edit(Project $project)
