@@ -11,17 +11,13 @@ class File extends Model
 
     protected $fillable = [
         'user_id',
-        'note_id',
-        'file_path',
+        'name',
+        'path',
+        'type',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function note()
-    {
-        return $this->belongsTo(Note::class);
     }
 }

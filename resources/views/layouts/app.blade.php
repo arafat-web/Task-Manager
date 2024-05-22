@@ -9,8 +9,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+
     <style>
         body {
             display: flex;
@@ -33,12 +38,18 @@
         .sidebar .nav-link {
             color: white;
             text-decoration: none;
+            display: flex;
+            align-items: center;
         }
 
         .sidebar .nav-link:hover,
         .sidebar .nav-link.active {
             background-color: #495057;
             border-radius: 0.25rem;
+        }
+
+        .sidebar .nav-link .bi {
+            margin-right: 10px;
         }
 
         .content {
@@ -90,25 +101,42 @@
         <h4 class="mb-4 text-center">Task Manager</h4>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}"
-                    href="{{ route('dashboard') }}">Home</a>
+                <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                    <i class="bi bi-house-door"></i> Home
+                </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('projects*') ? 'active' : '' }}"
-                    href="{{ route('projects.index') }}">Projects</a>
+                    href="{{ route('projects.index') }}">
+                    <i class="bi bi-folder"></i> Projects
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->is('tasks*') ? 'active' : '' }}"
-                    href="{{ route('projects.index') }}">Tasks</a>
+                <a class="nav-link {{ request()->is('tasks*') ? 'active' : '' }}" href="{{ route('projects.index') }}">
+                    <i class="bi bi-check2-square"></i> Tasks
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->is('routines*') ? 'active' : '' }}" href="#">Routines</a>
+                <a class="nav-link {{ request()->is('routines*') ? 'active' : '' }}"
+                    href="{{ route('routines.index') }}">
+                    <i class="bi bi-calendar-check"></i> Routines
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->is('notes*') ? 'active' : '' }}" href="#">Notes</a>
+                <a class="nav-link {{ request()->is('notes*') ? 'active' : '' }}" href="{{ route('notes.index') }}">
+                    <i class="bi bi-sticky"></i> Notes
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->is('calendar*') ? 'active' : '' }}" href="#">Calendar</a>
+                <a class="nav-link {{ request()->is('reminders*') ? 'active' : '' }}"
+                    href="{{ route('reminders.index') }}">
+                    <i class="bi bi-bell"></i> Reminders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('files*') ? 'active' : '' }}" href="{{ route('files.index') }}">
+                    <i class="bi bi-file"></i> Files
+                </a>
             </li>
         </ul>
     </div>
@@ -117,7 +145,7 @@
             <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="{{ route('dashboard') }}">
-                        Home
+                        <span id="currentDateTime"></span>
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
@@ -151,12 +179,26 @@
         </main>
         <footer class="mt-auto py-3 text-center">
             <div class="container">
-                <span class="text-muted">&copy; {{ date('Y') }} Your Company</span>
+                <span class="text-muted">&copy; {{ date('Y') }} Task Manager | Developed by <a href="https://github.com/arafat-web" target="_blank">Arafat Hossain Ar</a> </span>
             </div>
         </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const day = dayNames[now.getDay()];
+            const date = now.toLocaleDateString();
+            const time = now.toLocaleTimeString();
+
+            document.getElementById('currentDateTime').innerText = `${day}, ${date} ${time}`;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
 </body>
 
 </html>

@@ -11,11 +11,7 @@ class TaskController extends Controller
     public function index(Project $project)
     {
         $tasks = $project->tasks()->get()->groupBy('status');
-        $toDoCount = $project->tasks()->where('status', 'to_do')->count();
-        $inProgressCount = $project->tasks()->where('status', 'in_progress')->count();
-        $completedCount = $project->tasks()->where('status', 'completed')->count();
-        
-        return view('tasks.index', compact('project', 'tasks', 'toDoCount', 'inProgressCount', 'completedCount'));
+        return view('tasks.index', compact('project', 'tasks'));
     }
 
     public function store(Request $request, Project $project)
@@ -49,6 +45,14 @@ class TaskController extends Controller
 
         $task->update($request->all());
 
-        return redirect()->route('tasks.show', $task)->with('success', 'Task updated successfully.');
+        return redirect()->route('projects.tasks.index', $task->project_id)->with('success', 'Task updated successfully.');
+    }
+
+    public function updateStatus(Request $request, Task $task)
+    {
+        $task->status = $request->input('status');
+        $task->save();
+
+        return response()->json(['message' => 'Task status updated successfully.']);
     }
 }

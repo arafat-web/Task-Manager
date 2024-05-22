@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->enum('frequency', ['daily', 'weekly', 'monthly']);
+            $table->json('days')->nullable();
+            $table->json('weeks')->nullable();
+            $table->json('months')->nullable();
             $table->time('start_time');
             $table->time('end_time');
             $table->timestamps();

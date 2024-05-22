@@ -13,6 +13,9 @@ class Routine extends Model
         'title',
         'description',
         'frequency',
+        'days',
+        'weeks',
+        'months',
         'start_time',
         'end_time',
     ];

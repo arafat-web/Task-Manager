@@ -10,10 +10,10 @@ class Reminder extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'routine_id',
-        'task_id',
-        'reminder_time',
+        'title',
+        'description',
+        'date',
+        'time',
     ];
 
     public function user()
@@ -21,13 +21,4 @@ class Reminder extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function routine()
-    {
-        return $this->belongsTo(Routine::class);
-    }
-
-    public function task()
-    {
-        return $this->belongsTo(Task::class);
-    }
 }

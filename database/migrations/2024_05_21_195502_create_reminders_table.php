@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('reminders', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->text('description');
+            $table->string('date');
+            $table->string('time');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('routine_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('task_id')->nullable()->constrained()->onDelete('cascade');
-            $table->dateTime('reminder_time');
             $table->timestamps();
         });
     }

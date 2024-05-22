@@ -76,8 +76,13 @@ class User extends Authenticatable
     /**
      * Get the calendar events for the user.
      */
-    public function calendarEvents()
+    public function files()
     {
-        return $this->hasMany(CalendarEvent::class);
+        return $this->hasMany(File::class);
+    }
+
+    public function reminders()
+    {
+        return $this->hasMany(Reminder::class);
     }
 }
