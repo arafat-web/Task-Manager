@@ -87,7 +87,7 @@
 
 <body>
     <div class="sidebar d-flex flex-column p-3">
-        <h4 class="mb-4">Dashboard</h4>
+        <h4 class="mb-4 text-center">Task Manager</h4>
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}"
@@ -116,7 +116,9 @@
         <header class="topnav mb-4">
             <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="{{ route('dashboard') }}">Dashboard</a>
+                    <a class="navbar-brand" href="{{ route('dashboard') }}">
+                        Home
+                    </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
                         aria-label="Toggle navigation">
