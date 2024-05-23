@@ -1,10 +1,12 @@
 @extends('layouts.app')
-
+@section('title')
+    {{ $task->title }} - Task Details
+@endsection
 @section('content')
     <div class="container">
-        <h1 class="mb-4">Task Details</h1>
+        <h2 class="mb-4"> {{ $task->title }} - Task Details</h2>
 
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
@@ -16,17 +18,29 @@
                 <p class="card-text">{{ $task->description }}</p>
                 <p class="card-text"><strong>Due Date:</strong> {{ $task->due_date }}</p>
                 <p class="card-text"><strong>Priority:</strong> {{ ucfirst($task->priority) }}</p>
-                <p class="card-text"><strong>Status:</strong> {{ ucfirst($task->status) }}</p>
+                <p class="card-text"><strong>Status:</strong> 
+                @if($task->status == 'completed')
+                    <span class="badge bg-success">Completed</span>
+                @elseif($task->status == 'to_do')
+                    <span class="badge bg-primary">To Do</span>
+                @elseif($task->status == 'in_progress')
+                    <span class="badge bg-warning">In Progress</span>
+                @endif
+                </p>
 
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTaskModal">Edit Task</button>
-                <a href="{{ route('projects.tasks.index', $task->project->id) }}" class="btn btn-secondary">Back to Tasks</a>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTaskModal"> <i
+                        class="bi bi-pencil-square"></i> </button>
+                <a href="{{ route('projects.tasks.index', $task->project->id) }}" class="btn btn-secondary"> <i
+                        class="bi bi-arrow-90deg-left"></i> </a>
 
                 <h5 class="mt-4">Time Tracker</h5>
                 <div id="time-tracker">
                     <span id="time-display">00:00:00</span>
-                    <button id="start-btn" class="btn btn-success btn-sm">Start</button>
-                    <button id="pause-btn" class="btn btn-warning btn-sm">Pause</button>
-                    <button id="reset-btn" class="btn btn-danger btn-sm">Reset</button>
+                    <div>
+                        <button id="start-btn" class="btn btn-success btn-sm"><i class="bi bi-play-fill"></i></button>
+                        <button id="pause-btn" class="btn btn-warning btn-sm"><i class="bi bi-pause-fill"></i></button>
+                        <button id="reset-btn" class="btn btn-danger btn-sm"><i class="bi bi-stop-fill"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,7 +59,8 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="title" class="form-label">Title</label>
-                                <input type="text" name="title" id="title" class="form-control" value="{{ $task->title }}" required>
+                                <input type="text" name="title" id="title" class="form-control"
+                                    value="{{ $task->title }}" required>
                                 @error('title')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -59,7 +74,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="due_date" class="form-label">Due Date</label>
-                                <input type="date" name="due_date" id="due_date" class="form-control" value="{{ $task->due_date }}">
+                                <input type="date" name="due_date" id="due_date" class="form-control"
+                                    value="{{ $task->due_date }}">
                                 @error('due_date')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -68,7 +84,8 @@
                                 <label for="priority" class="form-label">Priority</label>
                                 <select name="priority" id="priority" class="form-select" required>
                                     <option value="low" {{ $task->priority == 'low' ? 'selected' : '' }}>Low</option>
-                                    <option value="medium" {{ $task->priority == 'medium' ? 'selected' : '' }}>Medium</option>
+                                    <option value="medium" {{ $task->priority == 'medium' ? 'selected' : '' }}>Medium
+                                    </option>
                                     <option value="high" {{ $task->priority == 'high' ? 'selected' : '' }}>High</option>
                                 </select>
                                 @error('priority')
@@ -79,8 +96,10 @@
                                 <label for="status" class="form-label">Status</label>
                                 <select name="status" id="status" class="form-select" required>
                                     <option value="to_do" {{ $task->status == 'to_do' ? 'selected' : '' }}>To Do</option>
-                                    <option value="in_progress" {{ $task->status == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                    <option value="completed" {{ $task->status == 'completed' ? 'selected' : '' }}>Completed</option>
+                                    <option value="in_progress" {{ $task->status == 'in_progress' ? 'selected' : '' }}>In
+                                        Progress</option>
+                                    <option value="completed" {{ $task->status == 'completed' ? 'selected' : '' }}>
+                                        Completed</option>
                                 </select>
                                 @error('status')
                                     <span class="text-danger">{{ $message }}</span>

@@ -1,9 +1,11 @@
 @extends('layouts.app')
-
+@section('title')
+    Projects 
+@endsection
 @section('content')
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Projects</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4 shadow-sm px-2 rounded">
+            <h2>Projects</h2>
             <a href="{{ route('projects.create') }}" class="btn btn-primary">Add Project</a>
         </div>
 
@@ -29,12 +31,12 @@
                                     <span class="text-danger">Deadline Passed</span>
                                 @endif
                             </p>
-                            <a href="{{ route('projects.tasks.index', $project->id) }}" class="btn btn-primary">View Tasks</a>
-                            <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-warning">Edit</a>
+                            <a href="{{ route('projects.tasks.index', $project->id) }}" class="btn btn-primary"> <i class="bi bi-list"></i> </a>
+                            <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-warning"> <i class="bi bi-pencil-square"></i> </a>
                             <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?')">Delete</button>
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?')"> <i class="bi bi-trash"></i> </button>
                             </form>
                         </div>
                     </div>

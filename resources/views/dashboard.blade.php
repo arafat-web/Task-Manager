@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('title')
+    Dashboard
+@endsection
 @section('content')
     <div class="container">
         <h1>Welcome to your Dashboard</h1>
@@ -53,7 +55,7 @@
                             @foreach($recentTasks as $task)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     {{ $task->title }}
-                                    <span class="badge bg-primary rounded-pill">{{ $task->status }}</span>
+                                    <span class="badge bg-primary rounded-pill">{{ $task->status == 'to_do' ? 'To Do' : 'In Progress' }}</span>
                                 </li>
                             @endforeach
                         </ul>

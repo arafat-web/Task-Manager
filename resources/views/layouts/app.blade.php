@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title> @yield('title') | Task Manager </title>
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo-circle.png') }}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,6 +27,11 @@
             font-family: "Poppins", sans-serif;
         }
 
+        .btn {
+            padding: .25rem .5rem !important;
+            font-size: .875rem !important;
+        }
+
         .sidebar {
             width: 250px;
             background-color: #343a40;
@@ -40,6 +46,8 @@
             text-decoration: none;
             display: flex;
             align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #495057;
         }
 
         .sidebar .nav-link:hover,
@@ -98,10 +106,16 @@
 
 <body>
     <div class="sidebar d-flex flex-column p-3">
-        <h4 class="mb-4 text-center">Task Manager</h4>
+        <h4 class="mb-4 text-center">
+            <a href="{{ route('dashboard') }}">
+                <img style=" filter: invert(100%) brightness(200%);"
+                    src="{{ asset('assets/img/logo-circle-horizontal.png') }}" class="img-fluid" width="100%"
+                    alt="task manager">
+            </a>
+        </h4>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                     <i class="bi bi-house-door"></i> Home
                 </a>
             </li>
@@ -145,7 +159,7 @@
             <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="{{ route('dashboard') }}">
-                        <span id="currentDateTime"></span>
+                        <span class="fw-normal" id="currentDateTime"></span>
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
@@ -179,7 +193,8 @@
         </main>
         <footer class="mt-auto py-3 text-center">
             <div class="container">
-                <span class="text-muted">&copy; {{ date('Y') }} Task Manager | Developed by <a href="https://github.com/arafat-web" target="_blank">Arafat Hossain Ar</a> </span>
+                <span class="text-muted">&copy; {{ date('Y') }} Task Manager | Developed by <a
+                        href="https://github.com/arafat-web" target="_blank">Arafat Hossain Ar</a> </span>
             </div>
         </footer>
     </div>
