@@ -41,4 +41,9 @@ class Task extends Model
                 return 'secondary';
         }
     }
+
+    public function checklistItems()
+    {
+        return $this->hasMany(ChecklistItem::class);
+    }
 }

@@ -4,8 +4,8 @@
 @endsection
 @section('content')
     <div class="container">
-        <h1>Welcome to your Dashboard</h1>
-        <p>This is your dashboard where you can manage your tasks, routines, notes, and calendar events.</p>
+        <h2>Welcome to your Dashboard</h2>
+        <p>This is your dashboard where you can manage your tasks, routines, notes, and files.</p>
         
         <div class="row mb-4">
             <div class="col-md-3 mb-4">

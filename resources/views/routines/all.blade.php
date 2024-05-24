@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">All Routines</h1>
+    <h2 class="mb-4">All Routines</h2>
 
-    <h2>Daily Routines</h2>
+    <h3>Daily Routines</h3>
     <div class="row">
         @forelse($dailyRoutines as $routine)
             <div class="col-md-4 mb-4">
@@ -30,7 +30,7 @@
         @endforelse
     </div>
 
-    <h2>Weekly Routines</h2>
+    <h3>Weekly Routines</h3>
     <div class="row">
         @forelse($weeklyRoutines as $routine)
             <div class="col-md-4 mb-4">
@@ -56,7 +56,7 @@
         @endforelse
     </div>
 
-    <h2>Monthly Routines</h2>
+    <h3>Monthly Routines</h3>
     <div class="row">
         @forelse($monthlyRoutines as $routine)
             <div class="col-md-4 mb-4">

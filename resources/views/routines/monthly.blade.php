@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Monthly Routines</h1>
+    <h2 class="mb-4">Monthly Routines</h2>
 
     <div class="row">
         @forelse($monthlyRoutines as $routine)

@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ChecklistItemController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProjectController;
@@ -30,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('files', FileController::class);
     Route::resource('notes', NoteController::class);
     Route::resource('reminders', ReminderController::class);
-    
+    Route::resource('checklist-items', ChecklistItemController::class);
     Route::get('/', function () {
         $user = Auth::user();
         $tasksCount = $user->tasks()->count();

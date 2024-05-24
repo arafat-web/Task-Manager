@@ -50,7 +50,11 @@
                         @foreach ($tasks['to_do'] ?? [] as $task)
                             <div class="card mb-3 kanban-item" data-id="{{ $task->id }}" draggable="true">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ $task->title }}</h5>
+                                    <h5 class="card-title">
+                                        {{ $task->title }} 
+                                        <span style="font-size: 12px;" class="badge {{ $task->priority == 'low' ? 'bg-success' : ($task->priority == 'medium' ? 'bg-warning' : 'bg-danger') }}">{{ ucfirst($task->priority) }}</span>
+                                    </h5>
+                                    
                                     <p class="card-text">{{ $task->description }}</p>
                                     <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></a>
                                 </div>

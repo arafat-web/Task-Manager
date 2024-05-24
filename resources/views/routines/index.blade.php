@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Upcoming Routines</h1>
+    <div class="d-flex justify-content-between align-items-center shadow-sm px-2 rounded mb-4">
+        <h2>Upcoming Routines</h2>
         <a href="{{ route('routines.create') }}" class="btn btn-primary">Add Routine</a>
     </div>
 
@@ -15,7 +15,7 @@
 
     <div class="row">
         <div class="col-md-4">
-            <h2>Daily Routines</h2>
+            <h3>Daily Routines</h3>
             <div class="kanban-column">
                 @forelse($upcomingDailyRoutines as $routine)
                     <div class="card mb-3">
@@ -44,7 +44,7 @@
         </div>
 
         <div class="col-md-4">
-            <h2>Weekly Routines</h2>
+            <h3>Weekly Routines</h3>
             <div class="kanban-column">
                 @forelse($upcomingWeeklyRoutines as $routine)
                     <div class="card mb-3">
@@ -73,7 +73,7 @@
         </div>
 
         <div class="col-md-4">
-            <h2>Monthly Routines</h2>
+            <h3>Monthly Routines</h3>
             <div class="kanban-column">
                 @forelse($upcomingMonthlyRoutines as $routine)
                     <div class="card mb-3">
