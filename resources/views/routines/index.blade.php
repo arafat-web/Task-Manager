@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center shadow-sm px-2 rounded mb-4">
+    <div class="d-flex justify-content-between align-items-center bg-white shadow-sm px-2 rounded mb-4">
         <h2>Upcoming Routines</h2>
         <a href="{{ route('routines.create') }}" class="btn btn-primary">Add Routine</a>
     </div>

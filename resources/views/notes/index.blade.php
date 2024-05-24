@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center shadow-sm px-2 rounded mb-4">
+    <div class="d-flex justify-content-between align-items-center bg-white shadow-sm px-2 rounded mb-4">
         <h2>Notes</h2>
         <a href="{{ route('notes.create') }}" class="btn btn-primary">Add Note</a>
     </div>

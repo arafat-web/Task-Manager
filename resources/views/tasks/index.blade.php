@@ -27,7 +27,7 @@
         }
     </style>
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4 shadow-sm px-2 rounded">
+        <div class="d-flex justify-content-between bg-white align-items-center mb-4 shadow-sm px-2 rounded">
             <h2>{{ $project->name }} - Tasks</h2>
         </div>
 

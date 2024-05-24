@@ -4,7 +4,7 @@
 @endsection
 @section('content')
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4 shadow-sm px-2 rounded">
+        <div class="d-flex justify-content-between align-items-center bg-white mb-4 shadow-sm px-2 rounded">
             <h2>Projects</h2>
             <a href="{{ route('projects.create') }}" class="btn btn-primary">Add Project</a>
         </div>

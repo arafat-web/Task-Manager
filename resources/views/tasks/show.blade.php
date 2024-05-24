@@ -12,7 +12,7 @@
             </div>
         @endif
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
                         <div class="row">
