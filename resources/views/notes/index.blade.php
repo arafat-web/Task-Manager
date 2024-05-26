@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('title')
+    Notes
+@endsection
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center bg-white shadow-sm px-2 rounded mb-4">

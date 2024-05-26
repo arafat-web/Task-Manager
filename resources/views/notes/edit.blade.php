@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('title')
+    Edit Note
+@endsection
 @section('content')
 <div class="container">
     <h2 class="mb-4">Edit Note</h2>

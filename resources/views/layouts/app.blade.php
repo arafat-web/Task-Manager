@@ -118,6 +118,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link {{ request()->is('mail*') ? 'active' : '' }}" href="{{ route('mail.inbox') }}">
+                    <i class="bi bi-inbox"></i> Inbox
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link {{ request()->is('projects*') ? 'active' : '' }}"
                     href="{{ route('projects.index') }}">
                     <i class="bi bi-folder"></i> Projects
@@ -203,10 +208,10 @@
             const now = new Date();
             const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const day = dayNames[now.getDay()];
-            const date = now.toLocaleDateString();
+            const date = now.toLocaleDateString(['en-US'], { day: 'numeric', month: 'long', year: 'numeric' });
             const time = now.toLocaleTimeString();
 
-            document.getElementById('currentDateTime').innerText = `${day}, ${date} ${time}`;
+            document.getElementById('currentDateTime').innerText = `${day}, ${date}  ${time}`;
         }
 
         updateDateTime();

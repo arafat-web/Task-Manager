@@ -1,10 +1,18 @@
 @extends('layouts.app')
-
+@section('title')
+    {{ $project->name }} - Project Details
+@endsection
 @section('content')
     <div class="container">
-        <h2 class="mb-4">Project Details</h2>
+        <h2 class="mb-4 shadow-sm p-3 rounded bg-white text-center"> {{ $project->name }}</h2>
 
-        <div class="card">
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div class="card mb-4 shadow-sm">
             <div class="card-body">
                 <h5 class="card-title">{{ $project->name }}</h5>
                 <p class="card-text">{{ $project->description }}</p>
@@ -13,31 +21,15 @@
                 <p class="card-text"><strong>Status:</strong> {{ ucfirst($project->status) }}</p>
                 <p class="card-text"><strong>Budget:</strong> ${{ $project->budget }}</p>
 
-                <h5 class="mt-4">Files</h5>
-                <ul class="list-group">
-                    @foreach($project->files as $file)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="{{ Storage::url($file->file_path) }}" target="_blank">{{ basename($file->file_path) }}</a>
-                            <form action="{{ route('projects.files.destroy', $file->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this file?')">Delete</button>
-                            </form>
-                        </li>
-                    @endforeach
-                </ul>
-
-                <form action="{{ route('projects.files.store', $project->id) }}" method="POST" enctype="multipart/form-data" class="mt-3">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="file" class="form-label">Add File</label>
-                        <input type="file" name="file" id="file" class="form-control" required>
-                        @error('file')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <button type="submit" class="btn btn-primary">Upload File</button>
-                </form>
+                <h5 class="mt-4">Project Progress</h5>
+                @php
+                    $totalTasks = $project->tasks->count();
+                    $completedTasks = $project->tasks->where('status', 'completed')->count();
+                    $progress = $totalTasks > 0 ? ($completedTasks / $totalTasks) * 100 : 0;
+                @endphp
+                <div class="progress mb-4">
+                    <div class="progress-bar" role="progressbar" style="width: {{ $progress }}%;" aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100">{{ round($progress) }}%</div>
+                </div>
 
                 <a href="{{ route('projects.index') }}" class="btn btn-secondary mt-3">Back to Projects</a>
             </div>

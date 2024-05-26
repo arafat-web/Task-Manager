@@ -4,7 +4,7 @@
 @endsection
 @section('content')
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center bg-white mb-4 shadow-sm px-2 rounded">
+        <div class="d-flex justify-content-between align-items-center bg-white mb-4 shadow-sm p-3 rounded">
             <h2>Projects</h2>
             <a href="{{ route('projects.create') }}" class="btn btn-primary">Add Project</a>
         </div>
@@ -32,6 +32,7 @@
                                 @endif
                             </p>
                             <a href="{{ route('projects.tasks.index', $project->id) }}" class="btn btn-primary"> <i class="bi bi-list"></i> </a>
+                            <a href="{{ route('projects.show', $project->id) }}" class="btn btn-primary"> <i class="bi bi-eye"></i> </a>
                             <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-warning"> <i class="bi bi-pencil-square"></i> </a>
                             <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="d-inline">
                                 @csrf

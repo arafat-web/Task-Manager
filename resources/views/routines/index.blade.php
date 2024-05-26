@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center bg-white shadow-sm px-2 rounded mb-4">
+    <div class="d-flex justify-content-between align-items-center bg-white shadow-sm p-3 rounded mb-4">
         <h2>Upcoming Routines</h2>
         <a href="{{ route('routines.create') }}" class="btn btn-primary">Add Routine</a>
     </div>
@@ -25,17 +25,17 @@
                             <p class="card-text"><strong>Days:</strong> {{ implode(', ', json_decode($routine->days, true) ?? []) }}</p>
                             <p class="card-text"><strong>Time:</strong> {{ $routine->start_time }} - {{ $routine->end_time }}</p>
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('routines.edit', $routine->id) }}" class="btn btn-warning">Edit</a>
+                                <a href="{{ route('routines.edit', $routine->id) }}" class="btn btn-warning"><i class="bi bi-pencil"></i></a>
                                 <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this routine?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <p>No upcoming daily routines.</p>
+                    <p >No upcoming daily routines.</p>
                 @endforelse
                 <div class="mt-3">
                     <a href="{{ route('routines.showDaily') }}" class="btn btn-secondary">View All Daily Routines</a>

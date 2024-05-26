@@ -2,6 +2,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ChecklistItemController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectFileController;
@@ -16,6 +17,9 @@ Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
+    Route::controller(MailController::class)->prefix('mail')->name('mail.')->group(function () {
+        Route::get('/', 'index')->name('inbox');
+    });
     Route::resource('projects', ProjectController::class);
     Route::get('projects/{project}/tasks', [TaskController::class, 'index'])->name('projects.tasks.index');
     Route::post('projects/{project}/tasks', [TaskController::class, 'store'])->name('projects.tasks.store');
@@ -32,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('notes', NoteController::class);
     Route::resource('reminders', ReminderController::class);
     Route::resource('checklist-items', ChecklistItemController::class);
+    Route::get('checklist-items/{checklistItem}/update-status', [ChecklistItemController::class, 'updateStatus'])->name('checklist-items.update-status');
     Route::get('/', function () {
         $user = Auth::user();
         $tasksCount = $user->tasks()->count();

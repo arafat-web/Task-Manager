@@ -4,7 +4,7 @@
 @endsection
 @section('content')
     <div class="container">
-        <h2 class="mb-4">Create Project</h2>
+        <h2 class="mb-4 shadow-sm p-3 rounded bg-white">Create Project</h2>
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <form action="{{ route('projects.store') }}" method="POST">

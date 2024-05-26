@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h2 class="mb-4">Add Routine</h2>
+        <h2 class="mb-4 shadow-sm p-3 rounded bg-white">Add Routine</h2>
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <form action="{{ route('routines.store') }}" method="POST">

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChecklistItem;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
 class ChecklistItemController extends Controller
@@ -18,7 +19,22 @@ class ChecklistItemController extends Controller
             'name' => $request->name,
         ]);
 
-        return back()->with('success', 'Checklist item created successfully.');
+        return response()->json([
+            'success' => true,
+            'data' =>  $checklistItem
+            
+        ]);
+    }
+
+    public function updateStatus(ChecklistItem $checklistItem)
+    {
+        $checklistItem->update([
+            'completed' => !$checklistItem->completed === true ? 1 : 0, 
+        ]);
+        return response()->json([
+            'success' => true,
+            'status' => 200
+        ]);
     }
 
     public function update(Request $request, ChecklistItem $checklistItem)
