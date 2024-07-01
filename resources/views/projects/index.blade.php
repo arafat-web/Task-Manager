@@ -23,7 +23,7 @@
                             <h5 class="card-title">{{ $project->name }}</h5>
                             <p class="card-text">{{ $project->description }}</p>
                             <p class="card-text">
-                                <strong>Status:</strong> {{ ucfirst($project->status) }}<br>
+                                <strong>Status:</strong> {{ $project->status == 'pending' ? 'Pending' : ($project->status == 'on_going' ? 'In Progress' : 'Completed') }}<br>
                                 <strong>Deadline:</strong> 
                                 @if($project->end_date && $project->end_date->isFuture())
                                     {{ $project->end_date->diffForHumans() }}

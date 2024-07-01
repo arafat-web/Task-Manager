@@ -12,13 +12,13 @@
             </div>
         @endif
 
-        <div class="card mb-4 shadow-sm">
+        <div class="card mb-4 shadow-sm m-auto" style="max-width: 600px;">
             <div class="card-body">
                 <h5 class="card-title">{{ $project->name }}</h5>
                 <p class="card-text">{{ $project->description }}</p>
-                <p class="card-text"><strong>Start Date:</strong> {{ $project->start_date }}</p>
-                <p class="card-text"><strong>End Date:</strong> {{ $project->end_date }}</p>
-                <p class="card-text"><strong>Status:</strong> {{ ucfirst($project->status) }}</p>
+                <p class="card-text"><strong>Start Date:</strong> {{ \Carbon\Carbon::parse($project->start_date)->format('Y-m-d') }}</p>
+                <p class="card-text"><strong>End Date:</strong> {{ \Carbon\Carbon::parse($project->end_date)->format('Y-m-d') }}</p>
+                <p class="card-text"><strong>Status:</strong> {{ $project->status == 'pending' ? 'Pending' : ($project->status == 'on_going' ? 'In Progress' : 'Completed') }}</p>
                 <p class="card-text"><strong>Budget:</strong> ${{ $project->budget }}</p>
 
                 <h5 class="mt-4">Project Progress</h5>

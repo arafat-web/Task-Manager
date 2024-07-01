@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h2 class="mb-4">Edit Reminder</h2>
+        <h2 class="mb-4 shadow-sm p-3 rounded bg-white">Edit Reminder</h2>
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <form action="{{ route('reminders.update', $reminder->id) }}" method="POST">

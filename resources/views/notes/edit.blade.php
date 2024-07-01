@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 <div class="container">
-    <h2 class="mb-4">Edit Note</h2>
+    <h2 class="mb-4 shadow-sm p-3 rounded bg-white">Edit Note</h2>
 
     <form action="{{ route('notes.update', $note->id) }}" method="POST">
         @csrf

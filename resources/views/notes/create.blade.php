@@ -4,8 +4,8 @@
 @endsection
 @section('content')
     <div class="container">
-        <h2 class="mb-4">Add Note</h2>
-        <div class="card border-0 shadow-sm">
+        <h2 class="mb-4 shadow-sm p-3 rounded bg-white">Add Note</h2>
+        <div class="card border-0 shadow-sm m-auto" style="max-width: 600px;">
             <div class="card-body">
                 <form action="{{ route('notes.store') }}" method="POST">
                     @csrf

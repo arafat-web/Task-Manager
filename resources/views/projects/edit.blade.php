@@ -5,7 +5,7 @@
 @section('content')
     <div class="container">
         <h2 class="mb-4 shadow-sm p-3 rounded bg-white">Edit Project</h2>
-        <div class="card border-0 shadow-sm">
+        <div class="card border-0 shadow-sm m-auto" style="max-width: 600px;">
             <div class="card-body">
                 <form action="{{ route('projects.update', $project->id) }}" method="POST">
                     @csrf
@@ -28,7 +28,7 @@
                     <div class="mb-3">
                         <label for="start_date" class="form-label">Start Date</label>
                         <input type="date" name="start_date" id="start_date" class="form-control"
-                            value="{{ $project->start_date }}">
+                               value="{{ \Carbon\Carbon::parse($project->start_date)->format('Y-m-d') }}">
                         @error('start_date')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -36,11 +36,12 @@
                     <div class="mb-3">
                         <label for="end_date" class="form-label">End Date</label>
                         <input type="date" name="end_date" id="end_date" class="form-control"
-                            value="{{ $project->end_date }}">
+                               value="{{ \Carbon\Carbon::parse($project->end_date)->format('Y-m-d') }}">
                         @error('end_date')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <select name="status" id="status" class="form-select" required>
