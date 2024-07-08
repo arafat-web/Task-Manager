@@ -117,11 +117,11 @@
                     <i class="bi bi-house-door"></i> Home
                 </a>
             </li>
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->is('mail*') ? 'active' : '' }}" href="{{ route('mail.inbox') }}">
                     <i class="bi bi-inbox"></i> Inbox
                 </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('projects*') ? 'active' : '' }}"
                     href="{{ route('projects.index') }}">
