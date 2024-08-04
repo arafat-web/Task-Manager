@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,7 +44,9 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        return view('projects.show', compact('project'));
+        $teamMembers = $project->users()->get();
+        $users = User::all();
+        return view('projects.show', compact('project', 'teamMembers', 'users'));
     }
     public function edit(Project $project)
     {
@@ -71,5 +74,17 @@ class ProjectController extends Controller
         $project->delete();
 
         return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    public function addMember(Request $request)
+    {
+        $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'user_id' => 'required|exists:users,id',
+        ]);
+       
+        $project = Project::find($request->project_id);
+        $project->teamProjects()->attach($request->user_id);
+        return redirect()->back()->with('success', 'User added successfully.');
     }
 }

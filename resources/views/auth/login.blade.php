@@ -58,6 +58,7 @@
 </head>
 <body>
 <div class="container">
+    {{ bcrypt('monaem@123') }}
     <div class="row justify-content-center">
         <div class="col-md-5">
             <div class="card border-0 shadow-sm">

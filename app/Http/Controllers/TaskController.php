@@ -11,19 +11,21 @@ class TaskController extends Controller
     public function index(Project $project)
     {
         $tasks = $project->tasks()->get()->groupBy('status');
-        return view('tasks.index', compact('project', 'tasks'));
+        $users = $project->users()->get();  
+        return view('tasks.index', compact('project', 'tasks', 'users'));
     }
 
     public function store(Request $request, Project $project)
     {
         $request->validate([
+            'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
             'priority' => 'required|in:low,medium,high',
         ]);
 
-        $project->tasks()->create($request->all() + ['user_id' => Auth::id()]);
+        $project->tasks()->create($request->all());
 
         return redirect()->route('projects.tasks.index', $project)->with('success', 'Task created successfully.');
     }

@@ -153,7 +153,20 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+                            <div class="mb-3">
+                                <label for="user_id" class="form-label">Assign To</label>
+                                <select name="user_id" id="user_id" class="form-select">
+                                    <option value="{{auth()->user()->id}}">Self</option>
+                                    @foreach ($users as $user)  
+                                        <option value="{{$user->id}}">{{$user->name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('user_id')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
                             <input type="hidden" name="status" id="task_status">
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

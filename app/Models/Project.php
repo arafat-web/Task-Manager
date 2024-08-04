@@ -41,7 +41,7 @@ class Project extends Model
 
     public function files()
     {
-        return $this->hasMany(ProjectFile::class);
+        return $this->hasMany(File::class);
     }
 
     public function getStatusAttribute()
@@ -58,5 +58,15 @@ class Project extends Model
         }
 
         return 'on_going';
+    }
+
+    public function teamProjects()
+    {
+        return $this->belongsToMany(ProjectTeam::class, 'project_teams', 'project_id', 'user_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'project_teams', 'project_id', 'user_id');
     }
 }

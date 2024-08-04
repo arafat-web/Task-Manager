@@ -33,6 +33,8 @@
                                     @endif
                                 </p>
 
+                                <p class="card-text"><strong>Assign To:</strong> {{ $task->user->name }}</p>
+
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#editTaskModal"> <i class="bi bi-pencil-square"></i> </button>
                                 <a href="{{ route('projects.tasks.index', $task->project->id) }}" class="btn btn-secondary">
