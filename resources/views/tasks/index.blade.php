@@ -3,408 +3,7 @@
 @section('title', isset($project) ? $project->name . ' Tasks' : 'My Tasks')
 
 @push('styles')
-<style>
-    .tasks-header {
-        background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-        border-radius: 18px;
-        padding: 28px 36px;
-        color: white;
-        margin-bottom: 32px;
-        position: relative;
-        overflow: hidden;
-        border: 2px solid var(--primary-500);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .tasks-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        transform: translate(25px, -25px);
-    }
-
-    .tasks-header h1 {
-        margin: 0;
-        font-size: 32px;
-        font-weight: 700;
-        position: relative;
-        z-index: 1;
-    }
-
-    .tasks-header p {
-        margin: 8px 0 0;
-        opacity: 0.9;
-        font-size: 16px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .view-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 28px;
-        background: white;
-        padding: 20px 28px;
-        border-radius: 16px;
-        box-shadow: var(--shadow-sm);
-        border: 2px solid var(--gray-200);
-    }
-
-    .view-toggle {
-        display: flex;
-        background: var(--gray-100);
-        border-radius: 10px;
-        padding: 4px;
-        gap: 2px;
-    }
-
-    .view-toggle button {
-        padding: 10px 18px;
-        border: none;
-        background: transparent;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 14px;
-        color: var(--gray-600);
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-
-    .view-toggle button.active {
-        background: var(--primary-600);
-        color: white;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .task-filters {
-        display: flex;
-        gap: 16px;
-        align-items: center;
-    }
-
-    .filter-select {
-        padding: 8px 14px;
-        border: 2px solid var(--gray-200);
-        border-radius: 8px;
-        background: white;
-        font-size: 14px;
-        color: var(--gray-700);
-        min-width: 120px;
-    }
-
-    .filter-select:focus {
-        outline: none;
-        border-color: var(--primary-500);
-    }
-
-    .kanban-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-        min-height: 600px;
-    }
-
-    .kanban-column {
-        background: var(--gray-50);
-        border-radius: 16px;
-        padding: 0;
-        border: 2px solid var(--gray-200);
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .column-header {
-        padding: 20px 24px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: 700;
-        font-size: 16px;
-        color: white;
-        position: relative;
-    }
-
-    .column-header.todo {
-        background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-    }
-
-    .column-header.in-progress {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    }
-
-    .column-header.completed {
-        background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
-    }
-
-    .column-header .task-count {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .add-task-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        border-radius: 8px;
-        padding: 6px 12px;
-        font-size: 18px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .add-task-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-    }
-
-    .kanban-list {
-        padding: 24px;
-        min-height: 500px;
-        background: var(--gray-50);
-    }
-
-    .task-card {
-        background: white;
-        border: 2px solid var(--gray-200);
-        border-radius: 12px;
-        padding: 18px;
-        margin-bottom: 16px;
-        cursor: move;
-        transition: all 0.2s ease;
-        position: relative;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .task-card:hover {
-        border-color: var(--primary-500);
-        box-shadow: var(--shadow-lg);
-        transform: translateY(-2px);
-    }
-
-    .task-card.dragging {
-        opacity: 0.5;
-        transform: rotate(5deg);
-        z-index: 1000;
-    }
-
-    .task-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--gray-900);
-        margin-bottom: 8px;
-        line-height: 1.4;
-    }
-
-    .task-description {
-        font-size: 14px;
-        color: var(--gray-600);
-        margin-bottom: 14px;
-        line-height: 1.5;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .task-meta {
-        display: flex;
-        justify-content: between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 12px;
-    }
-
-    .priority-badge {
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .priority-low {
-        background: rgba(16, 185, 129, 0.1);
-        color: var(--success-600);
-    }
-
-    .priority-medium {
-        background: rgba(245, 158, 11, 0.1);
-        color: #d97706;
-    }
-
-    .priority-high {
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--error-600);
-    }
-
-    .due-date {
-        font-size: 12px;
-        color: var(--gray-500);
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .due-date.overdue {
-        color: var(--error-600);
-        font-weight: 600;
-    }
-
-    .task-assignee {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: var(--primary-500);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 600;
-        margin-left: auto;
-    }
-
-    .task-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 14px;
-        padding-top: 14px;
-        border-top: 1px solid var(--gray-200);
-    }
-
-    .task-btn {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .btn-view {
-        background: var(--primary-50);
-        color: var(--primary-600);
-        border: 1px solid var(--primary-200);
-    }
-
-    .btn-view:hover {
-        background: var(--primary-100);
-        color: var(--primary-700);
-    }
-
-    .btn-edit {
-        background: var(--gray-100);
-        color: var(--gray-700);
-        border: 1px solid var(--gray-200);
-    }
-
-    .btn-edit:hover {
-        background: var(--gray-200);
-        color: var(--gray-800);
-    }
-
-    .list-view {
-        display: none;
-    }
-
-    .list-view.active {
-        display: block;
-    }
-
-    .kanban-view.active {
-        display: grid;
-    }
-
-    .tasks-table {
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-        border: 2px solid var(--gray-200);
-    }
-
-    .table-header {
-        background: var(--gray-100);
-        padding: 16px 24px;
-        border-bottom: 2px solid var(--gray-200);
-        font-weight: 600;
-        color: var(--gray-700);
-    }
-
-    .main-content {
-        padding: 32px;
-        background: var(--gray-25);
-    }
-
-    .back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--gray-600);
-        text-decoration: none;
-        margin-bottom: 24px;
-        font-weight: 500;
-        transition: color 0.2s ease;
-    }
-
-    .back-link:hover {
-        color: var(--primary-600);
-    }
-
-    @media (max-width: 768px) {
-        .kanban-container {
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        .view-controls {
-            flex-direction: column;
-            gap: 16px;
-            align-items: stretch;
-        }
-
-        .task-filters {
-            justify-content: center;
-        }
-
-        .main-content {
-            padding: 20px;
-        }
-    }
-
-    .empty-state {
-        text-align: center;
-        color: var(--gray-400);
-        font-style: italic;
-        padding: 40px 20px;
-        background: var(--gray-50);
-        border: 2px dashed var(--gray-200);
-        border-radius: 12px;
-        margin-top: 16px;
-    }
-
-    .empty-state i {
-        font-size: 48px;
-        margin-bottom: 12px;
-        color: var(--gray-300);
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('assets/tasks/style.css') }}">
 @endpush
 
 @section('content')
@@ -436,9 +35,6 @@
             <button type="button" data-view="list">
                 <i class="bi bi-list-ul me-2"></i>List
             </button>
-            <button type="button" data-view="calendar">
-                <i class="bi bi-calendar3 me-2"></i>Calendar
-            </button>
         </div>
 
         <div class="task-filters">
@@ -448,12 +44,12 @@
                 <option value="medium">Medium Priority</option>
                 <option value="low">Low Priority</option>
             </select>
-            <select class="filter-select" id="assigneeFilter">
+            {{-- <select class="filter-select" id="assigneeFilter">
                 <option value="">All Assignees</option>
                 @foreach ($users as $user)
                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                 @endforeach
-            </select>
+            </select> --}}
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
                 <i class="bi bi-plus-lg me-2"></i>New Task
             </button>
@@ -749,27 +345,9 @@
             </div>
         </div>
     </div>
-
-    <!-- Calendar View -->
-    <div class="calendar-view" style="display: none;">
-        <div class="calendar-container" style="background: white; border-radius: 16px; padding: 28px; box-shadow: var(--shadow-sm); border: 2px solid var(--gray-200);">
-            <div class="calendar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <h3 style="margin: 0; color: var(--gray-900);">Task Calendar</h3>
-                <div class="calendar-nav" style="display: flex; gap: 12px; align-items: center;">
-                    <button class="btn btn-outline-primary btn-sm" id="prevMonth">
-                        <i class="bi bi-chevron-left"></i>
-                    </button>
-                    <span id="currentMonth" style="font-weight: 600; min-width: 150px; text-align: center;"></span>
-                    <button class="btn btn-outline-primary btn-sm" id="nextMonth">
-                        <i class="bi bi-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-            <div id="calendar" style="min-height: 500px; border: 1px solid var(--gray-200); border-radius: 8px;"></div>
-        </div>
-    </div>
 </div>
 
+@endif
 <!-- Enhanced Create Task Modal -->
 <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -880,7 +458,6 @@
         </div>
     </div>
 </div>
-@endif
 
 @endsection
 
@@ -916,7 +493,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewToggleButtons = document.querySelectorAll('.view-toggle button');
     const kanbanView = document.querySelector('.kanban-view');
     const listView = document.querySelector('.list-view');
-    const calendarView = document.querySelector('.calendar-view');
 
     viewToggleButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -929,7 +505,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show/hide views
             kanbanView.style.display = view === 'kanban' ? 'grid' : 'none';
             listView.style.display = view === 'list' ? 'block' : 'none';
-            calendarView.style.display = view === 'calendar' ? 'block' : 'none';
 
             if (view === 'calendar') {
                 initializeCalendar();
@@ -986,8 +561,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    priorityFilter.addEventListener('change', applyFilters);
-    assigneeFilter.addEventListener('change', applyFilters);
+    // Add event listeners with null checks
+    if (priorityFilter) {
+        priorityFilter.addEventListener('change', applyFilters);
+    }
+    if (assigneeFilter) {
+        assigneeFilter.addEventListener('change', applyFilters);
+    }
 
     // Enhanced Drag and Drop
     const taskCards = document.querySelectorAll('.task-card');
@@ -1105,116 +685,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const createTaskModal = document.getElementById('createTaskModal');
     const taskStatusInput = document.getElementById('task_status');
 
-    createTaskModal.addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const status = button.getAttribute('data-status') || 'to_do';
-        taskStatusInput.value = status;
+    // Only add event listener if modal exists
+    if (createTaskModal) {
+        createTaskModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const status = button?.getAttribute('data-status') || 'to_do';
 
-        // Initialize Quill editor when modal opens
-        setTimeout(initializeQuillEditor, 100);
-    });
-
-    // Calendar functionality
-    function initializeCalendar() {
-        const calendarEl = document.getElementById('calendar');
-        const currentMonthEl = document.getElementById('currentMonth');
-        const prevMonthBtn = document.getElementById('prevMonth');
-        const nextMonthBtn = document.getElementById('nextMonth');
-
-        let currentDate = new Date();
-
-        function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-
-            // Update month display
-            currentMonthEl.textContent = new Intl.DateTimeFormat('en-US', {
-                month: 'long',
-                year: 'numeric'
-            }).format(currentDate);
-
-            // Clear calendar
-            calendarEl.innerHTML = '';
-
-            // Create calendar grid
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const firstDayOfMonth = new Date(year, month, 1).getDay();
-
-            // Calendar header
-            const headerRow = document.createElement('div');
-            headerRow.style.cssText = 'display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--gray-200); padding: 12px; font-weight: 600; text-align: center; color: var(--gray-700);';
-            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
-                const dayEl = document.createElement('div');
-                dayEl.textContent = day;
-                headerRow.appendChild(dayEl);
-            });
-            calendarEl.appendChild(headerRow);
-
-            // Calendar body
-            const calendarBody = document.createElement('div');
-            calendarBody.style.cssText = 'display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--gray-200);';
-
-            // Empty cells for days before month start
-            for (let i = 0; i < firstDayOfMonth; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.style.cssText = 'background: white; min-height: 80px; padding: 8px;';
-                calendarBody.appendChild(emptyDay);
+            if (taskStatusInput) {
+                taskStatusInput.value = status;
             }
 
-            // Days of the month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayEl = document.createElement('div');
-                dayEl.style.cssText = 'background: white; min-height: 80px; padding: 8px; position: relative; border: 1px solid transparent;';
-
-                const dayNumber = document.createElement('div');
-                dayNumber.textContent = day;
-                dayNumber.style.cssText = 'font-weight: 600; color: var(--gray-700); margin-bottom: 4px;';
-                dayEl.appendChild(dayNumber);
-
-                // Add tasks for this day
-                const dayTasks = getAllTasks().filter(task => {
-                    if (!task.due_date) return false;
-                    const taskDate = new Date(task.due_date);
-                    return taskDate.getDate() === day &&
-                           taskDate.getMonth() === month &&
-                           taskDate.getFullYear() === year;
-                });
-
-                dayTasks.forEach(task => {
-                    const taskEl = document.createElement('div');
-                    taskEl.style.cssText = `
-                        background: var(--primary-100);
-                        color: var(--primary-700);
-                        padding: 2px 6px;
-                        border-radius: 4px;
-                        font-size: 11px;
-                        margin-bottom: 2px;
-                        cursor: pointer;
-                        border-left: 3px solid ${task.priority === 'high' ? 'var(--error-500)' : task.priority === 'medium' ? '#d97706' : 'var(--success-500)'}
-                    `;
-                    taskEl.textContent = task.title.substring(0, 15) + (task.title.length > 15 ? '...' : '');
-                    taskEl.title = task.title;
-                    taskEl.onclick = () => window.location.href = `/tasks/${task.id}`;
-                    dayEl.appendChild(taskEl);
-                });
-
-                calendarBody.appendChild(dayEl);
-            }
-
-            calendarEl.appendChild(calendarBody);
-        }
-
-        prevMonthBtn.onclick = () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        };
-
-        nextMonthBtn.onclick = () => {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        };
-
-        renderCalendar();
+            // Initialize Quill editor when modal opens
+            setTimeout(initializeQuillEditor, 100);
+        });
     }
 
     function getAllTasks() {

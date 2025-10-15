@@ -542,12 +542,17 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        @php
+                            $hasProjects = \App\Models\Project::where('user_id', auth()->id())->exists();
+                            $taskCount = $hasProjects ? \App\Models\Task::where('user_id', auth()->id())->whereHas('project', function ($q) {$q->where('status', '!=', 'completed');})->where('status', '!=', 'completed')->count() : 0;
+                        @endphp
                         <a class="nav-link {{ request()->is('tasks*') ? 'active' : '' }}"
-                            href="{{ route('tasks.index') }}">
+                            href="{{ $hasProjects ? route('tasks.index') : route('projects.index') . '?message=create_project_first' }}">
                             <i class="bi bi-check-square-fill"></i>
                             <span>Tasks</span>
-                            <span
-                                class="nav-badge">{{ \App\Models\Task::where('user_id', auth()->id())->whereHas('project', function ($q) {$q->where('status', '!=', 'completed');})->where('status', '!=', 'completed')->count() }}</span>
+                            @if($hasProjects)
+                                <span class="nav-badge">{{ $taskCount }}</span>
+                            @endif
                         </a>
                     </li>
                 </ul>
@@ -624,7 +629,7 @@
     <div class="content">
         <header class="topnav">
             <div class="topnav-container">
-                <h1 class="page-title">@yield('page-title', 'Dashboard')</h1>
+                {{-- <h1 class="page-title">@yield('page-title')</h1> --}}
                 <div class="topnav-actions">
                     <span class="current-time" id="currentDateTime"></span>
                     <div class="dropdown">

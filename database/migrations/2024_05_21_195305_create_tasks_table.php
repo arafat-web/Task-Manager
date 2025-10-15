@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('due_date')->nullable();
             $table->enum('priority', ['low', 'medium', 'high']);
             $table->enum('status', ['to_do', 'in_progress', 'completed'])->default('to_do');
+            $table->decimal('estimated_hours', 5, 2)->nullable();
             $table->timestamps();
         });
     }
