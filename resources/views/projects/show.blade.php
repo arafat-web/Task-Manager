@@ -6,14 +6,14 @@
 <style>
     .project-header {
         background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-        border-radius: 18px;
-        padding: 36px;
+        border-radius: 12px;
+        padding: 18px 24px;
         color: white;
-        margin-bottom: 36px;
+        margin-bottom: 16px;
         position: relative;
         overflow: hidden;
-        border: 2px solid var(--primary-500);
-        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--primary-500);
+        box-shadow: var(--shadow-md);
     }
 
     .project-header::before {
@@ -29,18 +29,18 @@
     }
 
     .project-avatar-large {
-        width: 85px;
-        height: 85px;
-        border-radius: 18px;
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 34px;
+        font-size: 22px;
         color: var(--primary-600);
         background: white;
-        margin-bottom: 24px;
-        box-shadow: var(--shadow-lg);
+        margin-bottom: 12px;
+        box-shadow: var(--shadow-md);
         position: relative;
         z-index: 1;
     }
@@ -112,50 +112,50 @@
 
     .project-meta {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 28px;
-        margin-top: 28px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+        margin-top: 14px;
     }
 
     .meta-item {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 8px;
         color: rgba(255, 255, 255, 0.95);
     }
 
     .meta-icon {
-        width: 44px;
-        height: 44px;
+        width: 32px;
+        height: 32px;
         background: rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        font-size: 14px;
         flex-shrink: 0;
         border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .progress-card {
         background: white;
-        border: 2px solid var(--gray-200);
-        border-radius: 18px;
-        padding: 28px;
-        margin-bottom: 28px;
-        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-sm);
     }
 
     .progress-ring {
         position: relative;
-        width: 130px;
-        height: 130px;
-        margin: 0 auto 24px;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 14px;
     }
 
     .progress-ring svg {
-        width: 130px;
-        height: 130px;
+        width: 100px;
+        height: 100px;
         transform: rotate(-90deg);
     }
 
@@ -192,18 +192,18 @@
 
     .info-card {
         background: white;
-        border: 2px solid var(--gray-200);
-        border-radius: 18px;
-        padding: 28px;
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        padding: 16px;
         height: fit-content;
-        box-shadow: var(--shadow-md);
+        box-shadow: var(--shadow-sm);
     }
 
     .info-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 18px 0;
+        padding: 10px 0;
         border-bottom: 1px solid var(--gray-200);
     }
 
@@ -227,17 +227,17 @@
 
     .team-card {
         background: white;
-        border: 2px solid var(--gray-200);
-        border-radius: 18px;
-        padding: 28px;
-        margin-bottom: 28px;
-        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-sm);
     }
 
     .team-member {
         display: flex;
         align-items: center;
-        padding: 18px 0;
+        padding: 10px 0;
         border-bottom: 1px solid var(--gray-200);
     }
 
@@ -246,8 +246,8 @@
     }
 
     .member-avatar {
-        width: 52px;
-        height: 52px;
+        width: 38px;
+        height: 38px;
         border-radius: 50%;
         background: var(--primary-500);
         color: white;
@@ -255,24 +255,24 @@
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        margin-right: 18px;
+        margin-right: 10px;
         flex-shrink: 0;
-        font-size: 18px;
-        border: 3px solid white;
-        box-shadow: var(--shadow-md);
+        font-size: 14px;
+        border: 2px solid white;
+        box-shadow: var(--shadow-sm);
     }
 
     .member-info h6 {
-        margin: 0 0 6px 0;
+        margin: 0 0 2px 0;
         color: var(--gray-800);
         font-weight: 600;
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .member-info p {
         margin: 0;
         color: var(--gray-500);
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 500;
     }
 
@@ -309,22 +309,22 @@
 
     .quick-actions {
         display: flex;
-        gap: 14px;
-        margin-top: 28px;
+        gap: 8px;
+        margin-top: 14px;
     }
 
     .action-btn {
         flex: 1;
-        padding: 16px;
-        border: 2px solid var(--gray-200);
+        padding: 10px;
+        border: 1px solid var(--gray-200);
         background: white;
-        border-radius: 14px;
+        border-radius: 8px;
         text-align: center;
         text-decoration: none;
         color: var(--gray-700);
         font-weight: 600;
         transition: all 0.2s ease;
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .action-btn:hover {
@@ -355,43 +355,43 @@
     }
 
     .modal-header {
-        border-bottom: 2px solid var(--gray-200);
-        padding: 24px 28px;
+        border-bottom: 1px solid var(--gray-200);
+        padding: 14px 18px;
         background: var(--gray-50);
     }
 
     .modal-body {
-        padding: 28px;
+        padding: 16px 18px;
     }
 
     .modal-footer {
-        border-top: 2px solid var(--gray-200);
-        padding: 20px 28px;
+        border-top: 1px solid var(--gray-200);
+        padding: 12px 18px;
         background: var(--gray-50);
     }
 
     .content-header {
-        margin-bottom: 32px;
-        padding-bottom: 24px;
-        border-bottom: 2px solid var(--gray-200);
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--gray-200);
     }
 
     .content-title {
         color: var(--gray-900);
         font-weight: 700;
-        font-size: 28px;
-        margin-bottom: 4px;
+        font-size: 20px;
+        margin-bottom: 2px;
     }
 
     .content-subtitle {
         color: var(--gray-500);
-        font-size: 16px;
+        font-size: 13px;
         margin: 0;
         font-weight: 500;
     }
 
     .main-content {
-        padding: 32px;
+        padding: 16px;
         background: var(--gray-25);
     }
 

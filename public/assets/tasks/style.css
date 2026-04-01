@@ -2,14 +2,14 @@
     background: linear-gradient(135deg,
             var(--primary-600) 0%,
             var(--primary-700) 100%);
-    border-radius: 18px;
-    padding: 28px 36px;
+    border-radius: 12px;
+    padding: 14px 20px;
     color: white;
-    margin-bottom: 32px;
+    margin-bottom: 14px;
     position: relative;
     overflow: hidden;
-    border: 2px solid var(--primary-500);
-    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--primary-500);
+    box-shadow: var(--shadow-md);
 }
 
 .tasks-header::before {
@@ -26,16 +26,16 @@
 
 .tasks-header h1 {
     margin: 0;
-    font-size: 32px;
+    font-size: 20px;
     font-weight: 700;
     position: relative;
     z-index: 1;
 }
 
 .tasks-header p {
-    margin: 8px 0 0;
+    margin: 4px 0 0;
     opacity: 0.9;
-    font-size: 16px;
+    font-size: 13px;
     position: relative;
     z-index: 1;
 }
@@ -44,12 +44,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 28px;
+    margin-bottom: 12px;
     background: white;
-    padding: 20px 28px;
-    border-radius: 16px;
+    padding: 10px 16px;
+    border-radius: 10px;
     box-shadow: var(--shadow-sm);
-    border: 2px solid var(--gray-200);
+    border: 1px solid var(--gray-200);
 }
 
 .view-toggle {
@@ -61,12 +61,12 @@
 }
 
 .view-toggle button {
-    padding: 10px 18px;
+    padding: 6px 12px;
     border: none;
     background: transparent;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--gray-600);
     transition: all 0.2s ease;
     cursor: pointer;
@@ -80,7 +80,7 @@
 
 .task-filters {
     display: flex;
-    gap: 16px;
+    gap: 8px;
     align-items: center;
 }
 
@@ -102,26 +102,26 @@
 .kanban-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 12px;
     min-height: 600px;
 }
 
 .kanban-column {
     background: var(--gray-50);
-    border-radius: 16px;
+    border-radius: 10px;
     padding: 0;
-    border: 2px solid var(--gray-200);
+    border: 1px solid var(--gray-200);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
 }
 
 .column-header {
-    padding: 20px 24px;
+    padding: 10px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 13px;
     color: white;
     position: relative;
 }
@@ -167,17 +167,17 @@
 }
 
 .kanban-list {
-    padding: 24px;
-    min-height: 500px;
+    padding: 10px;
+    min-height: 400px;
     background: var(--gray-50);
 }
 
 .task-card {
     background: white;
-    border: 2px solid var(--gray-200);
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
     cursor: move;
     transition: all 0.2s ease;
     position: relative;
@@ -197,17 +197,17 @@
 }
 
 .task-title {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--gray-900);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     line-height: 1.4;
 }
 
 .task-description {
-    font-size: 14px;
+    font-size: 12px;
     color: var(--gray-600);
-    margin-bottom: 14px;
+    margin-bottom: 6px;
     line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -219,8 +219,8 @@
     display: flex;
     justify-content: between;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 6px;
+    margin-bottom: 6px;
 }
 
 .priority-badge {
@@ -278,8 +278,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 14px;
-    padding-top: 14px;
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px solid var(--gray-200);
 }
 
@@ -348,7 +348,7 @@
 }
 
 .main-content {
-    padding: 32px;
+    padding: 16px;
     background: var(--gray-25);
 }
 
@@ -370,12 +370,12 @@
 @media (max-width: 768px) {
     .kanban-container {
         grid-template-columns: 1fr;
-        gap: 16px;
+        gap: 10px;
     }
 
     .view-controls {
         flex-direction: column;
-        gap: 16px;
+        gap: 10px;
         align-items: stretch;
     }
 
@@ -384,7 +384,7 @@
     }
 
     .main-content {
-        padding: 20px;
+        padding: 12px;
     }
 }
 
@@ -392,16 +392,16 @@
     text-align: center;
     color: var(--gray-400);
     font-style: italic;
-    padding: 40px 20px;
+    padding: 20px 16px;
     background: var(--gray-50);
-    border: 2px dashed var(--gray-200);
-    border-radius: 12px;
-    margin-top: 16px;
+    border: 1px dashed var(--gray-200);
+    border-radius: 8px;
+    margin-top: 8px;
 }
 
 .empty-state i {
-    font-size: 48px;
-    margin-bottom: 12px;
+    font-size: 28px;
+    margin-bottom: 6px;
     color: var(--gray-300);
 }
 
@@ -409,11 +409,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 28px;
+    margin-bottom: 12px;
     background: white;
-    padding: 16px 24px;
-    border-radius: 12px;
-    border: 2px solid var(--gray-200);
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
     box-shadow: var(--shadow-sm);
 }
 

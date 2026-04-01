@@ -22,34 +22,34 @@
         .reminders-header {
             background: linear-gradient(135deg, var(--reminder-primary) 0%, var(--reminder-secondary) 100%);
             color: white;
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 25px var(--reminder-shadow-lg);
+            border-radius: 12px;
+            padding: 0.875rem 1.25rem;
+            margin-bottom: 0.875rem;
+            box-shadow: 0 4px 12px var(--reminder-shadow-lg);
         }
 
         .search-filter-bar {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px var(--reminder-shadow);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.875rem;
+            box-shadow: 0 2px 4px -1px var(--reminder-shadow);
             border: 1px solid var(--reminder-border);
         }
 
         .stats-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 0.875rem;
         }
 
         .stat-card {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 10px;
+            padding: 0.875rem;
             border: 1px solid var(--reminder-border);
-            box-shadow: 0 4px 6px -1px var(--reminder-shadow);
+            box-shadow: 0 2px 4px -1px var(--reminder-shadow);
             transition: all 0.3s ease;
         }
 
@@ -81,7 +81,7 @@
         }
 
         .stat-info h3 {
-            font-size: 2rem;
+            font-size: 1.625rem;
             font-weight: 700;
             margin: 0;
             color: var(--reminder-dark);
@@ -89,7 +89,7 @@
 
         .stat-info p {
             margin: 0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -103,8 +103,8 @@
 
         .reminders-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.875rem;
         }
 
         .reminder-card {
@@ -148,14 +148,14 @@
         }
 
         .reminder-card-header {
-            padding: 1.25rem 1.25rem 0.75rem;
+            padding: 0.75rem 0.75rem 0.375rem;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
         }
 
         .reminder-title {
-            font-size: 1.125rem;
+            font-size: 0.9375rem;
             font-weight: 600;
             color: var(--reminder-dark);
             margin: 0;
@@ -200,32 +200,32 @@
         }
 
         .reminder-content {
-            padding: 0 1.25rem;
+            padding: 0 0.75rem;
             color: var(--reminder-gray);
-            line-height: 1.6;
+            line-height: 1.5;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.375rem;
         }
 
         .reminder-meta {
-            padding: 0.75rem 1.25rem;
+            padding: 0.5rem 0.75rem;
             background: var(--reminder-light);
             border-top: 1px solid var(--reminder-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             color: var(--reminder-gray);
         }
 
         .reminder-actions {
-            padding: 1rem 1.25rem;
+            padding: 0.5rem 0.75rem;
             border-top: 1px solid var(--reminder-border);
             display: flex;
-            gap: 0.5rem;
+            gap: 0.375rem;
             flex-wrap: wrap;
         }
 

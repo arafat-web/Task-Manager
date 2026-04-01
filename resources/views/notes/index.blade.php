@@ -22,18 +22,18 @@
     .notes-header {
         background: linear-gradient(135deg, var(--note-primary) 0%, var(--note-secondary) 100%);
         color: white;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 25px var(--note-shadow-lg);
+        border-radius: 12px;
+        padding: 0.875rem 1.25rem;
+        margin-bottom: 0.875rem;
+        box-shadow: 0 4px 12px var(--note-shadow-lg);
     }
 
     .search-filter-bar {
         background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 6px -1px var(--note-shadow);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.875rem;
+        box-shadow: 0 2px 4px -1px var(--note-shadow);
         border: 1px solid var(--note-border);
     }
 
@@ -65,9 +65,9 @@
 
     .notes-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 0.875rem;
+        margin-bottom: 0.875rem;
     }
 
     .notes-list {
@@ -93,14 +93,14 @@
     }
 
     .note-card-header {
-        padding: 1.25rem 1.25rem 0.75rem;
+        padding: 0.75rem 0.75rem 0.375rem;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
     }
 
     .note-title {
-        font-size: 1.125rem;
+        font-size: 0.9375rem;
         font-weight: 600;
         color: var(--note-dark);
         margin: 0;
@@ -127,24 +127,24 @@
     }
 
     .note-content {
-        padding: 0 1.25rem;
+        padding: 0 0.75rem;
         color: var(--note-gray);
-        line-height: 1.6;
+        line-height: 1.5;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.375rem;
     }
 
     .note-meta {
-        padding: 0.75rem 1.25rem;
+        padding: 0.5rem 0.75rem;
         background: var(--note-light);
         border-top: 1px solid var(--note-border);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
         color: var(--note-gray);
     }
 
@@ -221,34 +221,34 @@
 
     .empty-notes {
         text-align: center;
-        padding: 4rem 2rem;
+        padding: 2rem 1rem;
         color: var(--note-gray);
     }
 
     .empty-icon {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto 1.5rem;
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 0.75rem;
         background: var(--note-light);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem;
+        font-size: 1.5rem;
         color: var(--note-gray);
     }
 
     .stats-cards {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.625rem;
+        margin-bottom: 0.875rem;
     }
 
     .stat-card {
         background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
+        padding: 0.875rem;
+        border-radius: 10px;
         border: 1px solid var(--note-border);
         text-align: center;
         transition: transform 0.2s ease;
@@ -259,15 +259,15 @@
     }
 
     .stat-number {
-        font-size: 2rem;
+        font-size: 1.625rem;
         font-weight: 700;
         color: var(--note-primary);
     }
 
     .stat-label {
         color: var(--note-gray);
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        margin-top: 0.125rem;
     }
 
     @media (max-width: 768px) {

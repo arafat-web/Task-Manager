@@ -29,16 +29,16 @@
     }
 
     .project-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 600;
-        font-size: 18px;
+        font-size: 16px;
         color: white;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
         flex-shrink: 0;
         box-shadow: var(--shadow-sm);
     }
@@ -119,29 +119,29 @@
 
     .search-filters {
         background: white;
-        border: 2px solid var(--gray-200);
-        border-radius: 16px;
-        padding: 28px;
-        margin-bottom: 28px;
+        border: 1px solid var(--gray-200);
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
         box-shadow: var(--shadow-sm);
     }
 
     .filter-group {
         display: flex;
         flex-wrap: wrap;
-        gap: 18px;
+        gap: 10px;
         align-items: center;
     }
 
     .search-input {
         flex: 1;
-        min-width: 250px;
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
-        padding: 12px 18px;
+        min-width: 200px;
+        border: 1px solid var(--gray-200);
+        border-radius: 8px;
+        padding: 8px 14px;
         background: white;
         transition: all 0.2s ease;
-        font-size: 14px;
+        font-size: 13px;
         color: var(--gray-700);
     }
 
@@ -156,13 +156,13 @@
     }
 
     .filter-select {
-        padding: 12px 18px;
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
+        padding: 8px 14px;
+        border: 1px solid var(--gray-200);
+        border-radius: 8px;
         background: white;
         color: var(--gray-700);
-        min-width: 160px;
-        font-size: 14px;
+        min-width: 140px;
+        font-size: 13px;
         font-weight: 500;
     }
 
@@ -175,8 +175,8 @@
     .list-view .project-card {
         display: flex;
         align-items: center;
-        padding: 24px 28px;
-        margin-bottom: 14px;
+        padding: 14px 18px;
+        margin-bottom: 8px;
     }
 
     .list-view .project-avatar {
@@ -191,9 +191,9 @@
     .project-meta {
         display: flex;
         align-items: center;
-        gap: 20px;
-        margin-top: 14px;
-        font-size: 13px;
+        gap: 12px;
+        margin-top: 8px;
+        font-size: 12px;
         color: var(--gray-500);
         font-weight: 500;
     }
@@ -207,22 +207,22 @@
 
     .project-actions {
         display: flex;
-        gap: 10px;
-        margin-top: 18px;
+        gap: 6px;
+        margin-top: 10px;
     }
 
     .btn-action {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        border: 2px solid var(--gray-200);
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        border: 1px solid var(--gray-200);
         background: white;
         color: var(--gray-500);
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
-        font-size: 16px;
+        font-size: 14px;
         text-decoration: none;
     }
 
@@ -242,21 +242,21 @@
 
     .empty-state {
         text-align: center;
-        padding: 80px 20px;
+        padding: 40px 20px;
         color: var(--gray-500);
     }
 
     .empty-state-icon {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         background: var(--gray-100);
-        border: 2px solid var(--gray-200);
+        border: 1px solid var(--gray-200);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 24px;
-        font-size: 32px;
+        margin: 0 auto 14px;
+        font-size: 24px;
         color: var(--gray-400);
     }
 
@@ -311,27 +311,27 @@
     }
 
     .content-header {
-        margin-bottom: 32px;
-        padding-bottom: 24px;
-        border-bottom: 2px solid var(--gray-200);
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--gray-200);
     }
 
     .content-title {
         color: var(--gray-900);
         font-weight: 700;
-        font-size: 28px;
-        margin-bottom: 4px;
+        font-size: 20px;
+        margin-bottom: 2px;
     }
 
     .content-subtitle {
         color: var(--gray-500);
-        font-size: 16px;
+        font-size: 13px;
         margin: 0;
         font-weight: 500;
     }
 
     .main-content {
-        padding: 32px;
+        padding: 16px;
         background: var(--gray-25);
     }
 
