@@ -2,682 +2,360 @@
 
 @section('title', 'Reminders')
 
+@push('styles')
+<style>
+/* ── cu-reminders page ── */
+.cu-rem-page { padding: 1rem 0; }
+
+/* Header */
+.cu-header {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    border-radius: 8px; padding: 12px 16px; margin-bottom: 14px;
+    position: relative; overflow: hidden;
+}
+.cu-header::before {
+    content: ''; position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px; background: rgba(255,255,255,.08); border-radius: 50%;
+}
+.cu-header-inner { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+.cu-header-title { font-weight: 700; font-size: 17px; margin: 0; color: #fff; }
+.cu-header-sub   { font-size: 12px; opacity: .8; margin: 2px 0 0; color: #fff; }
+.cu-btn-add-rem {
+    background: rgba(255,255,255,.18);
+    color: #fff; border: 1.5px solid rgba(255,255,255,.4);
+    border-radius: 6px; padding: 6px 14px;
+    font-size: 12px; font-weight: 700;
+    text-decoration: none; transition: background .15s;
+    display: inline-flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+}
+.cu-btn-add-rem:hover { background: rgba(255,255,255,.28); color: #fff; }
+
+/* Stat tiles */
+.cu-rem-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: .6rem;
+    margin-bottom: 1rem;
+}
+.cu-rem-tile {
+    background: #fff; border-radius: 10px;
+    padding: .8rem 1rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    display: flex; align-items: center; gap: .7rem;
+    cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.cu-rem-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.cu-rem-tile.cu-tile-active  { border-left: 4px solid #f59e0b; }
+.cu-rem-tile.cu-tile-ok      { border-left: 4px solid #10b981; }
+.cu-rem-tile.cu-tile-done    { border-left: 4px solid #3b82f6; }
+.cu-rem-tile.cu-tile-late    { border-left: 4px solid #ef4444; }
+.cu-rem-tile.cu-tile-today   { border-left: 4px solid #8b5cf6; }
+.cu-tile-ico {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+}
+.cu-tile-ico.amber  { background: #fef3c7; color: #d97706; }
+.cu-tile-ico.green  { background: #d1fae5; color: #059669; }
+.cu-tile-ico.blue   { background: #dbeafe; color: #2563eb; }
+.cu-tile-ico.red    { background: #fee2e2; color: #dc2626; }
+.cu-tile-ico.violet { background: #ede9fe; color: #7c3aed; }
+.cu-tile-val { font-size: 1.4rem; font-weight: 700; color: #111827; line-height: 1; }
+.cu-tile-lbl { font-size: .7rem; font-weight: 600; text-transform: uppercase;
+               letter-spacing: .04em; color: #6b7280; }
+
+/* Filter bar */
+.cu-rem-filter-bar {
+    background: #fff; border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    padding: .65rem 1rem;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.cu-rem-search {
+    flex: 1; min-width: 180px;
+    border: 1px solid #d1d5db; border-radius: 7px;
+    padding: .45rem .8rem; font-size: .85rem;
+    transition: border-color .2s;
+}
+.cu-rem-search:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.15); }
+.cu-rem-select {
+    border: 1px solid #d1d5db; border-radius: 7px;
+    padding: .45rem .7rem; font-size: .85rem;
+    background: #fff; color: #374151; cursor: pointer;
+    transition: border-color .2s;
+}
+.cu-rem-select:focus { outline: none; border-color: #f59e0b; }
+.cu-count-label {
+    margin-left: auto; font-size: .8rem; font-weight: 600; color: #6b7280;
+    background: #f3f4f6; border-radius: 20px; padding: .25rem .75rem;
+    white-space: nowrap;
+}
+
+/* Grid of cards */
+.cu-rem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: .9rem;
+}
+
+/* Individual card */
+.cu-rem-card {
+    background: #fff; border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    padding: 1rem 1.1rem;
+    display: flex; flex-direction: column; gap: .55rem;
+    transition: transform .15s, box-shadow .15s;
+}
+.cu-rem-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.1); }
+.cu-rem-card.cu-rem-done { opacity: .72; }
+.cu-rem-card.cu-rem-late { background: #fff8f8; }
+
+.cu-rem-head  { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
+.cu-rem-title { font-size: .95rem; font-weight: 600; color: #111827; margin: 0; flex: 1; line-height: 1.35; }
+.cu-rem-desc  { font-size: .82rem; color: #6b7280; margin: 0; line-height: 1.5; }
+
+/* Priority badges */
+.cu-pri-badge   { font-size: .68rem; font-weight: 700; text-transform: uppercase;
+                  letter-spacing: .05em; padding: .18rem .55rem; border-radius: 20px; white-space: nowrap; }
+.cu-pri-low     { background: #d1fae5; color: #065f46; }
+.cu-pri-medium  { background: #fef3c7; color: #92400e; }
+.cu-pri-high    { background: #fee2e2; color: #991b1b; }
+.cu-pri-urgent  { background: #dc2626; color: #fff; }
+
+/* Meta items */
+.cu-rem-meta { display: flex; flex-wrap: wrap; gap: .35rem .7rem; }
+.cu-meta-item {
+    font-size: .76rem; color: #6b7280;
+    display: flex; align-items: center; gap: .25rem;
+}
+.cu-meta-item.cu-meta-danger { color: #dc2626; }
+.cu-meta-item.cu-meta-warn   { color: #d97706; }
+
+/* Tags */
+.cu-rem-tags { display: flex; flex-wrap: wrap; gap: .3rem; }
+.cu-tag-pill {
+    font-size: .7rem; padding: .15rem .5rem; border-radius: 20px;
+    background: #fef3c7; color: #92400e; font-weight: 500;
+}
+.cu-tag-more { font-size: .7rem; color: #9ca3af; padding: .15rem .4rem; }
+
+/* Status badge */
+.cu-status-badge {
+    display: inline-flex; align-items: center; gap: .3rem;
+    font-size: .74rem; font-weight: 600; padding: .2rem .6rem; border-radius: 20px;
+}
+.cu-sb-danger  { background: #fee2e2; color: #dc2626; }
+.cu-sb-warn    { background: #fef3c7; color: #d97706; }
+.cu-sb-success { background: #d1fae5; color: #065f46; }
+.cu-sb-muted   { background: #f3f4f6; color: #6b7280; }
+
+/* Action buttons */
+.cu-rem-actions { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .2rem; }
+.cu-act {
+    display: inline-flex; align-items: center; gap: .25rem;
+    font-size: .76rem; font-weight: 600; padding: .3rem .65rem;
+    border-radius: 6px; border: none; cursor: pointer;
+    text-decoration: none; transition: opacity .15s, transform .1s;
+}
+.cu-act:hover { opacity: .82; transform: translateY(-1px); }
+.cu-act-success { background: #d1fae5; color: #065f46; }
+.cu-act-warn    { background: #fef3c7; color: #92400e; }
+.cu-act-muted   { background: #f3f4f6; color: #6b7280; }
+.cu-act-info    { background: #dbeafe; color: #1d4ed8; }
+.cu-act-primary { background: #fef3c7; color: #b45309; }
+.cu-act-danger  { background: #fee2e2; color: #dc2626; }
+
+/* Empty state */
+.cu-rem-empty { text-align: center; padding: 4rem 2rem; grid-column: 1/-1; }
+.cu-empty-ico { font-size: 3.5rem; color: #d1d5db; display: block; margin-bottom: 1rem; }
+.cu-btn-new-empty {
+    display: inline-flex; align-items: center; gap: .4rem;
+    margin-top: 1rem; background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #fff; border-radius: 8px; padding: .6rem 1.5rem;
+    font-weight: 600; font-size: .9rem; text-decoration: none;
+    transition: opacity .2s;
+}
+.cu-btn-new-empty:hover { opacity: .87; color: #fff; }
+
+@media (max-width: 576px) {
+    .cu-rem-grid  { grid-template-columns: 1fr; }
+    .cu-rem-stats { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+@endpush
+
 @section('content')
-    <style>
-        :root {
-            --reminder-primary: #667eea;
-            --reminder-secondary: #764ba2;
-            --reminder-success: #10b981;
-            --reminder-warning: #f59e0b;
-            --reminder-danger: #ef4444;
-            --reminder-info: #3b82f6;
-            --reminder-light: #f8fafc;
-            --reminder-dark: #1e293b;
-            --reminder-gray: #64748b;
-            --reminder-border: #e2e8f0;
-            --reminder-shadow: rgba(0, 0, 0, 0.1);
-            --reminder-shadow-lg: rgba(0, 0, 0, 0.15);
-        }
+<div class="cu-rem-page">
 
-        .reminders-header {
-            background: linear-gradient(135deg, var(--reminder-primary) 0%, var(--reminder-secondary) 100%);
-            color: white;
-            border-radius: 12px;
-            padding: 0.875rem 1.25rem;
-            margin-bottom: 0.875rem;
-            box-shadow: 0 4px 12px var(--reminder-shadow-lg);
-        }
+    {{-- Header --}}
+    <div class="cu-header">
+        <div class="cu-header-inner">
+            <div>
+                <h1 class="cu-header-title"><i class="bi bi-bell-fill me-2"></i>Reminders</h1>
+                <p class="cu-header-sub">{{ $stats['active'] }} active &middot; {{ $stats['due_today'] }} due today</p>
+            </div>
+            <a href="{{ route('reminders.create') }}" class="cu-btn-add-rem">
+                <i class="bi bi-plus-lg"></i> New Reminder
+            </a>
+        </div>
+    </div>
 
-        .search-filter-bar {
-            background: white;
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.875rem;
-            box-shadow: 0 2px 4px -1px var(--reminder-shadow);
-            border: 1px solid var(--reminder-border);
-        }
-
-        .stats-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 0.875rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 0.875rem;
-            border: 1px solid var(--reminder-border);
-            box-shadow: 0 2px 4px -1px var(--reminder-shadow);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px var(--reminder-shadow-lg);
-        }
-
-        .stat-card.primary {
-            border-left: 4px solid var(--reminder-primary);
-        }
-
-        .stat-card.success {
-            border-left: 4px solid var(--reminder-success);
-        }
-
-        .stat-card.warning {
-            border-left: 4px solid var(--reminder-warning);
-        }
-
-        .stat-card.danger {
-            border-left: 4px solid var(--reminder-danger);
-        }
-
-        .stat-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stat-info h3 {
-            font-size: 1.625rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--reminder-dark);
-        }
-
-        .stat-info p {
-            margin: 0;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--reminder-gray);
-        }
-
-        .stat-icon {
-            font-size: 2.5rem;
-            opacity: 0.3;
-        }
-
-        .reminders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 0.875rem;
-        }
-
-        .reminder-card {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--reminder-border);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .reminder-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px var(--reminder-shadow-lg);
-            border-color: var(--reminder-primary);
-        }
-
-        .reminder-card.priority-urgent {
-            border-left: 4px solid var(--reminder-danger);
-        }
-
-        .reminder-card.priority-high {
-            border-left: 4px solid #fd7e14;
-        }
-
-        .reminder-card.priority-medium {
-            border-left: 4px solid var(--reminder-warning);
-        }
-
-        .reminder-card.priority-low {
-            border-left: 4px solid var(--reminder-gray);
-        }
-
-        .reminder-card.reminder-completed {
-            opacity: 0.7;
-        }
-
-        .reminder-card.reminder-overdue {
-            background-color: #fef2f2;
-        }
-
-        .reminder-card-header {
-            padding: 0.75rem 0.75rem 0.375rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .reminder-title {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            color: var(--reminder-dark);
-            margin: 0;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .reminder-completed .reminder-title {
-            text-decoration: line-through;
-        }
-
-        .priority-badge {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-        }
-
-        .priority-badge.urgent {
-            background: #fef2f2;
-            color: var(--reminder-danger);
-        }
-
-        .priority-badge.high {
-            background: #fff7ed;
-            color: #ea580c;
-        }
-
-        .priority-badge.medium {
-            background: #fffbeb;
-            color: #d97706;
-        }
-
-        .priority-badge.low {
-            background: #f8fafc;
-            color: var(--reminder-gray);
-        }
-
-        .reminder-content {
-            padding: 0 0.75rem;
-            color: var(--reminder-gray);
-            line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 0.375rem;
-        }
-
-        .reminder-meta {
-            padding: 0.5rem 0.75rem;
-            background: var(--reminder-light);
-            border-top: 1px solid var(--reminder-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8125rem;
-            color: var(--reminder-gray);
-        }
-
-        .reminder-actions {
-            padding: 0.5rem 0.75rem;
-            border-top: 1px solid var(--reminder-border);
-            display: flex;
-            gap: 0.375rem;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--reminder-border);
-            border-radius: 6px;
-            background: white;
-            color: var(--reminder-gray);
-            text-decoration: none;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .action-btn:hover {
-            background: var(--reminder-light);
-            color: var(--reminder-dark);
-            text-decoration: none;
-            border-color: var(--reminder-primary);
-        }
-
-        .action-btn.success {
-            border-color: var(--reminder-success);
-            color: var(--reminder-success);
-        }
-
-        .action-btn.success:hover {
-            background: var(--reminder-success);
-            color: white;
-        }
-
-        .action-btn.warning {
-            border-color: var(--reminder-warning);
-            color: var(--reminder-warning);
-        }
-
-        .action-btn.warning:hover {
-            background: var(--reminder-warning);
-            color: white;
-        }
-
-        .action-btn.info {
-            border-color: var(--reminder-info);
-            color: var(--reminder-info);
-        }
-
-        .action-btn.info:hover {
-            background: var(--reminder-info);
-            color: white;
-        }
-
-        .action-btn.primary {
-            border-color: var(--reminder-primary);
-            color: var(--reminder-primary);
-        }
-
-        .action-btn.primary:hover {
-            background: var(--reminder-primary);
-            color: white;
-        }
-
-        .action-btn.danger {
-            border-color: var(--reminder-danger);
-            color: var(--reminder-danger);
-        }
-
-        .action-btn.danger:hover {
-            background: var(--reminder-danger);
-            color: white;
-        }
-
-        .tag {
-            display: inline-block;
-            background: var(--reminder-light);
-            color: var(--reminder-gray);
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin: 0.125rem;
-            border: 1px solid var(--reminder-border);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--reminder-border);
-            box-shadow: 0 4px 6px -1px var(--reminder-shadow);
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            color: var(--reminder-gray);
-            opacity: 0.5;
-            margin-bottom: 1rem;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-    </style>
-
-    <div class="container-fluid">
-        <!-- Header Section -->
-        <div class="reminders-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h2 mb-2">
-                        <i class="fas fa-bell me-3"></i>Reminders
-                    </h1>
-                    <p class="mb-0 opacity-75">Manage your reminders and stay on track with all your important tasks</p>
-                </div>
-                <div>
-                    <a href="{{ route('reminders.create') }}" class="btn btn-light btn-lg">
-                        <i class="fas fa-plus me-2"></i>New Reminder
-                    </a>
-                </div>
+    {{-- Stats --}}
+    <div class="cu-rem-stats">
+        <div class="cu-rem-tile cu-tile-active" onclick="setStatus('')" title="Show all">
+            <div class="cu-tile-ico amber"><i class="bi bi-bell"></i></div>
+            <div>
+                <div class="cu-tile-val">{{ $stats['total'] }}</div>
+                <div class="cu-tile-lbl">Total</div>
             </div>
         </div>
-
-        <!-- Statistics Cards -->
-        <div class="stats-cards">
-            <div class="stat-card primary">
-                <div class="stat-content">
-                    <div class="stat-info">
-                        <h3>{{ $stats['total'] }}</h3>
-                        <p>Total Reminders</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-bell" style="color: var(--reminder-primary);"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="stat-card success">
-                <div class="stat-content">
-                    <div class="stat-info">
-                        <h3>{{ $stats['active'] }}</h3>
-                        <p>Active</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-clock" style="color: var(--reminder-success);"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="stat-card warning">
-                <div class="stat-content">
-                    <div class="stat-info">
-                        <h3>{{ $stats['due_today'] }}</h3>
-                        <p>Due Today</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-day" style="color: var(--reminder-warning);"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="stat-card danger">
-                <div class="stat-content">
-                    <div class="stat-info">
-                        <h3>{{ $stats['overdue'] }}</h3>
-                        <p>Overdue</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-exclamation-triangle" style="color: var(--reminder-danger);"></i>
-                    </div>
-                </div>
+        <div class="cu-rem-tile cu-tile-ok" onclick="setStatus('active')" title="Active only">
+            <div class="cu-tile-ico green"><i class="bi bi-check2-circle"></i></div>
+            <div>
+                <div class="cu-tile-val">{{ $stats['active'] }}</div>
+                <div class="cu-tile-lbl">Active</div>
             </div>
         </div>
-
-        <!-- Search and Filters -->
-        <div class="search-filter-bar">
-            <form id="reminder-filters" class="row align-items-end g-3">
-                <div class="col-lg-3 col-md-4">
-                    <label for="search" class="form-label fw-semibold">Search Reminders</label>
-                    <div class="input-group">
-                        <span class="input-group-text border-end-0 bg-transparent">
-                            <i class="fas fa-search text-muted"></i>
-                        </span>
-                        <input type="text" id="search" name="search" class="form-control border-start-0 ps-0"
-                            placeholder="Search titles, descriptions..." value="{{ request('search') }}">
-                    </div>
-                </div>
-
-                <div class="col-lg-2 col-md-3">
-                    <label for="status" class="form-label fw-semibold">Status</label>
-                    <select id="status" name="status" class="form-select">
-                        <option value="active" {{ request('status', 'active') === 'active' ? 'selected' : '' }}>Active
-                        </option>
-                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed
-                        </option>
-                        <option value="overdue" {{ request('status') === 'overdue' ? 'selected' : '' }}>Overdue</option>
-                        <option value="due_today" {{ request('status') === 'due_today' ? 'selected' : '' }}>Due Today
-                        </option>
-                        <option value="due_soon" {{ request('status') === 'due_soon' ? 'selected' : '' }}>Due Soon</option>
-                    </select>
-                </div>
-
-                <div class="col-lg-2 col-md-3">
-                    <label for="priority" class="form-label fw-semibold">Priority</label>
-                    <select id="priority" name="priority" class="form-select">
-                        <option value="all">All Priorities</option>
-                        @foreach ($priorities as $key => $label)
-                            <option value="{{ $key }}" {{ request('priority') === $key ? 'selected' : '' }}>
-                                {{ $label }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-lg-2 col-md-3">
-                    <label for="category" class="form-label fw-semibold">Category</label>
-                    <select id="category" name="category" class="form-select">
-                        <option value="all">All Categories</option>
-                        @foreach ($categories as $cat)
-                            <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>
-                                {{ $cat }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-lg-2 col-md-3">
-                    <label for="view" class="form-label fw-semibold">View</label>
-                    <select id="view" name="view" class="form-select">
-                        <option value="list" {{ $view === 'list' ? 'selected' : '' }}>Grid View</option>
-                        <option value="calendar" {{ $view === 'calendar' ? 'selected' : '' }}>Calendar View</option>
-                    </select>
-                </div>
-
-                <div class="col-lg-1 col-md-2">
-                    <button type="button" id="clear-filters" class="btn btn-outline-secondary w-100">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </form>
+        <div class="cu-rem-tile cu-tile-done" onclick="setStatus('completed')" title="Completed">
+            <div class="cu-tile-ico blue"><i class="bi bi-check-circle-fill"></i></div>
+            <div>
+                <div class="cu-tile-val">{{ $stats['completed'] }}</div>
+                <div class="cu-tile-lbl">Completed</div>
+            </div>
         </div>
-
-        <!-- Content Area -->
-        <div id="content-area">
-            @if ($view === 'calendar')
-                @include('reminders.partials.calendar-view')
-            @else
-                @include('reminders.partials.list-view', ['reminders' => $reminders])
-            @endif
+        <div class="cu-rem-tile cu-tile-late" onclick="setStatus('overdue')" title="Overdue">
+            <div class="cu-tile-ico red"><i class="bi bi-exclamation-circle-fill"></i></div>
+            <div>
+                <div class="cu-tile-val">{{ $stats['overdue'] }}</div>
+                <div class="cu-tile-lbl">Overdue</div>
+            </div>
         </div>
-
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="loading-overlay">
-            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                <span class="visually-hidden">Loading...</span>
+        <div class="cu-rem-tile cu-tile-today" onclick="setStatus('due_today')" title="Due today">
+            <div class="cu-tile-ico violet"><i class="bi bi-calendar-day-fill"></i></div>
+            <div>
+                <div class="cu-tile-val">{{ $stats['due_today'] }}</div>
+                <div class="cu-tile-lbl">Due Today</div>
             </div>
         </div>
     </div>
 
+    {{-- Filter Bar --}}
+    <div class="cu-rem-filter-bar">
+        <input type="text" id="rem-search" class="cu-rem-search"
+               placeholder="Search reminders&#x2026;" value="{{ request('search') }}">
+
+        <select id="rem-category" class="cu-rem-select">
+            <option value="all">All Categories</option>
+            @foreach($categories as $cat)
+                <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>
+                    {{ $cat }}
+                </option>
+            @endforeach
+        </select>
+
+        <select id="rem-priority" class="cu-rem-select">
+            <option value="all">All Priorities</option>
+            @foreach($priorities as $val => $lbl)
+                <option value="{{ $val }}" {{ request('priority') === $val ? 'selected' : '' }}>
+                    {{ $lbl }}
+                </option>
+            @endforeach
+        </select>
+
+        <select id="rem-status" class="cu-rem-select">
+            <option value="active"    {{ (request('status', 'active') === 'active')    ? 'selected' : '' }}>Active</option>
+            <option value=""          {{ (request('status') === null)                   ? 'selected' : '' }}>All</option>
+            <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+            <option value="overdue"   {{ request('status') === 'overdue'   ? 'selected' : '' }}>Overdue</option>
+            <option value="due_today" {{ request('status') === 'due_today' ? 'selected' : '' }}>Due Today</option>
+            <option value="due_soon"  {{ request('status') === 'due_soon'  ? 'selected' : '' }}>Due Soon</option>
+        </select>
+
+        <span class="cu-count-label">
+            <span id="rem-count">{{ $reminders->count() }}</span> reminders
+        </span>
+    </div>
+
+    {{-- Results container --}}
+    <div id="rem-container">
+        @include('reminders.partials.reminders-grid', ['reminders' => $reminders])
+    </div>
+
+</div>
 @endsection
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Form elements
-            const searchInput = document.getElementById('search');
-            const statusSelect = document.getElementById('status');
-            const prioritySelect = document.getElementById('priority');
-            const categorySelect = document.getElementById('category');
-            const viewSelect = document.getElementById('view');
-            const clearFiltersBtn = document.getElementById('clear-filters');
-            const loadingOverlay = document.getElementById('loading-overlay');
+<script>
+(function () {
+    let debounce;
 
-            // Search timeout for debouncing
-            let searchTimeout;
+    function applyFilters() {
+        const search   = document.getElementById('rem-search').value;
+        const category = document.getElementById('rem-category').value;
+        const priority = document.getElementById('rem-priority').value;
+        const status   = document.getElementById('rem-status').value;
 
-            // Filter change handlers
-            function handleFilterChange() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    filterReminders();
-                }, 300);
+        const params = new URLSearchParams({ search, category, priority, status });
+
+        fetch('/reminders?' + params.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            document.getElementById('rem-container').innerHTML = data.html;
+            document.getElementById('rem-count').textContent   = data.count;
+        })
+        .catch(function (err) { console.error('Filter failed:', err); });
+    }
+
+    document.getElementById('rem-search').addEventListener('input', function () {
+        clearTimeout(debounce);
+        debounce = setTimeout(applyFilters, 350);
+    });
+
+    ['rem-category', 'rem-priority', 'rem-status'].forEach(function (id) {
+        document.getElementById(id).addEventListener('change', applyFilters);
+    });
+
+    /* Clickable stat tiles */
+    window.setStatus = function (val) {
+        document.getElementById('rem-status').value = val;
+        applyFilters();
+    };
+
+    /* Toggle complete */
+    window.toggleComplete = function (reminderId) {
+        fetch('/reminders/' + reminderId + '/toggle-complete', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
             }
+        })
+        .then(function () { applyFilters(); })
+        .catch(function (err) { console.error('Toggle failed:', err); });
+    };
 
-            // Add event listeners
-            searchInput?.addEventListener('input', handleFilterChange);
-            statusSelect?.addEventListener('change', filterReminders);
-            prioritySelect?.addEventListener('change', filterReminders);
-            categorySelect?.addEventListener('change', filterReminders);
-            viewSelect?.addEventListener('change', filterReminders);
-
-            // Clear filters
-            clearFiltersBtn?.addEventListener('click', function() {
-                searchInput.value = '';
-                statusSelect.value = 'active';
-                prioritySelect.value = 'all';
-                categorySelect.value = 'all';
-                viewSelect.value = 'list';
-                filterReminders();
-            });
-
-            // Filter reminders function
-            function filterReminders() {
-                const formData = {
-                    search: searchInput?.value || '',
-                    status: statusSelect?.value || 'active',
-                    priority: prioritySelect?.value || 'all',
-                    category: categorySelect?.value || 'all',
-                    view: viewSelect?.value || 'list'
-                };
-
-                const params = new URLSearchParams(formData);
-
-                showLoading();
-
-                fetch(`{{ route('reminders.index') }}?${params}`, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.html) {
-                            document.getElementById('content-area').innerHTML = data.html;
-                        } else if (Array.isArray(data)) {
-                            // Handle calendar view
-                            updateCalendar(data);
-                        }
-
-                        // Update URL without page reload
-                        const newUrl = `{{ route('reminders.index') }}?${params}`;
-                        history.pushState(null, '', newUrl);
-                    })
-                    .catch(error => {
-                        console.error('Error filtering reminders:', error);
-                        showNotification('Error loading reminders. Please try again.', 'error');
-                    })
-                    .finally(() => {
-                        hideLoading();
-                    });
-            }
-
-            // Show loading overlay
-            function showLoading() {
-                if (loadingOverlay) {
-                    loadingOverlay.style.display = 'flex';
-                }
-            }
-
-            // Hide loading overlay
-            function hideLoading() {
-                if (loadingOverlay) {
-                    loadingOverlay.style.display = 'none';
-                }
-            }
-
-            // Show notification
-            function showNotification(message, type = 'success') {
-                const alertClass = type === 'error' ? 'alert-danger' : 'alert-success';
-                const alertHtml = `
-            <div class="alert ${alertClass} alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 1050; max-width: 400px;">
-                <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
-
-                document.body.insertAdjacentHTML('beforeend', alertHtml);
-
-                // Auto-dismiss after 5 seconds
-                setTimeout(() => {
-                    const alerts = document.querySelectorAll('.alert');
-                    const lastAlert = alerts[alerts.length - 1];
-                    if (lastAlert && lastAlert.classList.contains('show')) {
-                        lastAlert.remove();
-                    }
-                }, 5000);
-            }
-
-            // Global functions for reminder actions
-            window.toggleComplete = function(reminderId) {
-                fetch(`/reminders/${reminderId}/toggle-complete`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            filterReminders();
-                            const status = data.is_completed ? 'completed' : 'reactivated';
-                            showNotification(`Reminder ${status} successfully!`);
-                        } else {
-                            throw new Error('Server returned unsuccessful response');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error toggling reminder:', error);
-                        showNotification('Error updating reminder. Please try again.', 'error');
-                    });
-            };
-
-            window.snoozeReminder = function(reminderId) {
-                // Create a modern modal-like prompt
-                const minutes = prompt('Snooze for how many minutes?', '15');
-
-                if (minutes && !isNaN(minutes) && parseInt(minutes) > 0) {
-                    fetch(`/reminders/${reminderId}/snooze`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                minutes: parseInt(minutes)
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                filterReminders();
-                                showNotification(`Reminder snoozed until ${data.snooze_until}`);
-                            } else {
-                                throw new Error('Server returned unsuccessful response');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error snoozing reminder:', error);
-                            showNotification('Error snoozing reminder. Please try again.', 'error');
-                        });
-                }
-            };
-
-            // Handle browser back/forward buttons
-            window.addEventListener('popstate', function(e) {
-                location.reload();
-            });
-        });
-    </script>
+    /* Snooze */
+    window.snoozeReminder = function (reminderId, minutes) {
+        minutes = minutes || 15;
+        fetch('/reminders/' + reminderId + '/snooze', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ minutes: minutes })
+        })
+        .then(function () { applyFilters(); })
+        .catch(function (err) { console.error('Snooze failed:', err); });
+    };
+})();
+</script>
 @endpush

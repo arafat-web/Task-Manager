@@ -1,158 +1,69 @@
 @if($notes->count() > 0)
-    <div class="notes-grid">
-        @foreach($notes as $note)
-            <div class="note-card" data-note-id="{{ $note->id }}">
-                <!-- Note Actions -->
-                <div class="note-actions">
-                    <a href="{{ route('notes.edit', $note->id) }}" class="action-btn edit" title="Edit Note">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <button class="action-btn duplicate" data-note-id="{{ $note->id }}" title="Duplicate Note">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                    <form action="{{ route('notes.destroy', $note->id) }}" method="POST" style="display: inline;"
-                          onsubmit="return confirm('Are you sure you want to delete this note?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="action-btn delete" title="Delete Note">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
-                </div>
+<div class="cu-notes-grid">
+    @foreach($notes as $note)
+    <div class="cu-note-card" data-note-id="{{ $note->id }}">
+        <div class="cu-note-accent"></div>
 
-                <!-- Note Header -->
-                <div class="note-card-header">
-                    <h3 class="note-title">{{ $note->title }}</h3>
-                    <button class="note-favorite {{ $note->is_favorite ? 'active' : '' }}"
-                            data-note-id="{{ $note->id }}" title="Toggle Favorite">
-                        <i class="fas fa-star"></i>
-                    </button>
-                </div>
-
-                <!-- Category and Tags -->
-                @if($note->category)
-                    <div style="padding: 0 1.25rem;">
-                        <span class="note-category">{{ $note->category }}</span>
-                    </div>
-                @endif
-
-                @if($note->tags && count($note->tags) > 0)
-                    <div style="padding: 0 1.25rem;">
-                        <div class="note-tags">
-                            @foreach($note->tags as $tag)
-                                <span class="note-tag">{{ $tag }}</span>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-
-                <!-- Note Content -->
-                <div class="note-content">
-                    {!! $note->excerpt !!}
-                </div>
-
-                <!-- Note Meta -->
-                <div class="note-meta">
-                    <div>
-                        <small>
-                            <i class="fas fa-clock me-1"></i>
-                            {{ $note->created_at->diffForHumans() }}
-                        </small>
-                        @if($note->date)
-                            <br>
-                            <small>
-                                <i class="fas fa-calendar me-1"></i>
-                                {{ $note->formatted_date }}
-                                @if($note->time)
-                                    at {{ $note->formatted_time }}
-                                @endif
-                            </small>
-                        @endif
-                    </div>
-                    <div class="text-end">
-                        <small>{{ $note->word_count }} words</small>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-
-    <!-- List View (Hidden by default) -->
-    <div class="notes-list">
-        @foreach($notes as $note)
-            <div class="note-card" data-note-id="{{ $note->id }}" style="display: flex; align-items: center; padding: 1.5rem; cursor: pointer;">
-                <div class="me-3">
-                    <button class="note-favorite {{ $note->is_favorite ? 'active' : '' }}"
-                            data-note-id="{{ $note->id }}" title="Toggle Favorite">
-                        <i class="fas fa-star"></i>
-                    </button>
-                </div>
-
-                <div class="flex-grow-1">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="mb-0">{{ $note->title }}</h5>
-                        <div class="d-flex gap-2">
-                            @if($note->category)
-                                <span class="note-category">{{ $note->category }}</span>
-                            @endif
-                            <small class="text-muted">{{ $note->created_at->diffForHumans() }}</small>
-                        </div>
-                    </div>
-
-                    <p class="text-muted mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                        {!! $note->excerpt !!}
-                    </p>
-
-                    @if($note->tags && count($note->tags) > 0)
-                        <div class="note-tags">
-                            @foreach($note->tags as $tag)
-                                <span class="note-tag">{{ $tag }}</span>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
-
-                <div class="ms-3">
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('notes.show', $note->id) }}">
-                                <i class="fas fa-eye me-2"></i>View
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('notes.edit', $note->id) }}">
-                                <i class="fas fa-edit me-2"></i>Edit
-                            </a></li>
-                            <li><button class="dropdown-item action-btn duplicate" data-note-id="{{ $note->id }}">
-                                <i class="fas fa-copy me-2"></i>Duplicate
-                            </button></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form action="{{ route('notes.destroy', $note->id) }}" method="POST"
-                                      onsubmit="return confirm('Are you sure you want to delete this note?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fas fa-trash me-2"></i>Delete
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-@else
-    <div class="empty-notes">
-        <div class="empty-icon">
-            <i class="fas fa-sticky-note"></i>
+        {{-- Title + favorite --}}
+        <div class="cu-note-head">
+            <h3 class="cu-note-title">{{ $note->title }}</h3>
+            <button class="cu-fav-btn {{ $note->is_favorite ? 'active' : '' }}" data-note-id="{{ $note->id }}" title="Toggle favourite">
+                <i class="bi bi-star-fill"></i>
+            </button>
         </div>
-        <h3>No Notes Found</h3>
-        <p class="mb-4">You haven't created any notes yet, or no notes match your current filters.</p>
-        <a href="{{ route('notes.create') }}" class="btn btn-primary btn-lg">
-            <i class="fas fa-plus me-2"></i>Create Your First Note
-        </a>
+
+        {{-- Category + tags --}}
+        @if($note->category || ($note->tags && count($note->tags)))
+        <div class="cu-note-badges">
+            @if($note->category)
+                <span class="cu-cat-badge"><i class="bi bi-tag me-1" style="font-size:10px;"></i>{{ $note->category }}</span>
+            @endif
+            @if($note->tags)
+                @foreach(array_slice($note->tags, 0, 3) as $tag)
+                    <span class="cu-tag-pill">{{ $tag }}</span>
+                @endforeach
+                @if(count($note->tags) > 3)
+                    <span class="cu-tag-pill">+{{ count($note->tags) - 3 }}</span>
+                @endif
+            @endif
+        </div>
+        @endif
+
+        {{-- Excerpt --}}
+        <div class="cu-note-excerpt">{{ $note->excerpt }}</div>
+
+        {{-- Footer --}}
+        <div class="cu-note-footer">
+            <div class="cu-note-meta">
+                <i class="bi bi-clock" style="font-size:10px;"></i>
+                {{ $note->created_at->diffForHumans() }}
+                &middot; {{ $note->word_count }} words
+            </div>
+            <div class="cu-note-actions">
+                <a href="{{ route('notes.edit', $note->id) }}" class="cu-note-btn edit" onclick="event.stopPropagation()">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <button class="cu-note-btn copy" data-note-id="{{ $note->id }}" title="Duplicate">
+                    <i class="bi bi-files"></i>
+                </button>
+                <form action="{{ route('notes.destroy', $note->id) }}" method="POST"
+                      onsubmit="return confirm('Delete this note?');" style="display:inline;">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="cu-note-btn del" onclick="event.stopPropagation()">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
+    @endforeach
+</div>
+@else
+<div class="cu-notes-grid">
+    <div class="cu-empty">
+        <i class="bi bi-journal-text"></i>
+        <p>No notes found. Create your first one!</p>
+        <a href="{{ route('notes.create') }}"><i class="bi bi-plus-lg"></i> New Note</a>
+    </div>
+</div>
 @endif

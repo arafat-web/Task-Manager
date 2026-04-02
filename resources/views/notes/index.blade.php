@@ -2,481 +2,272 @@
 
 @section('title', 'Notes')
 
-@section('content')
+@push('styles')
 <style>
-    :root {
-        --note-primary: #667eea;
-        --note-secondary: #764ba2;
-        --note-success: #10b981;
-        --note-warning: #f59e0b;
-        --note-danger: #ef4444;
-        --note-info: #3b82f6;
-        --note-light: #f8fafc;
-        --note-dark: #1e293b;
-        --note-gray: #64748b;
-        --note-border: #e2e8f0;
-        --note-shadow: rgba(0, 0, 0, 0.1);
-        --note-shadow-lg: rgba(0, 0, 0, 0.15);
-    }
+    .main-content { padding: 14px 16px; background: #f7f8fa; min-height: 100vh; }
 
-    .notes-header {
-        background: linear-gradient(135deg, var(--note-primary) 0%, var(--note-secondary) 100%);
-        color: white;
-        border-radius: 12px;
-        padding: 0.875rem 1.25rem;
-        margin-bottom: 0.875rem;
-        box-shadow: 0 4px 12px var(--note-shadow-lg);
+    /* Header */
+    .cu-header {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        border-radius: 10px; padding: 12px 18px; color: white;
+        margin-bottom: 14px; position: relative; overflow: hidden;
+        border: 1px solid #6d28d9; box-shadow: 0 2px 8px rgba(124,58,237,.3);
     }
-
-    .search-filter-bar {
-        background: white;
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.875rem;
-        box-shadow: 0 2px 4px -1px var(--note-shadow);
-        border: 1px solid var(--note-border);
+    .cu-header::before {
+        content: ''; position: absolute; top: 0; right: 0;
+        width: 80px; height: 80px; background: rgba(255,255,255,.08);
+        border-radius: 50%; transform: translate(20px,-20px);
     }
-
-    .notes-view-toggle {
-        display: flex;
-        gap: 0.5rem;
-        border: 1px solid var(--note-border);
-        border-radius: 8px;
-        padding: 0.25rem;
-        background: var(--note-light);
+    .cu-header-title { font-weight: 700; font-size: 17px; margin: 0; position: relative; z-index: 1; }
+    .cu-header-sub   { font-size: 12px; opacity: .8; margin: 2px 0 0; position: relative; z-index: 1; }
+    .cu-btn-new {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 14px; border-radius: 7px; background: rgba(255,255,255,.2);
+        color: white; border: 1px solid rgba(255,255,255,.3); font-size: 12px;
+        font-weight: 600; text-decoration: none; transition: background .15s; position: relative; z-index: 1;
     }
+    .cu-btn-new:hover { background: rgba(255,255,255,.3); color: white; }
 
-    .view-btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        background: transparent;
-        border-radius: 6px;
-        color: var(--note-gray);
-        font-size: 0.875rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
+    /* Stats */
+    .cu-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px; }
+    @media(max-width:700px) { .cu-stats { grid-template-columns: repeat(2,1fr); } }
+    .cu-stat {
+        background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+        padding: 12px 14px; display: flex; align-items: center; gap: 12px;
     }
-
-    .view-btn.active {
-        background: white;
-        color: var(--note-primary);
-        box-shadow: 0 2px 4px var(--note-shadow);
+    .cu-stat-icon {
+        width: 36px; height: 36px; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
     }
+    .cu-stat-label { font-size: 11px; color: #8a8f98; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .cu-stat-val   { font-size: 20px; font-weight: 800; color: #1a1d23; line-height: 1; }
 
-    .notes-grid {
+    /* Filter bar */
+    .cu-filter-bar {
+        background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+        padding: 10px 14px; margin-bottom: 14px;
+        display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .cu-search-wrap { position: relative; flex: 1; min-width: 180px; }
+    .cu-search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #adb0b8; }
+    .cu-search {
+        width: 100%; height: 34px; padding: 0 10px 0 32px;
+        border: 1px solid #d3d5db; border-radius: 6px; background: white;
+        font-size: 13px; color: #1a1d23; outline: none;
+        transition: border-color .15s, box-shadow .15s; box-sizing: border-box;
+    }
+    .cu-search:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,.15); }
+    .cu-select {
+        height: 34px; padding: 0 28px 0 10px; border: 1px solid #d3d5db; border-radius: 6px;
+        background: white; font-size: 13px; color: #1a1d23; outline: none;
+        transition: border-color .15s; appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a8f98' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .cu-select:focus { border-color: #7c3aed; }
+    .cu-fav-toggle {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 12px; border: 1px solid #d3d5db; border-radius: 6px;
+        font-size: 12px; font-weight: 600; color: #6b7385; background: white;
+        cursor: pointer; transition: all .15s; user-select: none; white-space: nowrap;
+    }
+    .cu-fav-toggle.active { border-color: #f59e0b; color: #b45309; background: #fef3c7; }
+    .cu-fav-toggle i { font-size: 13px; }
+
+    /* Notes grid */
+    .cu-notes-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 0.875rem;
-        margin-bottom: 0.875rem;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
     }
 
-    .notes-list {
-        display: none;
-        flex-direction: column;
-        gap: 1rem;
+    /* Note card */
+    .cu-note-card {
+        background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+        overflow: hidden; cursor: pointer; transition: all .15s; position: relative;
+        display: flex; flex-direction: column;
     }
-
-    .note-card {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid var(--note-border);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
+    .cu-note-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,.1); border-color: #c4b5fd; transform: translateY(-2px); }
+    .cu-note-accent { height: 3px; background: #7c3aed; }
+    .cu-note-head { padding: 10px 12px 6px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .cu-note-title { font-size: 13px; font-weight: 700; color: #1a1d23; line-height: 1.4; margin: 0;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .cu-fav-btn { background: none; border: none; padding: 2px; cursor: pointer; color: #d3d5db; font-size: 15px; flex-shrink: 0; transition: color .15s; }
+    .cu-fav-btn.active { color: #f59e0b; }
+    .cu-fav-btn:hover { color: #f59e0b; }
+    .cu-note-badges { padding: 0 12px 6px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .cu-cat-badge {
+        display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px;
+        font-size: 11px; font-weight: 600; background: #ede9fe; color: #6d28d9;
     }
-
-    .note-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px var(--note-shadow-lg);
-        border-color: var(--note-primary);
+    .cu-tag-pill {
+        display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 20px;
+        font-size: 10px; font-weight: 600; background: #f3f4f6; color: #6b7385;
+        border: 1px solid #e3e4e8;
     }
-
-    .note-card-header {
-        padding: 0.75rem 0.75rem 0.375rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+    .cu-note-excerpt {
+        padding: 0 12px 8px; font-size: 12px; color: #8a8f98; line-height: 1.5; flex: 1;
+        display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
-
-    .note-title {
-        font-size: 0.9375rem;
-        font-weight: 600;
-        color: var(--note-dark);
-        margin: 0;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+    .cu-note-footer {
+        padding: 8px 12px; border-top: 1px solid #f0f1f3; background: #fafbfc;
+        display: flex; align-items: center; justify-content: space-between; gap: 6px;
     }
-
-    .note-favorite {
-        background: none;
-        border: none;
-        color: var(--note-gray);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        padding: 0.25rem;
-        border-radius: 50%;
+    .cu-note-meta { font-size: 11px; color: #adb0b8; display: flex; align-items: center; gap: 4px; }
+    .cu-note-actions { display: flex; gap: 4px; }
+    .cu-note-btn {
+        display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px;
+        border-radius: 5px; font-size: 11px; font-weight: 600;
+        border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: all .15s;
     }
+    .cu-note-btn.edit   { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+    .cu-note-btn.edit:hover   { background: #fef3c7; }
+    .cu-note-btn.copy   { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
+    .cu-note-btn.copy:hover   { background: #d1fae5; }
+    .cu-note-btn.del    { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+    .cu-note-btn.del:hover    { background: #fee2e2; }
 
-    .note-favorite.active {
-        color: var(--note-warning);
-        transform: scale(1.1);
+    /* Empty */
+    .cu-empty { text-align: center; padding: 40px 20px; color: #adb0b8; grid-column: 1/-1; }
+    .cu-empty i { font-size: 36px; display: block; margin-bottom: 10px; opacity: .4; }
+    .cu-empty p { font-size: 13px; margin: 0 0 14px; }
+    .cu-empty a {
+        display: inline-flex; align-items: center; gap: 6px; padding: 7px 18px;
+        background: #7c3aed; color: white; border-radius: 7px; font-size: 13px;
+        font-weight: 600; text-decoration: none; transition: background .15s;
     }
+    .cu-empty a:hover { background: #6d28d9; }
 
-    .note-content {
-        padding: 0 0.75rem;
-        color: var(--note-gray);
-        line-height: 1.5;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin-bottom: 0.375rem;
-    }
-
-    .note-meta {
-        padding: 0.5rem 0.75rem;
-        background: var(--note-light);
-        border-top: 1px solid var(--note-border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.8125rem;
-        color: var(--note-gray);
-    }
-
-    .note-category {
-        background: var(--note-primary);
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        display: inline-block;
-        margin-bottom: 0.5rem;
-    }
-
-    .note-tags {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        margin-bottom: 0.5rem;
-    }
-
-    .note-tag {
-        background: var(--note-light);
-        color: var(--note-gray);
-        padding: 0.125rem 0.5rem;
-        border-radius: 8px;
-        font-size: 0.75rem;
-        border: 1px solid var(--note-border);
-    }
-
-    .note-actions {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        display: flex;
-        gap: 0.5rem;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-
-    .note-card:hover .note-actions {
-        opacity: 1;
-    }
-
-    .action-btn {
-        width: 32px;
-        height: 32px;
-        border: none;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 0.875rem;
-    }
-
-    .action-btn.edit {
-        background: var(--note-info);
-    }
-
-    .action-btn.duplicate {
-        background: var(--note-success);
-    }
-
-    .action-btn.delete {
-        background: var(--note-danger);
-    }
-
-    .action-btn:hover {
-        transform: scale(1.1);
-    }
-
-    .empty-notes {
-        text-align: center;
-        padding: 2rem 1rem;
-        color: var(--note-gray);
-    }
-
-    .empty-icon {
-        width: 56px;
-        height: 56px;
-        margin: 0 auto 0.75rem;
-        background: var(--note-light);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: var(--note-gray);
-    }
-
-    .stats-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 0.625rem;
-        margin-bottom: 0.875rem;
-    }
-
-    .stat-card {
-        background: white;
-        padding: 0.875rem;
-        border-radius: 10px;
-        border: 1px solid var(--note-border);
-        text-align: center;
-        transition: transform 0.2s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-2px);
-    }
-
-    .stat-number {
-        font-size: 1.625rem;
-        font-weight: 700;
-        color: var(--note-primary);
-    }
-
-    .stat-label {
-        color: var(--note-gray);
-        font-size: 0.75rem;
-        margin-top: 0.125rem;
-    }
-
-    @media (max-width: 768px) {
-        .notes-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .search-filter-bar {
-            padding: 1rem;
-        }
-
-        .notes-header {
-            padding: 1.5rem;
-        }
+    /* Count badge */
+    .cu-count-badge {
+        font-size: 11px; color: #8a8f98; font-weight: 600; margin-left: auto;
     }
 </style>
+@endpush
 
-<div class="container-fluid px-4">
-    <!-- Success Message -->
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+@section('content')
+<div class="main-content">
 
-    <!-- Header Section -->
-    <div class="notes-header">
-        <div class="d-flex justify-content-between align-items-center">
+    {{-- Header --}}
+    <div class="cu-header">
+        <div class="d-flex align-items-center justify-content-between" style="position:relative;z-index:1;">
             <div>
-                <h1 class="mb-2">
-                    <i class="fas fa-sticky-note me-3"></i>Notes
-                </h1>
-                <p class="mb-0 opacity-90">Organize your thoughts and ideas</p>
+                <h1 class="cu-header-title"><i class="bi bi-journal-text me-2"></i>Notes</h1>
+                <p class="cu-header-sub">Organize your thoughts and ideas</p>
             </div>
-            <a href="{{ route('notes.create') }}" class="btn btn-light btn-lg">
-                <i class="fas fa-plus me-2"></i>New Note
+            <a href="{{ route('notes.create') }}" class="cu-btn-new">
+                <i class="bi bi-plus-lg"></i> New Note
             </a>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="stats-cards">
-        <div class="stat-card">
-            <div class="stat-number">{{ $notes->count() }}</div>
-            <div class="stat-label">Total Notes</div>
+    {{-- Stats --}}
+    <div class="cu-stats">
+        <div class="cu-stat">
+            <div class="cu-stat-icon" style="background:#ede9fe;color:#7c3aed;"><i class="bi bi-journal-text"></i></div>
+            <div>
+                <div class="cu-stat-val" id="stat-total">{{ $notes->count() }}</div>
+                <div class="cu-stat-label">Total Notes</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $notes->where('is_favorite', true)->count() }}</div>
-            <div class="stat-label">Favorites</div>
+        <div class="cu-stat">
+            <div class="cu-stat-icon" style="background:#fef3c7;color:#d97706;"><i class="bi bi-star-fill"></i></div>
+            <div>
+                <div class="cu-stat-val">{{ $notes->where('is_favorite', true)->count() }}</div>
+                <div class="cu-stat-label">Favorites</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $categories->count() }}</div>
-            <div class="stat-label">Categories</div>
+        <div class="cu-stat">
+            <div class="cu-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="bi bi-tag"></i></div>
+            <div>
+                <div class="cu-stat-val">{{ $categories->count() }}</div>
+                <div class="cu-stat-label">Categories</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $notes->sum('word_count') }}</div>
-            <div class="stat-label">Total Words</div>
+        <div class="cu-stat">
+            <div class="cu-stat-icon" style="background:#dcfce7;color:#16a34a;"><i class="bi bi-file-text"></i></div>
+            <div>
+                <div class="cu-stat-val">{{ number_format($notes->sum('word_count')) }}</div>
+                <div class="cu-stat-label">Total Words</div>
+            </div>
         </div>
     </div>
 
-    <!-- Search and Filter Bar -->
-    <div class="search-filter-bar">
-        <form id="filter-form" class="row g-3">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="fas fa-search"></i>
-                    </span>
-                    <input type="text" class="form-control" name="search" id="search"
-                           placeholder="Search notes..." value="{{ request('search') }}">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" name="category" id="category">
-                    <option value="all">All Categories</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
-                            {{ $category }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-2">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="favorites" id="favorites"
-                           value="1" {{ request('favorites') == '1' ? 'checked' : '' }}>
-                    <label class="form-check-label" for="favorites">
-                        <i class="fas fa-star text-warning me-1"></i>Favorites
-                    </label>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="notes-view-toggle">
-                    <button type="button" class="view-btn active" data-view="grid">
-                        <i class="fas fa-th me-1"></i>Grid
-                    </button>
-                    <button type="button" class="view-btn" data-view="list">
-                        <i class="fas fa-list me-1"></i>List
-                    </button>
-                </div>
-            </div>
-        </form>
+    {{-- Filter bar --}}
+    <div class="cu-filter-bar">
+        <div class="cu-search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" class="cu-search" id="search" placeholder="Search notes..." value="{{ request('search') }}">
+        </div>
+        <select class="cu-select" id="category">
+            <option value="all">All Categories</option>
+            @foreach($categories as $cat)
+                <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+            @endforeach
+        </select>
+        <button type="button" class="cu-fav-toggle {{ request('favorites') == '1' ? 'active' : '' }}" id="fav-toggle">
+            <i class="bi bi-star-fill"></i> Favorites
+        </button>
+        <span class="cu-count-badge" id="notes-count">{{ $notes->count() }} notes</span>
     </div>
 
-    <!-- Notes Container -->
+    {{-- Notes container --}}
     <div id="notes-container">
         @include('notes.partials.notes-grid', ['notes' => $notes])
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-         background: rgba(255, 255, 255, 0.8); z-index: 9999; align-items: center; justify-content: center;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
 </div>
+@endsection
 
+@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const filterForm = document.getElementById('filter-form');
-    const searchInput = document.getElementById('search');
-    const categorySelect = document.getElementById('category');
-    const favoritesCheck = document.getElementById('favorites');
-    const viewButtons = document.querySelectorAll('.view-btn');
-    const notesContainer = document.getElementById('notes-container');
-    const loadingOverlay = document.getElementById('loading-overlay');
-
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput  = document.getElementById('search');
+    const categorySel  = document.getElementById('category');
+    const favToggle    = document.getElementById('fav-toggle');
+    const container    = document.getElementById('notes-container');
+    const countBadge   = document.getElementById('notes-count');
+    let favActive      = favToggle.classList.contains('active');
     let searchTimeout;
 
-    // Search with debounce
-    searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            filterNotes();
-        }, 300);
-    });
-
-    // Filter changes
-    categorySelect.addEventListener('change', filterNotes);
-    favoritesCheck.addEventListener('change', filterNotes);
-
-    // View toggle
-    viewButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            viewButtons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-
-            const view = this.dataset.view;
-            const notesGrid = document.querySelector('.notes-grid');
-            const notesList = document.querySelector('.notes-list');
-
-            if (view === 'grid') {
-                if (notesGrid) notesGrid.style.display = 'grid';
-                if (notesList) notesList.style.display = 'none';
-            } else {
-                if (notesGrid) notesGrid.style.display = 'none';
-                if (notesList) notesList.style.display = 'flex';
-            }
-        });
-    });
-
     function filterNotes() {
-        const formData = new FormData(filterForm);
-        const params = new URLSearchParams(formData);
-
-        loadingOverlay.style.display = 'flex';
-
-        fetch(`{{ route('notes.index') }}?${params.toString()}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            notesContainer.innerHTML = data.html;
-
-            // Re-apply view preference
-            const activeView = document.querySelector('.view-btn.active').dataset.view;
-            const notesGrid = document.querySelector('.notes-grid');
-            const notesList = document.querySelector('.notes-list');
-
-            if (activeView === 'list') {
-                if (notesGrid) notesGrid.style.display = 'none';
-                if (notesList) notesList.style.display = 'flex';
-            }
-
-            // Re-attach event listeners
-            attachNoteEventListeners();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        })
-        .finally(() => {
-            loadingOverlay.style.display = 'none';
+        const params = new URLSearchParams({
+            search:    searchInput.value,
+            category:  categorySel.value,
+            favorites: favActive ? '1' : '',
         });
+
+        fetch(`{{ route('notes.index') }}?${params}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            container.innerHTML = data.html;
+            countBadge.textContent = data.count + ' note' + (data.count !== 1 ? 's' : '');
+            attachListeners();
+        })
+        .catch(console.error);
     }
 
-    function attachNoteEventListeners() {
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(filterNotes, 300);
+    });
+
+    categorySel.addEventListener('change', filterNotes);
+
+    favToggle.addEventListener('click', () => {
+        favActive = !favActive;
+        favToggle.classList.toggle('active', favActive);
+        filterNotes();
+    });
+
+    function attachListeners() {
         // Favorite toggle
-        document.querySelectorAll('.note-favorite').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+        document.querySelectorAll('.cu-fav-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                e.preventDefault();
-
                 const noteId = this.dataset.noteId;
-
                 fetch(`/notes/${noteId}/toggle-favorite`, {
                     method: 'PATCH',
                     headers: {
@@ -484,50 +275,36 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Content-Type': 'application/json',
                     }
                 })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
-                    if (data.success) {
-                        this.classList.toggle('active', data.is_favorite);
-
-                        // Update stats
-                        const favoritesCount = document.querySelectorAll('.note-favorite.active').length;
-                        document.querySelector('.stat-card:nth-child(2) .stat-number').textContent = favoritesCount;
-                    }
+                    if (data.success) this.classList.toggle('active', data.is_favorite);
                 });
             });
         });
 
-        // Note card click
-        document.querySelectorAll('.note-card').forEach(card => {
-            card.addEventListener('click', function(e) {
-                if (!e.target.closest('.note-actions') && !e.target.closest('.note-favorite')) {
+        // Card click → show page
+        document.querySelectorAll('.cu-note-card').forEach(card => {
+            card.addEventListener('click', function (e) {
+                if (!e.target.closest('.cu-note-actions') && !e.target.closest('.cu-fav-btn')) {
                     window.location.href = `/notes/${this.dataset.noteId}`;
                 }
             });
         });
 
-        // Action buttons
-        document.querySelectorAll('.action-btn.duplicate').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+        // Duplicate
+        document.querySelectorAll('.cu-note-btn.copy').forEach(btn => {
+            btn.addEventListener('click', function (e) {
                 e.stopPropagation();
-
                 const noteId = this.dataset.noteId;
-
                 fetch(`/notes/${noteId}/duplicate`, {
                     method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    }
-                })
-                .then(() => {
-                    window.location.reload();
-                });
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                }).then(() => window.location.reload());
             });
         });
     }
 
-    // Initial event listener attachment
-    attachNoteEventListeners();
+    attachListeners();
 });
 </script>
-@endsection
+@endpush

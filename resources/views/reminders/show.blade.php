@@ -2,562 +2,421 @@
 
 @section('title', $reminder->title)
 
-@section('content')
+@push('styles')
 <style>
-    :root {
-        --reminder-primary: #667eea;
-        --reminder-secondary: #764ba2;
-        --reminder-success: #10b981;
-        --reminder-warning: #f59e0b;
-        --reminder-danger: #ef4444;
-        --reminder-info: #3b82f6;
-        --reminder-light: #f8fafc;
-        --reminder-dark: #1e293b;
-        --reminder-gray: #64748b;
-        --reminder-border: #e2e8f0;
-        --reminder-shadow: rgba(0, 0, 0, 0.1);
-        --reminder-shadow-lg: rgba(0, 0, 0, 0.15);
-    }
+.main-content { padding: 14px 16px; background: #f7f8fa; min-height: 100vh; }
 
-    .reminder-header {
-        background: linear-gradient(135deg, var(--reminder-primary) 0%, var(--reminder-secondary) 100%);
-        color: white;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 25px var(--reminder-shadow-lg);
-    }
+/* Top header bar */
+.cu-header {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    border-radius: 8px; padding: 12px 16px; margin-bottom: 14px;
+    position: relative; overflow: hidden;
+}
+.cu-header::before {
+    content: ''; position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px; background: rgba(255,255,255,.08); border-radius: 50%;
+}
+.cu-header-title { font-weight: 700; font-size: 17px; margin: 0; color: #fff; position: relative; z-index: 1; }
+.cu-header-sub   { font-size: 12px; opacity: .8; margin: 2px 0 0; color: #fff; position: relative; z-index: 1; }
 
-    .reminder-content-card {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid var(--reminder-border);
-        box-shadow: 0 4px 6px -1px var(--reminder-shadow);
-        overflow: hidden;
-    }
+/* Two-column layout */
+.cu-layout { display: grid; grid-template-columns: 240px 1fr; gap: 14px; align-items: start; }
+@media(max-width:768px) { .cu-layout { grid-template-columns: 1fr; } }
 
-    .reminder-content-body {
-        padding: 2rem;
-        line-height: 1.8;
-        color: var(--reminder-dark);
-    }
+/* Left info panel */
+.cu-info-panel {
+    background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+    overflow: hidden; position: sticky; top: 1rem;
+}
+.cu-info-panel-header { background: #f7f8fa; border-bottom: 1px solid #e3e4e8; padding: 10px 14px; }
+.cu-info-panel-header span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: #8a8f98; }
+.cu-info-body { padding: 14px; }
+.cu-avatar {
+    width: 48px; height: 48px; border-radius: 10px; background: #f59e0b;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; color: #fff; margin: 0 auto 10px;
+}
+.cu-panel-name { text-align: center; font-size: 13px; font-weight: 700; color: #1a1d23; margin-bottom: 4px; line-height: 1.35; }
+.cu-panel-sub  { text-align: center; font-size: 11px; color: #adb0b8; margin-bottom: 12px; }
 
-    .reminder-meta-sidebar {
-        background: var(--reminder-light);
-        padding: 1.5rem;
-        border-left: 1px solid var(--reminder-border);
-    }
+/* Priority badge in panel */
+.cu-pri-inline {
+    display: flex; justify-content: center; margin-bottom: 10px;
+}
+.cu-pri-badge {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .05em; padding: 3px 10px; border-radius: 20px;
+}
+.cu-pri-low    { background: #d1fae5; color: #065f46; }
+.cu-pri-medium { background: #fef3c7; color: #92400e; }
+.cu-pri-high   { background: #fee2e2; color: #991b1b; }
+.cu-pri-urgent { background: #dc2626; color: #fff; }
 
-    .breadcrumb-modern {
-        background: white;
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 4px var(--reminder-shadow);
-        border: 1px solid var(--reminder-border);
-    }
+/* Status badge */
+.cu-status-row { display: flex; justify-content: center; margin-bottom: 12px; }
+.cu-status-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+}
+.cu-sb-success { background: #d1fae5; color: #065f46; }
+.cu-sb-danger  { background: #fee2e2; color: #dc2626; }
+.cu-sb-warn    { background: #fef3c7; color: #d97706; }
+.cu-sb-info    { background: #dbeafe; color: #1d4ed8; }
 
-    .breadcrumb-modern .breadcrumb {
-        margin: 0;
-        background: none;
-        padding: 0;
-    }
+/* Meta rows */
+.cu-meta-row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: #6b7280; padding: 6px 0;
+    border-top: 1px solid #f3f4f6;
+}
+.cu-meta-row i { font-size: 13px; color: #adb0b8; flex-shrink: 0; margin-top: 1px; }
+.cu-meta-row strong { color: #1a1d23; font-weight: 600; }
+.cu-meta-row .cu-meta-danger { color: #dc2626; font-weight: 600; }
+.cu-meta-row .cu-meta-warn   { color: #d97706; font-weight: 600; }
 
-    .breadcrumb-modern .breadcrumb-item + .breadcrumb-item::before {
-        content: "›";
-        color: var(--reminder-gray);
-        font-weight: 600;
-    }
+/* Action buttons in panel */
+.cu-panel-actions { padding: 12px 14px; border-top: 1px solid #f3f4f6; display: flex; flex-direction: column; gap: 6px; }
+.cu-pact {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 10px; border-radius: 7px; font-size: 12px; font-weight: 600;
+    border: none; cursor: pointer; text-decoration: none; transition: opacity .15s, transform .1s;
+    width: 100%;
+}
+.cu-pact:hover { opacity: .82; transform: translateY(-1px); }
+.cu-pact-success { background: #d1fae5; color: #065f46; }
+.cu-pact-muted   { background: #f3f4f6; color: #6b7280; }
+.cu-pact-warn    { background: #fef3c7; color: #92400e; }
+.cu-pact-primary { background: #fef3c7; color: #b45309; }
+.cu-pact-danger  { background: #fee2e2; color: #dc2626; }
+.cu-pact-info    { background: #dbeafe; color: #1d4ed8; }
 
-    .meta-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid var(--reminder-border);
-    }
+/* Right sections */
+.cu-sections { display: flex; flex-direction: column; gap: 14px; }
+.cu-section { background: white; border: 1px solid #e3e4e8; border-radius: 8px; overflow: hidden; }
+.cu-section-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; background: #fafbfc; border-bottom: 1px solid #e3e4e8;
+}
+.cu-section-icon {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;
+}
+.cu-section-icon.amber  { background: #fef3c7; color: #d97706; }
+.cu-section-icon.violet { background: #ede9fe; color: #7c3aed; }
+.cu-section-icon.green  { background: #dcfce7; color: #16a34a; }
+.cu-section-icon.blue   { background: #dbeafe; color: #2563eb; }
+.cu-section-title { font-size: 13px; font-weight: 700; color: #1a1d23; margin: 0; }
+.cu-section-sub   { font-size: 11px; color: #8a8f98; margin: 0 0 0 auto; }
+.cu-section-body  { padding: 16px; }
 
-    .meta-item:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
-        padding-bottom: 0;
-    }
+/* Content text */
+.cu-content-text {
+    font-size: 14px; line-height: 1.8; color: #374151;
+    white-space: pre-wrap; word-break: break-word;
+}
 
-    .meta-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--reminder-primary);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 1rem;
-        flex-shrink: 0;
-    }
+/* Tag pills */
+.cu-tags-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.cu-tag-pill {
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; background: #fef3c7; color: #92400e;
+}
 
-    .meta-content h6 {
-        margin: 0;
-        font-weight: 600;
-        color: var(--reminder-dark);
-    }
-
-    .meta-content p {
-        margin: 0;
-        color: var(--reminder-gray);
-        font-size: 0.9rem;
-    }
-
-    .priority-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.875rem;
-    }
-
-    .priority-badge.urgent {
-        background: #fef2f2;
-        color: var(--reminder-danger);
-        border: 1px solid var(--reminder-danger);
-    }
-
-    .priority-badge.high {
-        background: #fff7ed;
-        color: #ea580c;
-        border: 1px solid #ea580c;
-    }
-
-    .priority-badge.medium {
-        background: #fffbeb;
-        color: var(--reminder-warning);
-        border: 1px solid var(--reminder-warning);
-    }
-
-    .priority-badge.low {
-        background: var(--reminder-light);
-        color: var(--reminder-gray);
-        border: 1px solid var(--reminder-gray);
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.875rem;
-    }
-
-    .status-badge.completed {
-        background: #f0fdf4;
-        color: var(--reminder-success);
-        border: 1px solid var(--reminder-success);
-    }
-
-    .status-badge.active {
-        background: #eff6ff;
-        color: var(--reminder-info);
-        border: 1px solid var(--reminder-info);
-    }
-
-    .status-badge.overdue {
-        background: #fef2f2;
-        color: var(--reminder-danger);
-        border: 1px solid var(--reminder-danger);
-    }
-
-    .tag {
-        display: inline-block;
-        background: var(--reminder-light);
-        color: var(--reminder-gray);
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        margin: 0.125rem;
-        border: 1px solid var(--reminder-border);
-    }
-
-    .action-buttons {
-        background: var(--reminder-light);
-        padding: 1.5rem;
-        border-top: 1px solid var(--reminder-border);
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-
-    .btn-modern {
-        padding: 0.75rem 1.25rem;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        border: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        cursor: pointer;
-        font-size: 0.875rem;
-    }
-
-    .btn-modern.btn-primary {
-        background: var(--reminder-primary);
-        color: white;
-    }
-
-    .btn-modern.btn-primary:hover {
-        background: var(--reminder-secondary);
-        transform: translateY(-1px);
-        color: white;
-    }
-
-    .btn-modern.btn-success {
-        background: var(--reminder-success);
-        color: white;
-    }
-
-    .btn-modern.btn-success:hover {
-        background: #059669;
-        transform: translateY(-1px);
-        color: white;
-    }
-
-    .btn-modern.btn-warning {
-        background: var(--reminder-warning);
-        color: white;
-    }
-
-    .btn-modern.btn-warning:hover {
-        background: #d97706;
-        transform: translateY(-1px);
-        color: white;
-    }
-
-    .btn-modern.btn-info {
-        background: var(--reminder-info);
-        color: white;
-    }
-
-    .btn-modern.btn-info:hover {
-        background: #2563eb;
-        transform: translateY(-1px);
-        color: white;
-    }
-
-    .btn-modern.btn-danger {
-        background: var(--reminder-danger);
-        color: white;
-    }
-
-    .btn-modern.btn-danger:hover {
-        background: #dc2626;
-        transform: translateY(-1px);
-        color: white;
-    }
-
-    .btn-modern.btn-secondary {
-        background: var(--reminder-gray);
-        color: white;
-    }
-
-    .btn-modern.btn-secondary:hover {
-        background: var(--reminder-dark);
-        transform: translateY(-1px);
-        color: white;
-    }
+/* Recurrence box */
+.cu-recur-box {
+    background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 7px;
+    padding: 12px 14px; font-size: 13px; color: #374151;
+    display: flex; align-items: center; gap: 8px;
+}
+.cu-recur-box i { color: #7c3aed; font-size: 15px; }
 </style>
+@endpush
 
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="reminder-header">
-        <div class="d-flex justify-content-between align-items-center">
+@section('content')
+<div class="main-content">
+
+    {{-- Top header bar --}}
+    <div class="cu-header">
+        <div class="d-flex align-items-center" style="position:relative;z-index:1;">
+            <a href="{{ route('reminders.index') }}" class="me-3 text-decoration-none">
+                <i class="bi bi-arrow-left fs-5" style="color:rgba(255,255,255,.8);"></i>
+            </a>
             <div>
-                <h1 class="h2 mb-2">
-                    <i class="fas fa-bell me-3"></i>{{ $reminder->title }}
-                </h1>
-                <div class="d-flex gap-2 mb-2">
-                    <span class="priority-badge {{ $reminder->priority }}">
-                        <i class="fas fa-{{ $reminder->priority === 'urgent' ? 'exclamation-triangle' : ($reminder->priority === 'high' ? 'exclamation' : ($reminder->priority === 'medium' ? 'minus' : 'chevron-down')) }}"></i>
+                <h1 class="cu-header-title">{{ Str::limit($reminder->title, 60) }}</h1>
+                <p class="cu-header-sub">
+                    @if($reminder->is_completed)
+                        Completed reminder
+                    @elseif($reminder->is_overdue)
+                        Overdue &mdash; {{ $reminder->formatted_date_time?->diffForHumans() }}
+                    @elseif($reminder->formatted_date_time)
+                        Due {{ $reminder->formatted_date_time->diffForHumans() }}
+                    @else
+                        No due date set
+                    @endif
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cu-layout">
+
+        {{-- ── Left panel ── --}}
+        <div class="cu-info-panel">
+            <div class="cu-info-panel-header"><span>Reminder Info</span></div>
+            <div class="cu-info-body">
+                <div class="cu-avatar"><i class="bi bi-bell-fill"></i></div>
+                <div class="cu-panel-name">{{ Str::limit($reminder->title, 40) }}</div>
+                <div class="cu-panel-sub">Created {{ $reminder->created_at->diffForHumans() }}</div>
+
+                {{-- Priority --}}
+                <div class="cu-pri-inline">
+                    <span class="cu-pri-badge cu-pri-{{ $reminder->priority }}">
                         {{ ucfirst($reminder->priority) }} Priority
                     </span>
+                </div>
+
+                {{-- Status --}}
+                <div class="cu-status-row">
                     @if($reminder->is_completed)
-                        <span class="status-badge completed">
-                            <i class="fas fa-check"></i>Completed
+                        <span class="cu-status-badge cu-sb-success">
+                            <i class="bi bi-check-circle-fill"></i> Completed
                         </span>
                     @elseif($reminder->is_overdue)
-                        <span class="status-badge overdue">
-                            <i class="fas fa-exclamation-triangle"></i>Overdue
+                        <span class="cu-status-badge cu-sb-danger">
+                            <i class="bi bi-exclamation-circle-fill"></i> Overdue
+                        </span>
+                    @elseif($reminder->is_due_soon)
+                        <span class="cu-status-badge cu-sb-warn">
+                            <i class="bi bi-clock-fill"></i> Due Soon
                         </span>
                     @else
-                        <span class="status-badge active">
-                            <i class="fas fa-clock"></i>Active
+                        <span class="cu-status-badge cu-sb-info">
+                            <i class="bi bi-bell"></i> Active
                         </span>
                     @endif
                 </div>
-                @if($reminder->description)
-                    <p class="mb-0 opacity-75">{{ Str::limit($reminder->description, 100) }}</p>
+
+                {{-- Meta --}}
+                @if($reminder->formatted_date_time)
+                    <div class="cu-meta-row">
+                        <i class="bi bi-calendar-event"></i>
+                        <div>
+                            <strong>{{ $reminder->formatted_date_time->format('M j, Y') }}</strong>
+                            @if($reminder->time)
+                                <br><span style="font-size:11px;">at {{ $reminder->formatted_time }}</span>
+                            @endif
+                            <br>
+                            <span class="{{ $reminder->is_overdue ? 'cu-meta-danger' : '' }}" style="font-size:11px;">
+                                {{ $reminder->formatted_date_time->diffForHumans() }}
+                            </span>
+                        </div>
+                    </div>
                 @endif
-            </div>
-            <a href="{{ route('reminders.index') }}" class="btn btn-light btn-lg">
-                <i class="fas fa-arrow-left me-2"></i>Back to Reminders
-            </a>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="reminder-content-card">
-                <div class="reminder-content-body">
-                    @if($reminder->description)
-                        <div class="mb-4">
-                            <h5 class="mb-3" style="color: var(--reminder-primary);">
-                                <i class="fas fa-align-left me-2"></i>Description
-                            </h5>
-                            <div style="line-height: 1.8;">
-                                {{ $reminder->description }}
-                            </div>
-                        </div>
-                    @endif
-
-                    @if($reminder->tags && count($reminder->tags) > 0)
-                        <div class="mb-4">
-                            <h6 class="mb-3" style="color: var(--reminder-primary);">
-                                <i class="fas fa-tags me-2"></i>Tags
-                            </h6>
-                            <div>
-                                @foreach($reminder->tags as $tag)
-                                    <span class="tag">{{ $tag }}</span>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    @if($reminder->is_recurring)
-                        <div class="mb-4">
-                            <h6 class="mb-3" style="color: var(--reminder-primary);">
-                                <i class="fas fa-repeat me-2"></i>Recurring Information
-                            </h6>
-                            <div class="p-3 rounded" style="background: var(--reminder-light); border: 1px solid var(--reminder-border);">
-                                <p class="mb-1">
-                                    <strong>Type:</strong> Every {{ $reminder->recurrence_interval }} {{ $reminder->recurrence_type }}{{ $reminder->recurrence_interval > 1 ? 's' : '' }}
-                                </p>
-                                @if($reminder->recurrence_end_date)
-                                    <p class="mb-0">
-                                        <strong>Ends:</strong> {{ \Carbon\Carbon::parse($reminder->recurrence_end_date)->format('F j, Y') }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="reminder-content-card">
-                <div class="reminder-meta-sidebar">
-                    <h6 class="mb-3" style="color: var(--reminder-dark); font-weight: 600;">Reminder Details</h6>
-
-                    @if($reminder->formatted_date_time)
-                        <div class="meta-item">
-                            <div class="meta-icon">
-                                <i class="fas fa-calendar"></i>
-                            </div>
-                            <div class="meta-content">
-                                <h6>Date & Time</h6>
-                                <p>
-                                    <strong>{{ $reminder->formatted_date_time->format('l, F j, Y') }}</strong>
-                                    @if($reminder->time)
-                                        <br>at {{ $reminder->formatted_date_time->format('g:i A') }}
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="meta-item">
-                            <div class="meta-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="meta-content">
-                                <h6>Time Until</h6>
-                                <p class="{{ $reminder->is_overdue ? 'text-danger' : 'text-success' }}">
-                                    {{ $reminder->formatted_date_time->diffForHumans() }}
-                                </p>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if($reminder->category)
-                        <div class="meta-item">
-                            <div class="meta-icon">
-                                <i class="fas fa-folder"></i>
-                            </div>
-                            <div class="meta-content">
-                                <h6>Category</h6>
-                                <p>{{ $reminder->category }}</p>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if($reminder->location)
-                        <div class="meta-item">
-                            <div class="meta-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="meta-content">
-                                <h6>Location</h6>
-                                <p>{{ $reminder->location }}</p>
-                            </div>
-                        </div>
-                    @endif
-
-                    <div class="meta-item">
-                        <div class="meta-icon">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="meta-content">
-                            <h6>Created By</h6>
-                            <p>{{ $reminder->user->name }}</p>
-                        </div>
+                @if($reminder->category)
+                    <div class="cu-meta-row">
+                        <i class="bi bi-folder2"></i>
+                        <span>{{ $reminder->category }}</span>
                     </div>
+                @endif
 
-                    <div class="meta-item">
-                        <div class="meta-icon">
-                            <i class="fas fa-calendar-plus"></i>
-                        </div>
-                        <div class="meta-content">
-                            <h6>Created</h6>
-                            <p>{{ $reminder->created_at->format('F j, Y') }}</p>
-                        </div>
+                @if($reminder->location)
+                    <div class="cu-meta-row">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>{{ $reminder->location }}</span>
                     </div>
+                @endif
 
-                    @if($reminder->updated_at != $reminder->created_at)
-                        <div class="meta-item">
-                            <div class="meta-icon">
-                                <i class="fas fa-edit"></i>
-                            </div>
-                            <div class="meta-content">
-                                <h6>Last Updated</h6>
-                                <p>{{ $reminder->updated_at->format('F j, Y') }}</p>
-                            </div>
-                        </div>
-                    @endif
+                @if($reminder->is_recurring)
+                    <div class="cu-meta-row">
+                        <i class="bi bi-arrow-repeat"></i>
+                        <span>Every {{ $reminder->recurrence_interval }}
+                              {{ $reminder->recurrence_type }}{{ $reminder->recurrence_interval > 1 ? 's' : '' }}</span>
+                    </div>
+                @endif
 
-                    @if($reminder->snooze_until && $reminder->snooze_until->isFuture())
-                        <div class="meta-item">
-                            <div class="meta-icon">
-                                <i class="fas fa-sleep"></i>
-                            </div>
-                            <div class="meta-content">
-                                <h6>Snoozed Until</h6>
-                                <p class="text-warning">{{ $reminder->snooze_until->format('F j, Y g:i A') }}</p>
-                            </div>
-                        </div>
-                    @endif
+                @if($reminder->snooze_until && $reminder->snooze_until->isFuture())
+                    <div class="cu-meta-row">
+                        <i class="bi bi-clock-history"></i>
+                        <span class="cu-meta-warn">
+                            Snoozed until {{ $reminder->snooze_until->format('M j, g:i A') }}
+                        </span>
+                    </div>
+                @endif
+
+                @if($reminder->is_completed && $reminder->completed_at)
+                    <div class="cu-meta-row">
+                        <i class="bi bi-check2-circle"></i>
+                        <span style="color:#065f46;">
+                            Done {{ $reminder->completed_at->diffForHumans() }}
+                        </span>
+                    </div>
+                @endif
+
+                <div class="cu-meta-row">
+                    <i class="bi bi-person"></i>
+                    <span>{{ $reminder->user->name }}</span>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                    @if(!$reminder->is_completed)
-                        <button onclick="toggleComplete({{ $reminder->id }})" class="btn-modern btn-success">
-                            <i class="fas fa-check"></i>Mark Complete
-                        </button>
-                    @else
-                        <button onclick="toggleComplete({{ $reminder->id }})" class="btn-modern btn-secondary">
-                            <i class="fas fa-undo"></i>Mark Incomplete
-                        </button>
-                    @endif
-
-                    @if(!$reminder->is_completed && !($reminder->snooze_until && $reminder->snooze_until->isFuture()))
-                        <button onclick="snoozeReminder({{ $reminder->id }})" class="btn-modern btn-warning">
-                            <i class="fas fa-clock"></i>Snooze
-                        </button>
-                    @endif
-
-                    <form action="{{ route('reminders.duplicate', $reminder) }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn-modern btn-info" onclick="return confirm('Create a duplicate of this reminder?')">
-                            <i class="fas fa-copy"></i>Duplicate
-                        </button>
-                    </form>
-
-                    <a href="{{ route('reminders.edit', $reminder) }}" class="btn-modern btn-primary">
-                        <i class="fas fa-edit"></i>Edit
-                    </a>
-
-                    <form action="{{ route('reminders.destroy', $reminder) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-modern btn-danger" onclick="return confirm('Are you sure you want to delete this reminder?')">
-                            <i class="fas fa-trash"></i>Delete
-                        </button>
-                    </form>
+                <div class="cu-meta-row">
+                    <i class="bi bi-clock"></i>
+                    <span>Updated {{ $reminder->updated_at->diffForHumans() }}</span>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
+            {{-- Action buttons --}}
+            <div class="cu-panel-actions">
+                @if(!$reminder->is_completed)
+                    <button onclick="toggleComplete({{ $reminder->id }})" class="cu-pact cu-pact-success">
+                        <i class="bi bi-check-lg"></i> Mark Complete
+                    </button>
+                @else
+                    <button onclick="toggleComplete({{ $reminder->id }})" class="cu-pact cu-pact-muted">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reactivate
+                    </button>
+                @endif
+
+                @if(!$reminder->is_completed && !($reminder->snooze_until && $reminder->snooze_until->isFuture()))
+                    <button onclick="snoozePrompt({{ $reminder->id }})" class="cu-pact cu-pact-warn">
+                        <i class="bi bi-clock"></i> Snooze
+                    </button>
+                @endif
+
+                <a href="{{ route('reminders.edit', $reminder) }}" class="cu-pact cu-pact-primary">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+
+                <form action="{{ route('reminders.duplicate', $reminder) }}" method="POST"
+                      onsubmit="return confirm('Duplicate this reminder?')">
+                    @csrf
+                    <button type="submit" class="cu-pact cu-pact-info">
+                        <i class="bi bi-copy"></i> Duplicate
+                    </button>
+                </form>
+
+                <form action="{{ route('reminders.destroy', $reminder) }}" method="POST"
+                      onsubmit="return confirm('Delete this reminder? This cannot be undone.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="cu-pact cu-pact-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {{-- ── Right sections ── --}}
+        <div class="cu-sections">
+
+            {{-- Description --}}
+            @if($reminder->description)
+            <div class="cu-section">
+                <div class="cu-section-header">
+                    <span class="cu-section-icon amber"><i class="bi bi-card-text"></i></span>
+                    <span class="cu-section-title">Description</span>
+                </div>
+                <div class="cu-section-body">
+                    <p class="cu-content-text">{{ $reminder->description }}</p>
+                </div>
+            </div>
+            @endif
+
+            {{-- Tags --}}
+            @if($reminder->tags && count($reminder->tags) > 0)
+            <div class="cu-section">
+                <div class="cu-section-header">
+                    <span class="cu-section-icon violet"><i class="bi bi-tags"></i></span>
+                    <span class="cu-section-title">Tags</span>
+                    <span class="cu-section-sub">{{ count($reminder->tags) }} tag{{ count($reminder->tags) !== 1 ? 's' : '' }}</span>
+                </div>
+                <div class="cu-section-body">
+                    <div class="cu-tags-row">
+                        @foreach($reminder->tags as $tag)
+                            <span class="cu-tag-pill">{{ $tag }}</span>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Recurrence info --}}
+            @if($reminder->is_recurring)
+            <div class="cu-section">
+                <div class="cu-section-header">
+                    <span class="cu-section-icon green"><i class="bi bi-arrow-repeat"></i></span>
+                    <span class="cu-section-title">Recurring Schedule</span>
+                </div>
+                <div class="cu-section-body">
+                    <div class="cu-recur-box">
+                        <i class="bi bi-arrow-repeat"></i>
+                        <span>
+                            Repeats every
+                            <strong>{{ $reminder->recurrence_interval }}
+                            {{ $reminder->recurrence_type }}{{ $reminder->recurrence_interval > 1 ? 's' : '' }}</strong>
+                            @if($reminder->recurrence_interval > 1 || $reminder->recurrence_type !== 'daily')
+                                — automatically creates the next occurrence when completed
+                            @endif
+                        </span>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- If nothing else to show, show a placeholder --}}
+            @if(!$reminder->description && !($reminder->tags && count($reminder->tags) > 0) && !$reminder->is_recurring)
+            <div class="cu-section">
+                <div class="cu-section-header">
+                    <span class="cu-section-icon blue"><i class="bi bi-bell"></i></span>
+                    <span class="cu-section-title">Reminder</span>
+                </div>
+                <div class="cu-section-body" style="text-align:center;padding:2rem;color:#adb0b8;">
+                    <i class="bi bi-bell" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>
+                    <p style="margin:0;font-size:13px;">No additional details added for this reminder.</p>
+                </div>
+            </div>
+            @endif
+
+        </div>{{-- /cu-sections --}}
+
+    </div>{{-- /cu-layout --}}
+</div>{{-- /main-content --}}
 @endsection
 
 @push('scripts')
 <script>
-// Global functions for reminder actions
 function toggleComplete(reminderId) {
-    fetch(`/reminders/${reminderId}/toggle-complete`, {
+    fetch('/reminders/' + reminderId + '/toggle-complete', {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            alert('Error updating reminder. Please try again.');
-        }
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+        if (data.success) { location.reload(); }
     })
-    .catch(error => {
-        console.error('Error toggling reminder:', error);
-        alert('Error updating reminder. Please try again.');
-    });
+    .catch(function (err) { console.error('Toggle failed:', err); });
 }
 
-function snoozeReminder(reminderId) {
-    const minutes = prompt('Snooze for how many minutes?', '15');
-
-    if (minutes && !isNaN(minutes) && parseInt(minutes) > 0) {
-        fetch(`/reminders/${reminderId}/snooze`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                minutes: parseInt(minutes)
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Error snoozing reminder. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error snoozing reminder:', error);
-            alert('Error snoozing reminder. Please try again.');
-        });
-    }
+function snoozePrompt(reminderId) {
+    var minutes = prompt('Snooze for how many minutes?', '15');
+    if (!minutes || isNaN(minutes) || parseInt(minutes) <= 0) return;
+    fetch('/reminders/' + reminderId + '/snooze', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ minutes: parseInt(minutes) })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+        if (data.success) { location.reload(); }
+    })
+    .catch(function (err) { console.error('Snooze failed:', err); });
 }
 </script>
 @endpush

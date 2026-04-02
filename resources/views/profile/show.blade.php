@@ -1,409 +1,311 @@
 @extends('layouts.app')
+@section('title', 'My Profile')
+@push('styles')
+<style>
 
-@section('title', 'Profile')
+.main-content { padding: 14px 16px; background: #f7f8fa; min-height: 100vh; }
+
+.cu-header {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 8px; padding: 12px 16px; margin-bottom: 14px;
+    position: relative; overflow: hidden;
+}
+.cu-header::before {
+    content: ''; position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px; background: rgba(255,255,255,.08); border-radius: 50%;
+}
+.cu-header-inner { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+.cu-header-title { font-weight: 700; font-size: 17px; margin: 0; color: #fff; }
+.cu-header-sub   { font-size: 12px; opacity: .8; margin: 2px 0 0; color: #fff; }
+.cu-btn-hdr {
+    background: rgba(255,255,255,.18); border: 1.5px solid rgba(255,255,255,.4);
+    color: #fff; font-size: 12px; font-weight: 700; border-radius: 6px;
+    padding: 6px 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+    transition: background .15s;
+}
+.cu-btn-hdr:hover { background: rgba(255,255,255,.28); color: #fff; }
+
+.cu-layout { display: grid; grid-template-columns: 220px 1fr; gap: 14px; align-items: start; }
+@media(max-width:768px) { .cu-layout { grid-template-columns: 1fr; } }
+
+.cu-info-panel {
+    background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+    overflow: hidden; position: sticky; top: 1rem;
+}
+.cu-info-panel-header { background: #f7f8fa; border-bottom: 1px solid #e3e4e8; padding: 10px 14px; }
+.cu-info-panel-header span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: #8a8f98; }
+.cu-info-body { padding: 14px; }
+
+.cu-sections { display: flex; flex-direction: column; gap: 14px; }
+.cu-section { background: white; border: 1px solid #e3e4e8; border-radius: 8px; overflow: hidden; }
+.cu-section-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; background: #fafbfc; border-bottom: 1px solid #e3e4e8;
+}
+.cu-section-icon {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;
+}
+.cu-section-icon.violet { background: #ede9fe; color: #7c3aed; }
+.cu-section-icon.blue   { background: #dbeafe; color: #2563eb; }
+.cu-section-icon.green  { background: #dcfce7; color: #16a34a; }
+.cu-section-icon.red    { background: #fee2e2; color: #dc2626; }
+.cu-section-icon.amber  { background: #fef3c7; color: #d97706; }
+.cu-section-title { font-size: 13px; font-weight: 700; color: #1a1d23; margin: 0; }
+.cu-section-sub   { font-size: 11px; color: #8a8f98; margin: 0 0 0 auto; }
+.cu-section-body  { padding: 16px; }
+
+.cu-field { margin-bottom: 14px; }
+.cu-field:last-child { margin-bottom: 0; }
+.cu-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:500px) { .cu-field-row { grid-template-columns: 1fr; } }
+.cu-label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+.cu-input, .cu-textarea {
+    width: 100%; border: 1px solid #d3d5db; border-radius: 6px;
+    padding: 7px 10px; font-size: 13px; color: #111827; background: white;
+    transition: border-color .15s, box-shadow .15s;
+}
+.cu-input:focus, .cu-textarea:focus {
+    outline: none; border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,.18);
+}
+.cu-input.is-invalid, .cu-textarea.is-invalid { border-color: #dc2626; }
+.cu-textarea { resize: vertical; min-height: 80px; }
+.cu-err  { font-size: 11px; color: #dc2626; margin-top: 3px; }
+.cu-hint { font-size: 11px; color: #9ca3af; margin-top: 3px; }
+
+.cu-action-bar {
+    background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+    padding: 12px 16px; display: flex; justify-content: flex-end; gap: 8px;
+}
+.cu-btn-cancel {
+    padding: 6px 14px; border: 1.5px solid #d3d5db; border-radius: 6px;
+    background: white; font-size: 13px; font-weight: 600; color: #6b7280;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+    transition: border-color .15s, color .15s;
+}
+.cu-btn-cancel:hover { border-color: #adb0b8; color: #1a1d23; }
+.cu-btn-save {
+    padding: 6px 18px; background: #6366f1; border: 1px solid #6366f1;
+    color: white; border-radius: 6px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 5px;
+}
+.cu-btn-save:hover { background: #4f46e5; border-color: #4f46e5; box-shadow: 0 2px 6px rgba(99,102,241,.4); }
+.cu-btn-danger {
+    padding: 6px 18px; background: #dc2626; border: 1px solid #dc2626;
+    color: white; border-radius: 6px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 5px;
+}
+.cu-btn-danger:hover { background: #b91c1c; border-color: #b91c1c; box-shadow: 0 2px 6px rgba(220,38,38,.4); }
+
+.cu-alert-success {
+    background: #d1fae5; border: 1px solid #6ee7b7; border-radius: 8px;
+    padding: 10px 14px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px; font-size: 13px; color: #065f46;
+}
+.cu-meta-row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: #6b7280; padding: 5px 0;
+    border-top: 1px solid #f3f4f6;
+}
+.cu-meta-row i { font-size: 13px; color: #adb0b8; flex-shrink: 0; margin-top: 1px; }
+.cu-meta-row strong { color: #1a1d23; font-weight: 600; }
+
+.cu-avatar-wrap { position: relative; width: 72px; height: 72px; margin: 0 auto 10px; }
+.cu-avatar-img  { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid #e3e4e8; display: block; }
+.cu-avatar-init {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff; font-size: 1.6rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+}
+.cu-panel-name { text-align: center; font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 2px; }
+.cu-panel-email { text-align: center; font-size: 11px; color: #adb0b8; margin-bottom: 12px; }
+.cu-panel-nav { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; border-top: 1px solid #f3f4f6; padding-top: 10px; }
+.cu-nav-link {
+    display: flex; align-items: center; gap: 8px; padding: 7px 10px;
+    border-radius: 6px; font-size: 12px; font-weight: 600; color: #374151;
+    text-decoration: none; transition: background .15s;
+}
+.cu-nav-link:hover, .cu-nav-link.active { background: #ede9fe; color: #6366f1; }
+.cu-nav-link i { font-size: 13px; }
+.cu-detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cu-detail-table tr td { padding: 8px 0; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+.cu-detail-table tr:last-child td { border-bottom: none; }
+.cu-detail-table td:first-child { font-weight: 600; color: #374151; width: 35%; display: flex; align-items: center; gap: 6px; }
+.cu-detail-table td:last-child  { color: #6b7280; }
+.cu-stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); gap: 10px; }
+.cu-stat-box { background: #f9fafb; border: 1px solid #e3e4e8; border-radius: 8px; padding: 12px; text-align: center; }
+.cu-stat-box-num { font-size: 20px; font-weight: 800; color: #1a1d23; line-height: 1; }
+.cu-stat-box-lbl { font-size: 10px; color: #8a8f98; text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
+</style>
+@endpush
 
 @section('content')
-<style>
-    :root {
-        --profile-primary: #6366f1;
-        --profile-secondary: #8b5cf6;
-        --profile-success: #10b981;
-        --profile-warning: #f59e0b;
-        --profile-danger: #ef4444;
-        --profile-info: #3b82f6;
-        --profile-light: #f8fafc;
-        --profile-dark: #1e293b;
-        --profile-gray: #64748b;
-        --profile-border: #e2e8f0;
-        --profile-shadow: rgba(0, 0, 0, 0.1);
-        --profile-shadow-lg: rgba(0, 0, 0, 0.15);
-    }
+<div class="main-content">
 
-    .profile-header {
-        background: linear-gradient(135deg, var(--profile-primary) 0%, var(--profile-secondary) 100%);
-        color: white;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 25px var(--profile-shadow-lg);
-    }
-
-    .profile-card {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid var(--profile-border);
-        box-shadow: 0 4px 6px -1px var(--profile-shadow);
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-
-    .profile-card-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid var(--profile-border);
-        background: var(--profile-light);
-    }
-
-    .profile-card-body {
-        padding: 2rem;
-    }
-
-    .avatar-section {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .avatar-large {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        margin-bottom: 1rem;
-        border: 4px solid var(--profile-primary);
-        object-fit: cover;
-    }
-
-    .avatar-placeholder {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--profile-primary), var(--profile-secondary));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin: 0 auto 1rem;
-        border: 4px solid var(--profile-primary);
-    }
-
-    .profile-info {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .info-item {
-        display: flex;
-        align-items: center;
-        padding: 1rem;
-        background: var(--profile-light);
-        border-radius: 8px;
-        border: 1px solid var(--profile-border);
-    }
-
-    .info-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 1rem;
-        color: white;
-    }
-
-    .info-icon.email { background: var(--profile-info); }
-    .info-icon.phone { background: var(--profile-success); }
-    .info-icon.location { background: var(--profile-warning); }
-    .info-icon.website { background: var(--profile-secondary); }
-    .info-icon.bio { background: var(--profile-primary); }
-
-    .info-content h6 {
-        margin: 0 0 0.25rem 0;
-        color: var(--profile-dark);
-        font-weight: 600;
-    }
-
-    .info-content p {
-        margin: 0;
-        color: var(--profile-gray);
-        font-size: 0.875rem;
-    }
-
-    .stats-section {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-card {
-        background: white;
-        border: 1px solid var(--profile-border);
-        border-radius: 12px;
-        padding: 1.5rem;
-        text-align: center;
-        transition: all 0.2s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px var(--profile-shadow);
-    }
-
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--profile-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-        color: var(--profile-gray);
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .btn-modern {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .btn-modern.btn-primary {
-        background: var(--profile-primary);
-        color: white;
-    }
-
-    .btn-modern.btn-primary:hover {
-        background: var(--profile-secondary);
-        transform: translateY(-1px);
-        color: white;
-    }
-
-    .btn-modern.btn-outline-secondary {
-        background: transparent;
-        color: var(--profile-gray);
-        border: 1px solid var(--profile-border);
-    }
-
-    .btn-modern.btn-outline-secondary:hover {
-        background: var(--profile-gray);
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    .alert-modern {
-        border: none;
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-        margin-bottom: 1.5rem;
-        border-left: 4px solid var(--profile-success);
-    }
-
-    .joined-date {
-        background: rgba(99, 102, 241, 0.1);
-        color: var(--profile-primary);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-top: 1rem;
-    }
-</style>
-
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="profile-header">
-        <div class="d-flex justify-content-between align-items-center">
+    <div class="cu-header">
+        <div class="cu-header-inner">
             <div>
-                <h1 class="h2 mb-2">
-                    <i class="fas fa-user me-3"></i>Profile
-                </h1>
-                <p class="mb-0 opacity-75">Manage your account settings and preferences</p>
+                <h1 class="cu-header-title"><i class="bi bi-person-circle me-2"></i>My Profile</h1>
+                <p class="cu-header-sub">View and manage your account details</p>
             </div>
-            <div>
-                <a href="{{ route('profile.edit') }}" class="btn btn-light btn-lg me-2">
-                    <i class="fas fa-edit me-2"></i>Edit Profile
-                </a>
-                <a href="{{ route('profile.password') }}" class="btn btn-outline-light btn-lg">
-                    <i class="fas fa-key me-2"></i>Change Password
-                </a>
-            </div>
+            <a href="{{ route('profile.edit') }}" class="cu-btn-hdr">
+                <i class="bi bi-pencil"></i> Edit Profile
+            </a>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-modern">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-        </div>
+    <div class="cu-alert-success"><i class="bi bi-check-circle-fill"></i> {{ session('success') }}</div>
     @endif
 
-    <div class="row">
-        <div class="col-lg-4">
-            <!-- Profile Card -->
-            <div class="profile-card">
-                <div class="profile-card-body">
-                    <div class="avatar-section">
-                        @if($user->avatar)
-                            <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="avatar-large">
-                        @else
-                            <div class="avatar-placeholder">
-                                {{ strtoupper(substr($user->name, 0, 2)) }}
-                            </div>
-                        @endif
-                        <h3 style="color: var(--profile-dark);">{{ $user->name }}</h3>
-                        <p class="text-muted">{{ $user->email }}</p>
-                        <div class="joined-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            Joined {{ $user->created_at->format('M Y') }}
-                        </div>
-                    </div>
+    <div class="cu-layout">
+        {{-- Left panel --}}
+        <div class="cu-info-panel">
+            <div class="cu-info-panel-header"><span>Account</span></div>
+            <div class="cu-info-body">
+                <div class="cu-avatar-wrap">
+                    @if($user->avatar)
+                        <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="cu-avatar-img">
+                    @else
+                        <div class="cu-avatar-init">{{ strtoupper(substr($user->name,0,2)) }}</div>
+                    @endif
                 </div>
-            </div>
+                <div class="cu-panel-name">{{ $user->name }}</div>
+                <div class="cu-panel-email">{{ $user->email }}</div>
 
-            <!-- Statistics -->
-            <div class="profile-card">
-                <div class="profile-card-header">
-                    <h5 class="mb-0" style="color: var(--profile-dark);">
-                        <i class="fas fa-chart-bar me-2" style="color: var(--profile-primary);"></i>Activity Statistics
-                    </h5>
-                </div>
-                <div class="profile-card-body">
-                    <div class="stats-section">
-                        <div class="stat-card">
-                            <div class="stat-number">{{ $user->projects()->count() }}</div>
-                            <div class="stat-label">Projects</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{{ $user->tasks()->count() }}</div>
-                            <div class="stat-label">Tasks</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{{ $user->notes()->count() }}</div>
-                            <div class="stat-label">Notes</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{{ $user->reminders()->count() }}</div>
-                            <div class="stat-label">Reminders</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{{ $user->routines()->count() }}</div>
-                            <div class="stat-label">Routines</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{{ $user->files()->count() }}</div>
-                            <div class="stat-label">Files</div>
-                        </div>
-                    </div>
+                @if($user->location)
+                <div class="cu-meta-row"><i class="bi bi-geo-alt"></i><span>{{ $user->location }}</span></div>
+                @endif
+                @if($user->phone)
+                <div class="cu-meta-row"><i class="bi bi-telephone"></i><span>{{ $user->phone }}</span></div>
+                @endif
+                @if($user->website)
+                <div class="cu-meta-row"><i class="bi bi-globe"></i><a href="{{ $user->website }}" target="_blank" style="color:#6366f1;font-size:11px;word-break:break-all;">{{ Str::limit($user->website,30) }}</a></div>
+                @endif
+                <div class="cu-meta-row"><i class="bi bi-calendar3"></i><span>Joined <strong>{{ $user->created_at->format('M Y') }}</strong></span></div>
+
+                <div class="cu-panel-nav">
+                    <a href="{{ route('profile.show') }}" class="cu-nav-link active"><i class="bi bi-person"></i> Profile</a>
+                    <a href="{{ route('profile.edit') }}" class="cu-nav-link"><i class="bi bi-pencil"></i> Edit Info</a>
+                    <a href="{{ route('profile.password') }}" class="cu-nav-link"><i class="bi bi-key"></i> Password</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-8">
-            <!-- Personal Information -->
-            <div class="profile-card">
-                <div class="profile-card-header">
-                    <h5 class="mb-0" style="color: var(--profile-dark);">
-                        <i class="fas fa-user-circle me-2" style="color: var(--profile-primary);"></i>Personal Information
-                    </h5>
+        {{-- Right sections --}}
+        <div class="cu-sections">
+
+            {{-- Stats --}}
+            <div class="cu-section">
+                <div class="cu-section-header">
+                    <span class="cu-section-icon violet"><i class="bi bi-bar-chart"></i></span>
+                    <span class="cu-section-title">Activity Overview</span>
                 </div>
-                <div class="profile-card-body">
-                    <div class="profile-info">
-                        <div class="info-item">
-                            <div class="info-icon email">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div class="info-content">
-                                <h6>Email Address</h6>
-                                <p>{{ $user->email }}</p>
-                            </div>
+                <div class="cu-section-body">
+                    <div class="cu-stat-row">
+                        <div class="cu-stat-box">
+                            <div class="cu-stat-box-num">{{ $user->tasks()->count() }}</div>
+                            <div class="cu-stat-box-lbl">Tasks</div>
                         </div>
-
-                        @if($user->phone)
-                            <div class="info-item">
-                                <div class="info-icon phone">
-                                    <i class="fas fa-phone"></i>
-                                </div>
-                                <div class="info-content">
-                                    <h6>Phone Number</h6>
-                                    <p>{{ $user->phone }}</p>
-                                </div>
-                            </div>
-                        @endif
-
-                        @if($user->location)
-                            <div class="info-item">
-                                <div class="info-icon location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="info-content">
-                                    <h6>Location</h6>
-                                    <p>{{ $user->location }}</p>
-                                </div>
-                            </div>
-                        @endif
-
-                        @if($user->website)
-                            <div class="info-item">
-                                <div class="info-icon website">
-                                    <i class="fas fa-globe"></i>
-                                </div>
-                                <div class="info-content">
-                                    <h6>Website</h6>
-                                    <p><a href="{{ $user->website }}" target="_blank" style="color: var(--profile-primary);">{{ $user->website }}</a></p>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-
-                    @if($user->bio)
-                        <div class="info-item" style="grid-column: 1 / -1;">
-                            <div class="info-icon bio">
-                                <i class="fas fa-user-edit"></i>
-                            </div>
-                            <div class="info-content">
-                                <h6>Bio</h6>
-                                <p>{{ $user->bio }}</p>
-                            </div>
+                        <div class="cu-stat-box">
+                            <div class="cu-stat-box-num">{{ $user->projects()->count() }}</div>
+                            <div class="cu-stat-box-lbl">Projects</div>
                         </div>
-                    @endif
-
-                    @if(!$user->phone && !$user->location && !$user->website && !$user->bio)
-                        <div class="text-center py-4">
-                            <i class="fas fa-user-plus fa-3x mb-3" style="color: var(--profile-border);"></i>
-                            <h5 style="color: var(--profile-gray);">Complete Your Profile</h5>
-                            <p class="text-muted mb-4">Add more information to help others get to know you better.</p>
-                            <a href="{{ route('profile.edit') }}" class="btn-modern btn-primary">
-                                <i class="fas fa-edit"></i>Add Information
-                            </a>
+                        <div class="cu-stat-box">
+                            <div class="cu-stat-box-num">{{ $user->reminders()->count() }}</div>
+                            <div class="cu-stat-box-lbl">Reminders</div>
                         </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Account Security -->
-            <div class="profile-card">
-                <div class="profile-card-header">
-                    <h5 class="mb-0" style="color: var(--profile-dark);">
-                        <i class="fas fa-shield-alt me-2" style="color: var(--profile-primary);"></i>Account Security
-                    </h5>
-                </div>
-                <div class="profile-card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 style="color: var(--profile-dark);">Password</h6>
-                            <p class="text-muted mb-0">Last updated {{ $user->updated_at->format('M d, Y') }}</p>
+                        <div class="cu-stat-box">
+                            <div class="cu-stat-box-num">{{ $user->notes()->count() }}</div>
+                            <div class="cu-stat-box-lbl">Notes</div>
                         </div>
-                        <a href="{{ route('profile.password') }}" class="btn-modern btn-outline-secondary">
-                            <i class="fas fa-key"></i>Change Password
-                        </a>
+                        <div class="cu-stat-box">
+                            <div class="cu-stat-box-num">{{ $user->files()->count() }}</div>
+                            <div class="cu-stat-box-lbl">Files</div>
+                        </div>
+                        <div class="cu-stat-box">
+                            <div class="cu-stat-box-num">{{ $user->routines()->count() }}</div>
+                            <div class="cu-stat-box-lbl">Routines</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+
+            {{-- Personal info --}}
+            <div class="cu-section">
+                <div class="cu-section-header">
+                    <span class="cu-section-icon blue"><i class="bi bi-person-lines-fill"></i></span>
+                    <span class="cu-section-title">Personal Information</span>
+                    <a href="{{ route('profile.edit') }}" style="margin-left:auto;font-size:11px;color:#6366f1;font-weight:600;text-decoration:none;">Edit</a>
+                </div>
+                <div class="cu-section-body">
+                    <table class="cu-detail-table">
+                        <tr>
+                            <td><i class="bi bi-person text-muted"></i> Name</td>
+                            <td>{{ $user->name }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-envelope text-muted"></i> Email</td>
+                            <td>{{ $user->email }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-telephone text-muted"></i> Phone</td>
+                            <td>{{ $user->phone ?: '—' }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-geo-alt text-muted"></i> Location</td>
+                            <td>{{ $user->location ?: '—' }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-globe text-muted"></i> Website</td>
+                            <td>
+                                @if($user->website)
+                                    <a href="{{ $user->website }}" target="_blank" style="color:#6366f1;">{{ Str::limit($user->website,40) }}</a>
+                                @else
+                                    —
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-calendar3 text-muted"></i> Member Since</td>
+                            <td>{{ $user->created_at->format('F d, Y') }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            {{-- Bio --}}
+            @if($user->bio)
+            <div class="cu-section">
+                <div class="cu-section-header">
+                    <span class="cu-section-icon amber"><i class="bi bi-chat-quote"></i></span>
+                    <span class="cu-section-title">Bio</span>
+                </div>
+                <div class="cu-section-body">
+                    <p style="font-size:13px;color:#374151;line-height:1.7;margin:0;">{{ $user->bio }}</p>
+                </div>
+            </div>
+            @endif
+
+            {{-- Security --}}
+            <div class="cu-section">
+                <div class="cu-section-header">
+                    <span class="cu-section-icon red"><i class="bi bi-shield-lock"></i></span>
+                    <span class="cu-section-title">Security</span>
+                </div>
+                <div class="cu-section-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <div style="font-size:13px;color:#374151;">
+                        <strong>Password</strong><br>
+                        <span style="font-size:11px;color:#9ca3af;">Last updated {{ $user->updated_at->diffForHumans() }}</span>
+                    </div>
+                    <a href="{{ route('profile.password') }}" class="cu-btn-save" style="text-decoration:none;">
+                        <i class="bi bi-key"></i> Change Password
+                    </a>
+                </div>
+            </div>
+
+        </div>{{-- /cu-sections --}}
+    </div>{{-- /cu-layout --}}
 </div>
-
 @endsection

@@ -3,783 +3,748 @@
 @section('title', $task->title . ' - Task Details')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/tasks/style.css') }}">
+<style>
+/* ── Task Show – ClickUp style ─────────────────────────────── */
+.ts-wrap { padding: 14px 16px 40px; }
+
+/* Header */
+.ts-header {
+    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+    border-radius: 14px;
+    padding: 18px 24px;
+    color: #fff;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(124,58,237,.35);
+}
+.ts-header::before {
+    content:'';
+    position:absolute;
+    top:-30px; right:-30px;
+    width:120px; height:120px;
+    background:rgba(255,255,255,.08);
+    border-radius:50%;
+}
+.ts-header::after {
+    content:'';
+    position:absolute;
+    bottom:-40px; right:80px;
+    width:80px; height:80px;
+    background:rgba(255,255,255,.06);
+    border-radius:50%;
+}
+.ts-back-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    color:rgba(255,255,255,.85); font-size:13px; font-weight:500;
+    text-decoration:none; padding:6px 12px;
+    background:rgba(255,255,255,.15); border-radius:8px;
+    transition:background .2s; white-space:nowrap; z-index:1;
+}
+.ts-back-btn:hover { background:rgba(255,255,255,.25); color:#fff; }
+.ts-header-meta { flex:1; z-index:1; }
+.ts-task-id {
+    font-size:11px; font-weight:700; letter-spacing:.08em;
+    opacity:.75; text-transform:uppercase; margin-bottom:4px;
+}
+.ts-header-title {
+    font-size:20px; font-weight:700; line-height:1.3; margin:0;
+}
+.ts-header-actions { display:flex; gap:8px; z-index:1; }
+.ts-header-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:8px 14px; border-radius:8px; font-size:13px;
+    font-weight:600; text-decoration:none; border:none; cursor:pointer;
+    transition:all .2s;
+}
+.ts-header-btn.edit {
+    background:rgba(255,255,255,.2); color:#fff;
+}
+.ts-header-btn.edit:hover { background:rgba(255,255,255,.3); color:#fff; }
+.ts-header-btn.del {
+    background:rgba(239,68,68,.3); color:#fff;
+}
+.ts-header-btn.del:hover { background:rgba(239,68,68,.5); }
+
+/* Two-column layout */
+.ts-body { display:grid; grid-template-columns:260px 1fr; gap:20px; align-items:start; }
+
+/* Left panel */
+.ts-panel {
+    background:#fff; border-radius:14px;
+    border:1px solid #e5e7eb; position:sticky;
+    top:80px; overflow:hidden;
+    box-shadow:0 1px 4px rgba(0,0,0,.06);
+}
+.ts-panel-icon {
+    display:flex; align-items:center; justify-content:center;
+    height:12px;
+}
+.ts-priority-bar {
+    height:5px; width:100%;
+}
+.ts-priority-bar.high  { background:#dc2626; }
+.ts-priority-bar.medium { background:#f59e0b; }
+.ts-priority-bar.low   { background:#16a34a; }
+
+.ts-panel-body { padding:20px; }
+.ts-panel-title { font-size:15px; font-weight:700; color:#111827; margin-bottom:14px; line-height:1.3; word-break:break-word; }
+
+/* Status chip */
+.ts-status {
+    display:inline-flex; align-items:center; gap:7px;
+    padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600;
+    cursor:pointer; transition:opacity .2s; margin-bottom:10px;
+}
+.ts-status:hover { opacity:.8; }
+.ts-status.to_do    { background:#f3f4f6; color:#374151; }
+.ts-status.in_progress { background:#ede9fe; color:#5b21b6; }
+.ts-status.completed { background:#dcfce7; color:#15803d; }
+.ts-status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.ts-status.to_do    .ts-status-dot { background:#9ca3af; }
+.ts-status.in_progress .ts-status-dot { background:#7c3aed; }
+.ts-status.completed .ts-status-dot { background:#16a34a; }
+
+/* Priority chip */
+.ts-priority {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 10px; border-radius:20px; font-size:11px; font-weight:600;
+    margin-bottom:18px;
+}
+.ts-priority.high   { background:#fef2f2; color:#dc2626; }
+.ts-priority.medium { background:#fffbeb; color:#d97706; }
+.ts-priority.low    { background:#f0fdf4; color:#16a34a; }
+
+/* Meta rows */
+.ts-divider { height:1px; background:#f3f4f6; margin:0 -20px 16px; }
+.ts-meta-row {
+    display:flex; align-items:flex-start; gap:10px;
+    margin-bottom:13px; font-size:13px;
+}
+.ts-meta-row:last-child { margin-bottom:0; }
+.ts-meta-icon {
+    width:28px; height:28px; border-radius:7px;
+    background:#f3f4f6; display:flex; align-items:center;
+    justify-content:center; color:#6b7280; flex-shrink:0; font-size:13px;
+}
+.ts-meta-label { font-size:10px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:.05em; line-height:1; margin-bottom:2px; }
+.ts-meta-val { font-size:13px; font-weight:500; color:#111827; line-height:1.3; }
+.ts-meta-val a { color:#7c3aed; text-decoration:none; }
+.ts-meta-val a:hover { text-decoration:underline; }
+.ts-overdue { color:#dc2626; font-size:11px; font-weight:600; margin-top:2px; }
+
+/* Panel action buttons */
+.ts-panel-actions { padding:0 16px 16px; display:flex; flex-direction:column; gap:8px; }
+.ts-panel-btn {
+    display:flex; align-items:center; gap:8px; padding:10px 14px;
+    border-radius:9px; font-size:13px; font-weight:600;
+    text-decoration:none; border:none; cursor:pointer;
+    transition:all .2s; width:100%; box-sizing:border-box;
+}
+.ts-panel-btn.edit   { background:#7c3aed; color:#fff; }
+.ts-panel-btn.edit:hover { background:#6d28d9; color:#fff; }
+.ts-panel-btn.danger { background:#fef2f2; color:#dc2626; }
+.ts-panel-btn.danger:hover { background:#fee2e2; }
+
+/* Right content */
+.ts-content { display:flex; flex-direction:column; gap:16px; }
+.ts-card {
+    background:#fff; border-radius:14px;
+    border:1px solid #e5e7eb;
+    box-shadow:0 1px 4px rgba(0,0,0,.06);
+    overflow:hidden;
+}
+.ts-card-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 20px; border-bottom:1px solid #f3f4f6;
+}
+.ts-card-title {
+    display:flex; align-items:center; gap:8px;
+    font-size:14px; font-weight:700; color:#111827;
+}
+.ts-card-title i { color:#7c3aed; }
+.ts-card-body { padding:20px; }
+
+/* Progress */
+.ts-progress-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.ts-stat-tile {
+    background:#f8f9fa; border-radius:10px; padding:14px;
+    text-align:center; border:1px solid #f3f4f6;
+}
+.ts-stat-val { font-size:22px; font-weight:800; color:#111827; }
+.ts-stat-lbl { font-size:11px; color:#9ca3af; font-weight:600; margin-top:4px; text-transform:uppercase; letter-spacing:.05em; }
+.ts-prog-bar-wrap { background:#f3f4f6; border-radius:999px; height:8px; margin-top:16px; overflow:hidden; }
+.ts-prog-bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#7c3aed,#a78bfa); transition:width .4s ease; }
+
+/* Description */
+.ts-description { font-size:14px; line-height:1.8; color:#374151; }
+.ts-empty { text-align:center; padding:32px 20px; color:#9ca3af; }
+.ts-empty i { font-size:36px; opacity:.35; display:block; margin-bottom:8px; }
+.ts-empty p { font-size:13px; margin:0; }
+
+/* Checklist */
+.ts-checklist-progress-bar { font-size:12px; color:#6b7280; }
+.ts-cl-prog-wrap { background:#f3f4f6; border-radius:999px; height:6px; margin-top:6px; overflow:hidden; }
+.ts-cl-prog-fill { height:100%; border-radius:999px; background:#7c3aed; transition:width .3s; }
+.ts-cl-item {
+    display:flex; align-items:center; gap:10px;
+    padding:9px 12px; border-radius:9px; transition:background .15s;
+    margin-bottom:4px;
+}
+.ts-cl-item:hover { background:#f8f9fa; }
+.ts-cl-item.completed .ts-cl-text { text-decoration:line-through; color:#9ca3af; }
+.ts-cl-check {
+    width:18px; height:18px; border-radius:5px;
+    border:2px solid #d1d5db; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:all .2s; color:#fff; font-size:11px;
+}
+.ts-cl-check.checked { background:#7c3aed; border-color:#7c3aed; }
+.ts-cl-text { flex:1; font-size:13px; color:#374151; font-weight:500; }
+.ts-cl-del {
+    opacity:0; background:none; border:none; cursor:pointer;
+    color:#9ca3af; padding:4px; border-radius:4px; transition:all .2s;
+    font-size:13px;
+}
+.ts-cl-item:hover .ts-cl-del { opacity:1; }
+.ts-cl-del:hover { color:#ef4444; background:#fef2f2; }
+.ts-cl-add {
+    display:flex; align-items:center; gap:8px;
+    margin-top:12px; padding-top:12px; border-top:1px dashed #e5e7eb;
+}
+.ts-cl-input {
+    flex:1; border:1.5px solid #e5e7eb; border-radius:8px;
+    padding:8px 12px; font-size:13px; outline:none;
+    transition:border-color .2s;
+}
+.ts-cl-input:focus { border-color:#7c3aed; }
+.ts-cl-btn {
+    display:flex; align-items:center; gap:5px;
+    padding:8px 14px; border-radius:8px; background:#7c3aed;
+    color:#fff; font-size:13px; font-weight:600; border:none;
+    cursor:pointer; transition:background .2s; white-space:nowrap;
+}
+.ts-cl-btn:hover { background:#6d28d9; }
+
+/* Status change modal */
+.ts-modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.45);
+    z-index:9000; display:flex; align-items:center; justify-content:center;
+}
+.ts-modal-box {
+    background:#fff; border-radius:16px; width:420px; max-width:95vw;
+    box-shadow:0 20px 60px rgba(0,0,0,.3); overflow:hidden;
+}
+.ts-modal-head {
+    background:linear-gradient(135deg,#7c3aed,#5b21b6);
+    color:#fff; padding:18px 20px; display:flex; align-items:center; justify-content:space-between;
+}
+.ts-modal-head h5 { margin:0; font-size:15px; font-weight:700; }
+.ts-modal-body { padding:20px; }
+.ts-status-opt {
+    display:flex; align-items:center; gap:12px;
+    padding:12px; border:2px solid #e5e7eb; border-radius:10px;
+    cursor:pointer; margin-bottom:8px; transition:all .2s;
+}
+.ts-status-opt:last-child { margin-bottom:0; }
+.ts-status-opt:hover { border-color:#c4b5fd; background:#faf5ff; }
+.ts-status-opt.selected { border-color:#7c3aed; background:#f5f3ff; }
+.ts-status-opt input { display:none; }
+.ts-status-chip {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 10px; border-radius:20px; font-size:12px; font-weight:600;
+}
+.ts-status-chip.to_do    { background:#f3f4f6; color:#374151; }
+.ts-status-chip.in_progress { background:#ede9fe; color:#5b21b6; }
+.ts-status-chip.completed { background:#dcfce7; color:#15803d; }
+.ts-modal-foot {
+    padding:12px 20px; border-top:1px solid #f3f4f6;
+    display:flex; justify-content:flex-end; gap:8px;
+}
+.ts-modal-cancel {
+    padding:9px 18px; border-radius:8px; border:1.5px solid #e5e7eb;
+    background:#fff; font-size:13px; font-weight:600; color:#374151;
+    cursor:pointer;
+}
+.ts-modal-save {
+    padding:9px 18px; border-radius:8px; border:none;
+    background:#7c3aed; color:#fff; font-size:13px; font-weight:600;
+    cursor:pointer; transition:background .2s;
+}
+.ts-modal-save:hover { background:#6d28d9; }
+
+@media(max-width:768px) {
+    .ts-body { grid-template-columns:1fr; }
+    .ts-panel { position:static; }
+    .ts-progress-grid { grid-template-columns:repeat(3,1fr); }
+    .ts-header { flex-wrap:wrap; gap:10px; }
+    .ts-header-actions { flex-wrap:wrap; }
+}
+</style>
 @endpush
 
 
 @section('content')
-    <div class="main-content">
-        <!-- Enhanced Back Navigation -->
-        <div class="back-navigation">
-            <div class="nav-left">
-                <a href="{{ route('tasks.index') }}" class="quick-action-btn">
-                    <i class="bi bi-arrow-left"></i>
-                    Back to Tasks
-                </a>
-            </div>
+@php
+    $statusClass = str_replace('_', '_', $task->status);
+    $statusLabel = ucwords(str_replace('_', ' ', $task->status));
+    $priorityColor = ['high' => '#dc2626', 'medium' => '#f59e0b', 'low' => '#16a34a'][$task->priority] ?? '#7c3aed';
 
-            <div class="nav-actions">
-                @if ($task->project)
-                    <a href="{{ route('projects.show', $task->project->id) }}" class="quick-action-btn" title="View Project">
-                        <i class="bi bi-folder"></i>
-                        Project
-                    </a>
-                @endif
-                <a href="{{ route('tasks.edit', $task->id) }}" class="quick-action-btn primary" title="Edit Task">
-                    <i class="bi bi-pencil"></i>
-                    Edit
-                </a>
-            </div>
+    $checklistTotal = $task->checklistItems->count();
+    $checklistDone  = $task->checklistItems->where('completed', true)->count();
+    $checklistPct   = $checklistTotal > 0 ? round(($checklistDone / $checklistTotal) * 100) : 0;
+
+    $overdue = $task->due_date
+        && \Carbon\Carbon::parse($task->due_date)->isPast()
+        && $task->status !== 'completed';
+
+    $progressPct = $task->status === 'completed' ? 100
+        : ($task->status === 'in_progress' ? 50 : 0);
+@endphp
+
+<div class="ts-wrap">
+
+    {{-- ── Header ───────────────────────────────────────────────── --}}
+    <div class="ts-header">
+        @if($task->project)
+            <a href="{{ route('projects.tasks.index', $task->project) }}" class="ts-back-btn">
+                <i class="bi bi-arrow-left"></i> Tasks
+            </a>
+        @else
+            <a href="{{ route('tasks.index') }}" class="ts-back-btn">
+                <i class="bi bi-arrow-left"></i> Tasks
+            </a>
+        @endif
+
+        <div class="ts-header-meta">
+            <div class="ts-task-id">TASK-{{ str_pad($task->id, 4, '0', STR_PAD_LEFT) }}</div>
+            <h1 class="ts-header-title">{{ $task->title }}</h1>
         </div>
 
-        <div class="task-container">
-
-
-            <div class="task-grid">
-                <!-- Left Column - Placeholder for grid balance -->
-                <div>
-                    <!-- Enhanced Task Header -->
-                    <div class="task-header">
-                        <div class="task-header-top">
-                            <div class="task-title-section">
-                                <div class="task-id">TASK-{{ str_pad($task->id, 4, '0', STR_PAD_LEFT) }}</div>
-                                <h1 class="task-title">{{ $task->title }}</h1>
-                            </div>
-
-                            <div class="task-header-actions">
-                                <button class="header-action-btn" title="Copy Task Link" onclick="copyTaskLink()">
-                                    <i class="bi bi-link-45deg"></i>
-                                </button>
-
-                                <button class="header-action-btn" title="Print Task" onclick="window.print()">
-                                    <i class="bi bi-printer"></i>
-                                </button>
-
-                                <button class="header-action-btn danger" title="Delete Task" onclick="confirmDelete()">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="task-meta">
-                            <div class="status-badge status-{{ str_replace('_', '-', strtolower($task->status)) }}"
-                                title="Click to change status" onclick="showStatusModal()">
-                                <span class="status-dot"></span>
-                                {{ ucwords(str_replace('_', ' ', $task->status)) }}
-                            </div>
-
-                            <div class="priority-badge priority-{{ $task->priority }}"
-                                title="{{ ucfirst($task->priority) }} Priority Task">
-                                <span class="priority-dot"></span>
-                                {{ ucfirst($task->priority) }} Priority
-                            </div>
-
-                            @if ($task->due_date)
-                                <div class="due-date-info">
-                                    <i class="bi bi-calendar-event"></i>
-                                    Due: {{ \Carbon\Carbon::parse($task->due_date)->format('M j, Y') }}
-                                    @if (\Carbon\Carbon::parse($task->due_date)->isPast() && $task->status !== 'completed')
-                                        <span style="color: var(--error-600); font-weight: 600; margin-left: 8px;">
-                                            ({{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }})
-                                        </span>
-                                    @else
-                                        <span style="color: var(--gray-500); margin-left: 8px;">
-                                            ({{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }})
-                                        </span>
-                                    @endif
-                                </div>
-                            @endif
-
-                            @if ($task->estimated_hours)
-                                <div class="due-date-info">
-                                    <i class="bi bi-clock-history"></i>
-                                    Estimated: {{ $task->estimated_hours }} hours
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="section-header">
-                            <h3>
-                                <i class="bi bi-file-text"></i>
-                                Task Description
-                            </h3>
-                        </div>
-                        <div class="section-content">
-                            @if ($task->description)
-                                <div class="description-content">
-                                    {!! $task->description !!}
-                                </div>
-                            @else
-                                <div class="empty-description">
-                                    <i class="bi bi-file-text"
-                                        style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
-                                    <p>No description provided for this task.</p>
-                                </div>
-                            @endif
-                        </div>
-                    </div> <!-- Main Content Grid -->
-                    <!-- Checklist Section -->
-                    <div class="checklist-section">
-                        <div class="checklist-header">
-                            <h3>
-                                <i class="bi bi-list-check"></i>
-                                Task Checklist
-                            </h3>
-                            <div class="checklist-progress">
-                                <span id="checklist-progress-text">0 of 0 completed</span>
-                                <div class="checklist-progress-bar">
-                                    <div class="checklist-progress-fill" id="checklist-progress-fill" style="width: 0%">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="checklist-content">
-                            <div class="checklist-items" id="checklist-items">
-                                @forelse($task->checklistItems as $item)
-                                    <div class="checklist-item {{ $item->completed ? 'completed' : '' }}"
-                                        data-id="{{ $item->id }}">
-                                        <div class="checklist-checkbox {{ $item->completed ? 'checked' : '' }}"
-                                            onclick="toggleChecklistItem({{ $item->id }})">
-                                            @if ($item->completed)
-                                                <i class="bi bi-check"></i>
-                                            @endif
-                                        </div>
-                                        <div class="checklist-text">{{ $item->name }}</div>
-                                        <div class="checklist-actions">
-                                            <button class="checklist-action-btn delete"
-                                                onclick="deleteChecklistItem({{ $item->id }})" title="Delete item">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="empty-checklist" id="empty-checklist">
-                                        <i class="bi bi-list-check"></i>
-                                        <p>No checklist items yet. Add some tasks to track your progress!</p>
-                                    </div>
-                                @endforelse
-                            </div>
-
-                            <form class="add-checklist-form" onsubmit="addChecklistItem(event)">
-                                <input type="text" class="checklist-input" id="checklist-input"
-                                    placeholder="Add a new checklist item..." required>
-                                <button type="submit" class="add-checklist-btn">
-                                    <i class="bi bi-plus"></i>
-                                    Add Item
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sidebar -->
-                <div class="task-sidebar">
-                    <!-- Task Information -->
-                    <div class="info-card">
-                        <div class="info-card-header">
-                            <h4>
-                                <i class="bi bi-info-circle"></i>
-                                Task Information
-                            </h4>
-                        </div>
-                        <div class="info-card-content">
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="bi bi-person"></i>
-                                </div>
-                                <div class="info-content">
-                                    <h5>Assigned To</h5>
-                                    <p>{{ $task->user->name }}</p>
-                                </div>
-                            </div>
-
-                            @if ($task->project)
-                                <div class="info-item">
-                                    <div class="info-icon">
-                                        <i class="bi bi-folder"></i>
-                                    </div>
-                                    <div class="info-content">
-                                        <h5>Project</h5>
-                                        <p>{{ $task->project->name }}</p>
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if ($task->estimated_hours)
-                                <div class="info-item">
-                                    <div class="info-icon">
-                                        <i class="bi bi-clock"></i>
-                                    </div>
-                                    <div class="info-content">
-                                        <h5>Estimated Time</h5>
-                                        <p>{{ $task->estimated_hours }} hours</p>
-                                    </div>
-                                </div>
-                            @endif
-
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="bi bi-calendar-plus"></i>
-                                </div>
-                                <div class="info-content">
-                                    <h5>Created</h5>
-                                    <p>{{ $task->created_at->format('M j, Y \a\t g:i A') }}</p>
-                                </div>
-                            </div>
-
-                            @if ($task->updated_at->ne($task->created_at))
-                                <div class="info-item">
-                                    <div class="info-icon">
-                                        <i class="bi bi-pencil"></i>
-                                    </div>
-                                    <div class="info-content">
-                                        <h5>Last Updated</h5>
-                                        <p>{{ $task->updated_at->format('M j, Y \a\t g:i A') }}</p>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                    <!-- Progress Section -->
-                    @if ($task->status !== 'to_do')
-                        <div class="progress-section">
-                            <div class="info-card">
-                                <div class="info-card-header">
-                                    <h4>
-                                        <i class="bi bi-bar-chart"></i>
-                                        Task Progress
-                                    </h4>
-                                </div>
-                                <div class="info-card-content">
-                                    <div class="progress-info">
-                                        <span class="progress-label">Completion Status</span>
-                                        <span class="progress-percentage">
-                                            @if ($task->status === 'completed')
-                                                100%
-                                            @elseif($task->status === 'in_progress')
-                                                {{ $task->estimated_hours ? '50%' : '25%' }}
-                                            @else
-                                                0%
-                                            @endif
-                                        </span>
-                                    </div>
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar"
-                                            style="width:
-                                @if ($task->status === 'completed') 100%
-                                @elseif($task->status === 'in_progress')
-                                    {{ $task->estimated_hours ? '50%' : '25%' }}
-                                @else
-                                    0% @endif
-                            ">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                    <!-- Time Tracker -->
-                    {{-- <div class="info-card time-tracker-card">
-                        <div class="info-card-header">
-                            <h4>
-                                <i class="bi bi-stopwatch"></i>
-                                Time Tracker
-                            </h4>
-                        </div>
-                        <div class="info-card-content">
-                            <div class="time-display" id="time-display">00:00:00</div>
-                            <div class="time-controls">
-                                <button class="time-btn btn-start" id="start-btn">
-                                    <i class="bi bi-play-fill"></i>
-                                    Start
-                                </button>
-                                <button class="time-btn btn-pause" id="pause-btn" style="display: none;">
-                                    <i class="bi bi-pause-fill"></i>
-                                    Pause
-                                </button>
-                                <button class="time-btn btn-stop" id="stop-btn" style="display: none;">
-                                    <i class="bi bi-stop-fill"></i>
-                                    Stop
-                                </button>
-                            </div>
-                        </div>
-                    </div> --}}
-
-                    <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        <h4>
-                            <i class="bi bi-gear"></i>
-                            Actions
-                        </h4>
-                        <div class="btn-group">
-                            <a href="{{ route('tasks.edit', $task->id) }}" class="action-btn btn-edit">
-                                <i class="bi bi-pencil"></i>
-                                Edit Task
-                            </a>
-
-                            <button type="button" class="action-btn btn-delete" onclick="confirmDelete()">
-                                <i class="bi bi-trash"></i>
-                                Delete Task
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="ts-header-actions">
+            <a href="{{ route('tasks.edit', $task->id) }}" class="ts-header-btn edit">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <button class="ts-header-btn del" onclick="confirmDelete()">
+                <i class="bi bi-trash"></i> Delete
+            </button>
         </div>
     </div>
 
-    <!-- Delete Confirmation Form -->
-    <form id="deleteForm" action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display: none;">
-        @csrf
-        @method('DELETE')
-    </form>
+    {{-- ── Body ─────────────────────────────────────────────────── --}}
+    <div class="ts-body">
+
+        {{-- ── Left panel ──────────────────────────────────────── --}}
+        <div class="ts-panel">
+            <div class="ts-priority-bar {{ $task->priority }}"></div>
+            <div class="ts-panel-body">
+
+                <div class="ts-panel-title">{{ $task->title }}</div>
+
+                {{-- Status chip --}}
+                <div>
+                    <div class="ts-status {{ $task->status }}" onclick="openStatusModal()" title="Click to change status">
+                        <span class="ts-status-dot"></span>
+                        {{ $statusLabel }}
+                        <i class="bi bi-chevron-down" style="font-size:10px; margin-left:2px;"></i>
+                    </div>
+                </div>
+
+                {{-- Priority chip --}}
+                <div class="ts-priority {{ $task->priority }}">
+                    <i class="bi bi-flag-fill" style="font-size:10px;"></i>
+                    {{ ucfirst($task->priority) }} Priority
+                </div>
+
+                <div class="ts-divider"></div>
+
+                {{-- Meta rows --}}
+                <div class="ts-meta-row">
+                    <div class="ts-meta-icon"><i class="bi bi-person"></i></div>
+                    <div>
+                        <div class="ts-meta-label">Assigned To</div>
+                        <div class="ts-meta-val">{{ $task->user->name }}</div>
+                    </div>
+                </div>
+
+                @if($task->project)
+                <div class="ts-meta-row">
+                    <div class="ts-meta-icon"><i class="bi bi-folder"></i></div>
+                    <div>
+                        <div class="ts-meta-label">Project</div>
+                        <div class="ts-meta-val">
+                            <a href="{{ route('projects.show', $task->project) }}">{{ $task->project->name }}</a>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                @if($task->due_date)
+                <div class="ts-meta-row">
+                    <div class="ts-meta-icon">
+                        <i class="bi bi-calendar-event" style="{{ $overdue ? 'color:#dc2626;' : '' }}"></i>
+                    </div>
+                    <div>
+                        <div class="ts-meta-label">Due Date</div>
+                        <div class="ts-meta-val">{{ \Carbon\Carbon::parse($task->due_date)->format('M j, Y') }}</div>
+                        @if($overdue)
+                            <div class="ts-overdue"><i class="bi bi-exclamation-triangle-fill"></i> {{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }}</div>
+                        @else
+                            <div style="font-size:11px; color:#9ca3af; margin-top:1px;">{{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }}</div>
+                        @endif
+                    </div>
+                </div>
+                @endif
+
+                @if($task->estimated_hours)
+                <div class="ts-meta-row">
+                    <div class="ts-meta-icon"><i class="bi bi-clock"></i></div>
+                    <div>
+                        <div class="ts-meta-label">Estimated</div>
+                        <div class="ts-meta-val">{{ $task->estimated_hours }} hrs</div>
+                    </div>
+                </div>
+                @endif
+
+                <div class="ts-meta-row">
+                    <div class="ts-meta-icon"><i class="bi bi-calendar-plus"></i></div>
+                    <div>
+                        <div class="ts-meta-label">Created</div>
+                        <div class="ts-meta-val">{{ $task->created_at->format('M j, Y') }}</div>
+                    </div>
+                </div>
+
+                @if($task->updated_at->ne($task->created_at))
+                <div class="ts-meta-row">
+                    <div class="ts-meta-icon"><i class="bi bi-pencil"></i></div>
+                    <div>
+                        <div class="ts-meta-label">Updated</div>
+                        <div class="ts-meta-val">{{ $task->updated_at->format('M j, Y') }}</div>
+                    </div>
+                </div>
+                @endif
+
+                @if($checklistTotal > 0)
+                <div class="ts-divider" style="margin-top:16px;"></div>
+                <div style="margin-bottom:4px;">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px;">
+                        <span>Checklist</span>
+                        <span>{{ $checklistDone }}/{{ $checklistTotal }}</span>
+                    </div>
+                    <div class="ts-cl-prog-wrap">
+                        <div class="ts-cl-prog-fill" style="width:{{ $checklistPct }}%"></div>
+                    </div>
+                </div>
+                @endif
+
+            </div>
+
+            <div class="ts-panel-actions">
+                <a href="{{ route('tasks.edit', $task->id) }}" class="ts-panel-btn edit">
+                    <i class="bi bi-pencil"></i> Edit Task
+                </a>
+                <button class="ts-panel-btn danger" onclick="confirmDelete()">
+                    <i class="bi bi-trash"></i> Delete Task
+                </button>
+            </div>
+        </div>
+
+        {{-- ── Right content ────────────────────────────────────── --}}
+        <div class="ts-content">
+
+            {{-- Progress card --}}
+            <div class="ts-card">
+                <div class="ts-card-header">
+                    <div class="ts-card-title"><i class="bi bi-bar-chart-line"></i> Progress</div>
+                </div>
+                <div class="ts-card-body">
+                    <div class="ts-progress-grid">
+                        <div class="ts-stat-tile">
+                            <div class="ts-stat-val">{{ $progressPct }}%</div>
+                            <div class="ts-stat-lbl">Task Status</div>
+                        </div>
+                        <div class="ts-stat-tile">
+                            <div class="ts-stat-val">{{ $checklistDone }}/{{ $checklistTotal }}</div>
+                            <div class="ts-stat-lbl">Checklist</div>
+                        </div>
+                        <div class="ts-stat-tile">
+                            @if($task->due_date)
+                                @php
+                                    $dueCarbon   = \Carbon\Carbon::parse($task->due_date)->startOfDay();
+                                    $isPastDue   = $dueCarbon->isPast();
+                                    $daysCount   = (int) \Carbon\Carbon::now()->startOfDay()->diffInDays($dueCarbon);
+                                @endphp
+                                @if($overdue)
+                                    <div class="ts-stat-val" style="color:#dc2626;">{{ $daysCount }}d</div>
+                                    <div class="ts-stat-lbl" style="color:#dc2626;">Overdue</div>
+                                @elseif($task->status === 'completed')
+                                    <div class="ts-stat-val" style="color:#16a34a; font-size:28px;">✓</div>
+                                    <div class="ts-stat-lbl">Completed</div>
+                                @elseif($daysCount === 0)
+                                    <div class="ts-stat-val" style="color:#d97706;">Today</div>
+                                    <div class="ts-stat-lbl">Due</div>
+                                @else
+                                    <div class="ts-stat-val">{{ $daysCount }}d</div>
+                                    <div class="ts-stat-lbl">Days Left</div>
+                                @endif
+                            @else
+                                <div class="ts-stat-val">—</div>
+                                <div class="ts-stat-lbl">Due Date</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="ts-prog-bar-wrap">
+                        <div class="ts-prog-bar-fill" style="width:{{ $progressPct }}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Description card --}}
+            <div class="ts-card">
+                <div class="ts-card-header">
+                    <div class="ts-card-title"><i class="bi bi-file-text"></i> Description</div>
+                </div>
+                <div class="ts-card-body">
+                    @if($task->description)
+                        <div class="ts-description">{!! $task->description !!}</div>
+                    @else
+                        <div class="ts-empty">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <p>No description provided for this task.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Checklist card --}}
+            <div class="ts-card">
+                <div class="ts-card-header">
+                    <div class="ts-card-title">
+                        <i class="bi bi-list-check"></i> Checklist
+                        @if($checklistTotal > 0)
+                            <span style="font-size:12px; color:#9ca3af; font-weight:400; margin-left:4px;">({{ $checklistDone }} of {{ $checklistTotal }} done)</span>
+                        @endif
+                    </div>
+                    @if($checklistTotal > 0)
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div class="ts-cl-prog-wrap" style="width:100px; margin-top:0; display:inline-block; vertical-align:middle;">
+                            <div class="ts-cl-prog-fill" id="cl-bar" style="width:{{ $checklistPct }}%"></div>
+                        </div>
+                        <span id="cl-pct" style="font-size:12px; font-weight:700; color:#7c3aed; min-width:32px;">{{ $checklistPct }}%</span>
+                    </div>
+                    @endif
+                </div>
+                <div class="ts-card-body">
+
+                    <div id="cl-items">
+                        @forelse($task->checklistItems as $item)
+                            <div class="ts-cl-item {{ $item->completed ? 'completed' : '' }}" data-id="{{ $item->id }}">
+                                <div class="ts-cl-check {{ $item->completed ? 'checked' : '' }}"
+                                     onclick="toggleChecklistItem({{ $item->id }})">
+                                    @if($item->completed)
+                                        <i class="bi bi-check" style="font-size:12px;"></i>
+                                    @endif
+                                </div>
+                                <div class="ts-cl-text">{{ $item->name }}</div>
+                                <button class="ts-cl-del" onclick="deleteChecklistItem({{ $item->id }})" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        @empty
+                            <div id="cl-empty" class="ts-empty" style="padding:20px 0;">
+                                <i class="bi bi-list-check"></i>
+                                <p>No checklist items yet. Add some below!</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    {{-- Add form --}}
+                    <form class="ts-cl-add" onsubmit="addChecklistItem(event)">
+                        <input type="text" class="ts-cl-input" id="cl-input"
+                               placeholder="Add checklist item…" required>
+                        <button type="submit" class="ts-cl-btn">
+                            <i class="bi bi-plus"></i> Add
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>{{-- end .ts-content --}}
+    </div>{{-- end .ts-body --}}
+</div>{{-- end .ts-wrap --}}
+
+{{-- Delete form --}}
+<form id="deleteForm" action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:none;">
+    @csrf @method('DELETE')
+</form>
+
+{{-- Status Modal --}}
+<div id="statusModal" class="ts-modal-overlay" style="display:none;" onclick="if(event.target===this)closeStatusModal()">
+    <div class="ts-modal-box">
+        <div class="ts-modal-head">
+            <h5><i class="bi bi-arrow-repeat" style="margin-right:8px;"></i>Change Status</h5>
+            <button onclick="closeStatusModal()" style="background:rgba(255,255,255,.2); border:none; color:#fff; border-radius:6px; width:28px; height:28px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;"><i class="bi bi-x"></i></button>
+        </div>
+        <div class="ts-modal-body">
+            @foreach(['to_do' => 'To Do', 'in_progress' => 'In Progress', 'completed' => 'Completed'] as $val => $lbl)
+            <div class="ts-status-opt {{ $task->status === $val ? 'selected' : '' }}" onclick="selectStatus('{{ $val }}', this)" data-status="{{ $val }}">
+                <input type="radio" name="status" value="{{ $val }}" {{ $task->status === $val ? 'checked' : '' }}>
+                <span class="ts-status-chip {{ $val }}">
+                    <span style="width:7px;height:7px;border-radius:50%;background:{{ $val==='to_do'?'#9ca3af':($val==='in_progress'?'#7c3aed':'#16a34a') }};display:inline-block;"></span>
+                    {{ $lbl }}
+                </span>
+                <span style="font-size:12px; color:#6b7280;">
+                    {{ $val==='to_do'?'Task is ready to start':($val==='in_progress'?'Currently being worked on':'Task is finished') }}
+                </span>
+            </div>
+            @endforeach
+        </div>
+        <div class="ts-modal-foot">
+            <button class="ts-modal-cancel" onclick="closeStatusModal()">Cancel</button>
+            <button class="ts-modal-save" onclick="saveStatus()">Update Status</button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
-    <script>
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     let startTime = 0;
-        //     let elapsedTime = 0;
-        //     let timerInterval = null;
-        //     let isRunning = false;
+<script>
+const TASK_ID = '{{ $task->id }}';
+const CSRF    = '{{ csrf_token() }}';
+let selectedStatus = '{{ $task->status }}';
 
-        //     const timeDisplay = document.getElementById('time-display');
-        //     const startBtn = document.getElementById('start-btn');
-        //     const pauseBtn = document.getElementById('pause-btn');
-        //     const stopBtn = document.getElementById('stop-btn');
+/* ── Status modal ─────────────────────────────────────────── */
+function openStatusModal() {
+    document.getElementById('statusModal').style.display = 'flex';
+}
+function closeStatusModal() {
+    document.getElementById('statusModal').style.display = 'none';
+}
+function selectStatus(val, el) {
+    selectedStatus = val;
+    document.querySelectorAll('.ts-status-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+}
+function saveStatus() {
+    const current = '{{ $task->status }}';
+    if (selectedStatus === current) { closeStatusModal(); return; }
 
-        //     function formatTime(milliseconds) {
-        //         const totalSeconds = Math.floor(milliseconds / 1000);
-        //         const hours = Math.floor(totalSeconds / 3600);
-        //         const minutes = Math.floor((totalSeconds % 3600) / 60);
-        //         const seconds = totalSeconds % 60;
+    fetch(`/tasks/${TASK_ID}/update-status`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({ status: selectedStatus })
+    })
+    .then(r => r.json())
+    .then(() => { location.reload(); })
+    .catch(() => showToast('Failed to update status', false));
+}
 
-        //         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        //     }
+/* ── Delete ───────────────────────────────────────────────── */
+function confirmDelete() {
+    if (confirm('Delete this task? This action cannot be undone.')) {
+        document.getElementById('deleteForm').submit();
+    }
+}
 
-        //     function updateDisplay() {
-        //         if (isRunning) {
-        //             const currentTime = Date.now();
-        //             const totalElapsed = elapsedTime + (currentTime - startTime);
-        //             timeDisplay.textContent = formatTime(totalElapsed);
-        //         }
-        //     }
+/* ── Toast ────────────────────────────────────────────────── */
+function showToast(msg, ok = true) {
+    const d = document.createElement('div');
+    d.style.cssText = `position:fixed;top:20px;right:20px;z-index:9999;padding:12px 18px;
+        border-radius:10px;font-size:13px;font-weight:600;color:#fff;
+        background:${ok?'#16a34a':'#dc2626'};box-shadow:0 4px 14px rgba(0,0,0,.25);`;
+    d.textContent = msg;
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 3500);
+}
 
-        //     function startTimer() {
-        //         if (!isRunning) {
-        //             startTime = Date.now();
-        //             isRunning = true;
-        //             timerInterval = setInterval(updateDisplay, 100);
+/* ── Checklist helpers ────────────────────────────────────── */
+function updateChecklistUI() {
+    const items  = document.querySelectorAll('#cl-items .ts-cl-item');
+    const done   = document.querySelectorAll('#cl-items .ts-cl-item.completed');
+    const total  = items.length;
+    const pct    = total > 0 ? Math.round(done.length / total * 100) : 0;
 
-        //             startBtn.style.display = 'none';
-        //             pauseBtn.style.display = 'flex';
-        //             stopBtn.style.display = 'flex';
-        //         }
-        //     }
+    const bar = document.getElementById('cl-bar');
+    const txt = document.getElementById('cl-pct');
+    if (bar) bar.style.width = pct + '%';
+    if (txt) txt.textContent = pct + '%';
 
-        //     function pauseTimer() {
-        //         if (isRunning) {
-        //             elapsedTime += Date.now() - startTime;
-        //             isRunning = false;
-        //             clearInterval(timerInterval);
+    const empty = document.getElementById('cl-empty');
+    if (empty) empty.style.display = total === 0 ? 'block' : 'none';
+}
 
-        //             pauseBtn.style.display = 'none';
-        //             startBtn.style.display = 'flex';
-        //             stopBtn.style.display = 'flex';
-
-        //             // Change start button text to "Resume"
-        //             startBtn.innerHTML = '<i class="bi bi-play-fill"></i>Resume';
-        //         }
-        //     }
-
-        //     function stopTimer() {
-        //         elapsedTime = 0;
-        //         isRunning = false;
-        //         clearInterval(timerInterval);
-        //         timeDisplay.textContent = '00:00:00';
-
-        //         startBtn.style.display = 'flex';
-        //         pauseBtn.style.display = 'none';
-        //         stopBtn.style.display = 'none';
-
-        //         // Reset start button text
-        //         startBtn.innerHTML = '<i class="bi bi-play-fill"></i>Start';
-        //     }
-
-        //     if (startBtn) startBtn.addEventListener('click', startTimer);
-        //     if (pauseBtn) pauseBtn.addEventListener('click', pauseTimer);
-        //     if (stopBtn) stopBtn.addEventListener('click', stopTimer);
-        // });
-
-        function confirmDelete() {
-            if (confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
-                if (confirm(
-                        'This is your final warning. Are you absolutely sure you want to permanently delete this task?')) {
-                    document.getElementById('deleteForm').submit();
-                }
-            }
+function toggleChecklistItem(id) {
+    const row  = document.querySelector(`[data-id="${id}"]`);
+    const box  = row.querySelector('.ts-cl-check');
+    fetch(`/checklist-items/${id}/update-status`, {
+        headers: { 'X-Requested-With':'XMLHttpRequest', 'X-CSRF-TOKEN': CSRF }
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            row.classList.toggle('completed');
+            box.classList.toggle('checked');
+            box.innerHTML = row.classList.contains('completed')
+                ? '<i class="bi bi-check" style="font-size:12px;"></i>' : '';
+            updateChecklistUI();
         }
+    })
+    .catch(() => showToast('Failed to update item', false));
+}
 
-        function copyTaskLink() {
-            const url = window.location.href;
+function addChecklistItem(e) {
+    e.preventDefault();
+    const input = document.getElementById('cl-input');
+    const name  = input.value.trim();
+    if (!name) return;
 
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(url).then(() => {
-                    showNotification('Task link copied to clipboard!', 'success');
-                }).catch(() => {
-                    fallbackCopyTextToClipboard(url);
-                });
-            } else {
-                fallbackCopyTextToClipboard(url);
-            }
+    fetch('/checklist-items', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({ task_id: TASK_ID, name })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            const container = document.getElementById('cl-items');
+            const div = document.createElement('div');
+            div.className = 'ts-cl-item';
+            div.setAttribute('data-id', d.data.id);
+            div.innerHTML = `
+                <div class="ts-cl-check" onclick="toggleChecklistItem(${d.data.id})"></div>
+                <div class="ts-cl-text">${d.data.name}</div>
+                <button class="ts-cl-del" onclick="deleteChecklistItem(${d.data.id})" title="Delete">
+                    <i class="bi bi-trash"></i>
+                </button>`;
+            container.appendChild(div);
+            input.value = '';
+            updateChecklistUI();
+            showToast('Item added');
         }
+    })
+    .catch(() => showToast('Failed to add item', false));
+}
 
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
-
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-
-            try {
-                document.execCommand('copy');
-                showNotification('Task link copied to clipboard!', 'success');
-            } catch (err) {
-                showNotification('Failed to copy link', 'error');
-            }
-
-            document.body.removeChild(textArea);
+function deleteChecklistItem(id) {
+    if (!confirm('Delete this checklist item?')) return;
+    fetch(`/checklist-items/${id}`, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': CSRF }
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            document.querySelector(`[data-id="${id}"]`).remove();
+            updateChecklistUI();
+            showToast('Item removed');
         }
+    })
+    .catch(() => showToast('Failed to delete item', false));
+}
 
-        function showStatusModal() {
-            const currentStatus = '{{ $task->status }}';
-            const taskId = '{{ $task->id }}';
-
-            const modal = document.createElement('div');
-            modal.className = 'modal fade';
-            modal.innerHTML = `
-        <div class="modal-dialog">
-            <div class="modal-content" style="border: none; border-radius: 16px;">
-                <div class="modal-header" style="background: var(--primary-600); color: white; border: none; border-radius: 16px 16px 0 0;">
-                    <h5 class="modal-title">
-                        <i class="bi bi-arrow-repeat me-2"></i>Change Task Status
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" style="padding: 24px;">
-                    <p style="margin-bottom: 20px; color: var(--gray-600);">Select the new status for this task:</p>
-                    <div class="status-options" style="display: flex; flex-direction: column; gap: 12px;">
-                        <label class="status-option" style="display: flex; align-items: center; padding: 12px; border: 2px solid var(--gray-200); border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" data-status="to_do">
-                            <input type="radio" name="new_status" value="to_do" ${currentStatus === 'to_do' ? 'checked' : ''} style="margin-right: 12px;">
-                            <div class="status-badge status-to-do" style="margin-right: 12px;">
-                                <span class="status-dot"></span>
-                                To Do
-                            </div>
-                            <span style="color: var(--gray-600);">Task is ready to be started</span>
-                        </label>
-                        <label class="status-option" style="display: flex; align-items: center; padding: 12px; border: 2px solid var(--gray-200); border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" data-status="in_progress">
-                            <input type="radio" name="new_status" value="in_progress" ${currentStatus === 'in_progress' ? 'checked' : ''} style="margin-right: 12px;">
-                            <div class="status-badge status-in-progress" style="margin-right: 12px;">
-                                <span class="status-dot"></span>
-                                In Progress
-                            </div>
-                            <span style="color: var(--gray-600);">Task is currently being worked on</span>
-                        </label>
-                        <label class="status-option" style="display: flex; align-items: center; padding: 12px; border: 2px solid var(--gray-200); border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" data-status="completed">
-                            <input type="radio" name="new_status" value="completed" ${currentStatus === 'completed' ? 'checked' : ''} style="margin-right: 12px;">
-                            <div class="status-badge status-completed" style="margin-right: 12px;">
-                                <span class="status-dot"></span>
-                                Completed
-                            </div>
-                            <span style="color: var(--gray-600);">Task has been finished</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer" style="border: none; padding: 16px 24px;">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="updateTaskStatus()">
-                        <i class="bi bi-check-lg me-2"></i>Update Status
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-
-            document.body.appendChild(modal);
-            const bootstrapModal = new bootstrap.Modal(modal);
-
-            // Add hover effects to status options
-            modal.querySelectorAll('.status-option').forEach(option => {
-                option.addEventListener('mouseenter', function() {
-                    this.style.borderColor = 'var(--primary-300)';
-                    this.style.background = 'var(--primary-25)';
-                });
-
-                option.addEventListener('mouseleave', function() {
-                    if (!this.querySelector('input').checked) {
-                        this.style.borderColor = 'var(--gray-200)';
-                        this.style.background = 'white';
-                    }
-                });
-
-                option.addEventListener('click', function() {
-                    modal.querySelectorAll('.status-option').forEach(opt => {
-                        opt.style.borderColor = 'var(--gray-200)';
-                        opt.style.background = 'white';
-                    });
-                    this.style.borderColor = 'var(--primary-500)';
-                    this.style.background = 'var(--primary-50)';
-                    this.querySelector('input').checked = true;
-                });
-            });
-
-            // Set initial selected state
-            const selectedOption = modal.querySelector(`input[value="${currentStatus}"]`)?.closest('.status-option');
-            if (selectedOption) {
-                selectedOption.style.borderColor = 'var(--primary-500)';
-                selectedOption.style.background = 'var(--primary-50)';
-            }
-
-            bootstrapModal.show();
-
-            // Cleanup when modal is hidden
-            modal.addEventListener('hidden.bs.modal', function() {
-                document.body.removeChild(modal);
-            });
-
-            // Add update function to global scope
-            window.updateTaskStatus = function() {
-                const selectedStatus = modal.querySelector('input[name="new_status"]:checked')?.value;
-                if (selectedStatus && selectedStatus !== currentStatus) {
-                    // Update status via AJAX
-                    fetch(`/tasks/${taskId}/update-status`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute(
-                                    'content') || '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                status: selectedStatus
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            showNotification('Task status updated successfully!', 'success');
-                            // Reload page to show updated status
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            showNotification('Failed to update task status', 'error');
-                        });
-                }
-                bootstrapModal.hide();
-            };
-        }
-
-        function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
-            notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        min-width: 350px;
-        box-shadow: var(--shadow-lg);
-        border: none;
-        border-radius: 12px;
-        padding: 16px 20px;
-    `;
-            notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}" style="font-size: 20px;"></i>
-            <div>
-                <div style="font-weight: 600; margin-bottom: 2px;">
-                    ${type === 'success' ? 'Success!' : 'Error!'}
-                </div>
-                <div style="font-size: 14px; opacity: 0.9;">
-                    ${message}
-                </div>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" style="margin-left: auto;"></button>
-        </div>
-    `;
-
-            document.body.appendChild(notification);
-
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 5000);
-        }
-
-        // Add CSRF token to meta tag if it doesn't exist
-        if (!document.querySelector('meta[name="csrf-token"]')) {
-            const meta = document.createElement('meta');
-            meta.name = 'csrf-token';
-            meta.content = '{{ csrf_token() }}';
-            document.head.appendChild(meta);
-        }
-
-        // Checklist Functions
-        function updateChecklistProgress() {
-            const items = document.querySelectorAll('.checklist-item');
-            const completedItems = document.querySelectorAll('.checklist-item.completed');
-            const total = items.length;
-            const completed = completedItems.length;
-
-            // Update progress text
-            const progressText = document.getElementById('checklist-progress-text');
-            if (progressText) {
-                progressText.textContent = `${completed} of ${total} completed`;
-            }
-
-            // Update progress bar
-            const progressFill = document.getElementById('checklist-progress-fill');
-            if (progressFill) {
-                const percentage = total > 0 ? (completed / total) * 100 : 0;
-                progressFill.style.width = `${percentage}%`;
-            }
-
-            // Show/hide empty state
-            const emptyState = document.getElementById('empty-checklist');
-            if (emptyState) {
-                emptyState.style.display = total === 0 ? 'block' : 'none';
-            }
-        }
-
-        function toggleChecklistItem(itemId) {
-            const item = document.querySelector(`[data-id="${itemId}"]`);
-            const checkbox = item.querySelector('.checklist-checkbox');
-            const isCompleted = item.classList.contains('completed');
-
-            fetch(`/checklist-items/${itemId}/update-status`, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-                            '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Toggle visual state
-                        item.classList.toggle('completed');
-                        checkbox.classList.toggle('checked');
-
-                        if (!isCompleted) {
-                            checkbox.innerHTML = '<i class="bi bi-check"></i>';
-                        } else {
-                            checkbox.innerHTML = '';
-                        }
-
-                        updateChecklistProgress();
-                        showNotification('Checklist item updated!', 'success');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Failed to update checklist item', 'error');
-                });
-        }
-
-        function addChecklistItem(event) {
-            event.preventDefault();
-
-            const input = document.getElementById('checklist-input');
-            const name = input.value.trim();
-
-            if (!name) return;
-
-            const taskId = '{{ $task->id }}';
-
-            fetch('/checklist-items', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-                            '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        task_id: taskId,
-                        name: name
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Add new item to the list
-                        const checklistItems = document.getElementById('checklist-items');
-                        const emptyState = document.getElementById('empty-checklist');
-
-                        if (emptyState) {
-                            emptyState.style.display = 'none';
-                        }
-
-                        const newItem = document.createElement('div');
-                        newItem.className = 'checklist-item';
-                        newItem.setAttribute('data-id', data.data.id);
-                        newItem.innerHTML = `
-                <div class="checklist-checkbox" onclick="toggleChecklistItem(${data.data.id})"></div>
-                <div class="checklist-text">${data.data.name}</div>
-                <div class="checklist-actions">
-                    <button class="checklist-action-btn delete" onclick="deleteChecklistItem(${data.data.id})" title="Delete item">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            `;
-
-                        checklistItems.appendChild(newItem);
-                        input.value = '';
-                        updateChecklistProgress();
-                        showNotification('Checklist item added!', 'success');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Failed to add checklist item', 'error');
-                });
-        }
-
-        function deleteChecklistItem(itemId) {
-            if (!confirm('Are you sure you want to delete this checklist item?')) return;
-
-            fetch(`/checklist-items/${itemId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-                            '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const item = document.querySelector(`[data-id="${itemId}"]`);
-                        item.remove();
-                        updateChecklistProgress();
-                        showNotification('Checklist item deleted!', 'success');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Failed to delete checklist item', 'error');
-                });
-        }
-
-        // Initialize checklist progress on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateChecklistProgress();
-        });
-    </script>
+document.addEventListener('DOMContentLoaded', updateChecklistUI);
+</script>
 @endpush

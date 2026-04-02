@@ -652,45 +652,21 @@
         </header>
 
         <!-- Flash Messages -->
-        @if(session('success'))
-            <div class="container-fluid px-4 mt-3">
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        @foreach(['success' => ['bi-check-circle','#166534','#f0fdf4','#86efac'], 'error' => ['bi-exclamation-circle','#991b1b','#fef2f2','#fca5a5'], 'warning' => ['bi-exclamation-triangle','#92400e','#fffbeb','#fcd34d'], 'info' => ['bi-info-circle','#1e40af','#eff6ff','#93c5fd']] as $type => [$icon,$textColor,$bgColor,$borderColor])
+            @if(session($type))
+            <div class="px-4 pt-3" style="max-width:100%;">
+                <div role="alert" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1px solid {{ $borderColor }};background:{{ $bgColor }};color:{{ $textColor }};font-size:13px;font-weight:500;line-height:1.4;">
+                    <i class="bi {{ $icon }}" style="font-size:15px;flex-shrink:0;"></i>
+                    <span style="flex:1;">{{ session($type) }}</span>
+                    <button type="button" data-bs-dismiss="alert" aria-label="Close"
+                            style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;border:none;background:none;cursor:pointer;color:{{ $textColor }};opacity:.6;padding:0;flex-shrink:0;font-size:14px;line-height:1;"
+                            onclick="this.closest('[role=alert]').parentElement.remove()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
             </div>
-        @endif
-
-        @if(session('error'))
-            <div class="container-fluid px-4 mt-3">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-circle me-2"></i>
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
-
-        @if(session('warning'))
-            <div class="container-fluid px-4 mt-3">
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    {{ session('warning') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
-
-        @if(session('info'))
-            <div class="container-fluid px-4 mt-3">
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <i class="bi bi-info-circle me-2"></i>
-                    {{ session('info') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
+            @endif
+        @endforeach
 
         <main>
             @yield('content')

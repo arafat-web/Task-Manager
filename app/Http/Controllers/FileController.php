@@ -38,6 +38,11 @@ class FileController extends Controller
         return redirect()->route('files.index')->with('success', 'File uploaded successfully.');
     }
 
+    public function show(File $file)
+    {
+        return view('files.show', compact('file'));
+    }
+
     public function edit(File $file)
     {
         return view('files.edit', compact('file'));

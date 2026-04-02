@@ -4,394 +4,459 @@
 
 @push('styles')
 <style>
-    .form-container {
-        max-width: 700px;
-        margin: 0 auto;
+    /* ─── Page Shell ─────────────────────────────────────────── */
+    .main-content {
+        padding: 14px 16px;
+        background: #f7f8fa;
+        min-height: 100vh;
     }
 
-    .form-card {
-        background: white;
-        border: 2px solid var(--gray-200);
-        border-radius: 16px;
-        box-shadow: var(--shadow-lg);
-        overflow: hidden;
-    }
-
-    .form-header {
+    /* ─── Gradient Page Header ───────────────────────────────── */
+    .content-header {
         background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-        padding: 32px;
-        text-align: center;
+        border-radius: 10px;
+        padding: 12px 18px;
         color: white;
+        margin-bottom: 14px;
         position: relative;
+        overflow: hidden;
+        border: 1px solid var(--primary-500);
+        box-shadow: 0 2px 8px rgba(99,102,241,.3);
     }
 
-    .form-header::before {
+    .content-header::before {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        background: rgba(255, 255, 255, 0.1);
+        top: 0; right: 0;
+        width: 90px; height: 90px;
+        background: rgba(255,255,255,.08);
         border-radius: 50%;
-        transform: translate(20px, -20px);
+        transform: translate(22px,-22px);
     }
 
-    .project-avatar-edit {
-        width: 65px;
-        height: 65px;
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.2);
+    .content-title {
         color: white;
+        font-weight: 700;
+        font-size: 17px;
+        margin-bottom: 2px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .content-subtitle {
+        color: rgba(255,255,255,.8);
+        font-size: 12px;
+        margin: 0;
+        font-weight: 400;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ─── Two-Panel Grid ─────────────────────────────────────── */
+    .cu-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 14px;
+        align-items: start;
+    }
+
+    /* ─── Left Info Panel ────────────────────────────────────── */
+    .cu-info-panel {
+        background: white;
+        border: 1px solid #e3e4e8;
+        border-radius: 8px;
+        overflow: hidden;
+        position: sticky;
+        top: 14px;
+    }
+
+    .cu-info-panel-header {
+        background: #f7f8fa;
+        border-bottom: 1px solid #e3e4e8;
+        padding: 10px 14px;
+    }
+
+    .cu-info-panel-header span {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        color: #8a8f98;
+    }
+
+    .cu-info-body {
+        padding: 14px;
+    }
+
+    .cu-project-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-weight: 800;
+        font-size: 22px;
+        color: white;
+        margin: 0 auto 10px;
+    }
+
+    .cu-project-name {
+        text-align: center;
+        font-size: 13px;
         font-weight: 700;
-        font-size: 26px;
-        margin: 0 auto 20px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        box-shadow: var(--shadow-md);
-        position: relative;
-        z-index: 1;
+        color: #1a1d23;
+        margin-bottom: 4px;
+        word-break: break-word;
     }
 
-    .form-header h2 {
-        margin: 0;
-        font-size: 28px;
-        font-weight: 700;
-        position: relative;
-        z-index: 1;
-    }
-
-    .form-header p {
-        margin: 8px 0 0;
-        opacity: 0.9;
-        font-size: 16px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .form-body {
-        padding: 32px;
-    }
-
-    .form-group {
-        margin-bottom: 26px;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 10px;
+    .cu-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 20px;
+        font-size: 11px;
         font-weight: 600;
-        color: var(--gray-700);
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        margin: 0 auto 12px;
     }
 
-    .form-control, .form-select {
-        width: 100%;
-        padding: 14px 18px;
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
+    .cu-status-badge.not-started  { background:#f1f2f4; color:#6b7385; }
+    .cu-status-badge.in-progress  { background:#e8f0fe; color:#3b66d4; }
+    .cu-status-badge.completed    { background:#e6f9f0; color:#1a8a56; }
+
+    .cu-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 0;
+        border-top: 1px solid #f0f1f3;
+        font-size: 12px;
+        color: #6b7385;
+    }
+
+    .cu-meta-row i { font-size: 13px; color: #adb0b8; flex-shrink: 0; }
+    .cu-meta-row strong { color: #1a1d23; font-weight: 600; }
+
+    /* ─── Right — Form Sections ──────────────────────────────── */
+    .cu-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cu-section {
         background: white;
-        font-size: 14px;
-        color: var(--gray-700);
-        transition: all 0.2s ease;
+        border: 1px solid #e3e4e8;
+        border-radius: 8px;
+        overflow: hidden;
     }
 
-    .form-control:focus, .form-select:focus {
+    .cu-section-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: #fafbfc;
+        border-bottom: 1px solid #e3e4e8;
+    }
+
+    .cu-section-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .cu-section-icon.purple { background: #ede9fe; color: #7c3aed; }
+    .cu-section-icon.blue   { background: #dbeafe; color: #2563eb; }
+    .cu-section-icon.green  { background: #dcfce7; color: #16a34a; }
+    .cu-section-icon.red    { background: #fee2e2; color: #dc2626; }
+
+    .cu-section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1a1d23;
+        margin: 0;
+    }
+
+    .cu-section-subtitle {
+        font-size: 11px;
+        color: #8a8f98;
+        margin: 0 0 0 auto;
+    }
+
+    .cu-section-body {
+        padding: 16px;
+    }
+
+    /* ─── Field Rows ─────────────────────────────────────────── */
+    .cu-field {
+        margin-bottom: 14px;
+    }
+
+    .cu-field:last-child { margin-bottom: 0; }
+
+    .cu-field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .cu-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        color: #8a8f98;
+        margin-bottom: 5px;
+    }
+
+    .cu-input {
+        width: 100%;
+        height: 34px;
+        padding: 0 10px 0 34px;
+        border: 1px solid #d3d5db;
+        border-radius: 6px;
+        background: white;
+        font-size: 13px;
+        color: #1a1d23;
         outline: none;
-        border-color: var(--primary-500);
-        box-shadow: 0 0 0 4px var(--primary-100);
+        transition: border-color .15s, box-shadow .15s;
+        box-sizing: border-box;
     }
 
-    .form-control.is-invalid {
-        border-color: var(--error-500);
-        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    .cu-input.no-icon { padding-left: 10px; }
+
+    .cu-input:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 2px rgba(124,58,237,.15);
+    }
+
+    .cu-input.is-invalid { border-color: #dc2626; }
+
+    .cu-input-wrap {
+        position: relative;
+    }
+
+    .cu-input-wrap > i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 13px;
+        color: #adb0b8;
+        pointer-events: none;
     }
 
     .invalid-feedback {
         display: block;
-        margin-top: 8px;
-        font-size: 13px;
-        color: var(--error-600);
+        margin-top: 4px;
+        font-size: 11px;
+        color: #dc2626;
         font-weight: 500;
     }
 
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
+    /* ─── Quill Editor ───────────────────────────────────────── */
+    .cu-editor-wrap {
+        border: 1px solid #d3d5db;
+        border-radius: 6px;
+        overflow: hidden;
+        transition: border-color .15s, box-shadow .15s;
     }
 
-    .status-options {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 14px;
-        margin-top: 10px;
+    .cu-editor-wrap:focus-within {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 2px rgba(124,58,237,.15);
     }
 
-    .status-option {
-        position: relative;
+    .cu-editor-wrap .ql-toolbar {
+        border: none;
+        border-bottom: 1px solid #e3e4e8;
+        background: #fafbfc;
+        padding: 6px 10px;
     }
 
-    .status-option input {
-        position: absolute;
-        opacity: 0;
-    }
+    .cu-editor-wrap .ql-toolbar .ql-formats { margin-right: 8px; }
 
-    .status-option label {
-        display: flex;
-        align-items: center;
-        padding: 14px 18px;
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background: white;
-        font-weight: 600;
+    .cu-editor-wrap .ql-container {
+        border: none;
+        font-family: inherit;
         font-size: 13px;
     }
 
-    .status-option input:checked + label {
-        border-color: var(--primary-500);
-        background: var(--primary-50);
-        color: var(--primary-700);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .status-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 10px;
-        flex-shrink: 0;
-    }
-
-    .status-not-started .status-dot { background: var(--gray-500); }
-    .status-in-progress .status-dot { background: var(--primary-500); }
-    .status-completed .status-dot { background: var(--success-500); }
-
-    .form-actions {
-        display: flex;
-        gap: 14px;
-        justify-content: flex-end;
-        padding-top: 28px;
-        border-top: 2px solid var(--gray-100);
-        margin-top: 28px;
-    }
-
-    .btn-secondary {
-        padding: 14px 26px;
-        border: 2px solid var(--gray-200);
-        background: white;
-        color: var(--gray-700);
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        font-size: 14px;
-    }
-
-    .btn-secondary:hover {
-        border-color: var(--gray-300);
-        background: var(--gray-50);
-        color: var(--gray-800);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .btn-primary {
-        padding: 14px 34px;
-        background: var(--primary-600);
-        border: 2px solid var(--primary-600);
-        color: white;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-700);
-        border-color: var(--primary-700);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .btn-danger {
-        padding: 14px 26px;
-        background: var(--error-500);
-        border: 2px solid var(--error-500);
-        color: white;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .btn-danger:hover {
-        background: var(--error-600);
-        border-color: var(--error-600);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .input-icon {
-        position: relative;
-    }
-
-    .input-icon .form-control {
-        padding-left: 50px;
-    }
-
-    .input-icon i {
-        position: absolute;
-        left: 18px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--gray-400);
-        z-index: 2;
-    }
-
-    /* Quill Editor Styling */
-    .editor-container {
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
-        overflow: hidden;
-        transition: all 0.2s ease;
-    }
-
-    .editor-container:focus-within {
-        border-color: var(--primary-500);
-        box-shadow: 0 0 0 4px var(--primary-100);
-    }
-
-    .ql-toolbar {
-        border: none;
-        border-bottom: 1px solid var(--gray-200);
-        background: var(--gray-50);
-        padding: 12px;
-    }
-
-    .ql-container {
-        border: none;
-        font-family: inherit;
-        font-size: 14px;
-    }
-
-    .ql-editor {
-        min-height: 200px;
-        padding: 18px;
-        color: var(--gray-700);
+    .cu-editor-wrap .ql-editor {
+        min-height: 130px;
+        padding: 10px 12px;
+        color: #1a1d23;
         line-height: 1.6;
     }
 
-    .ql-editor.ql-blank::before {
-        color: var(--gray-400);
+    .cu-editor-wrap .ql-editor.ql-blank::before {
+        color: #b0b4be;
         font-style: normal;
-        left: 18px;
-        right: 18px;
+        left: 12px;
     }
 
-    .ql-snow .ql-tooltip {
+    /* ─── Status Chips ───────────────────────────────────────── */
+    .cu-status-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .cu-chip-option { position: relative; }
+
+    .cu-chip-option input {
+        position: absolute;
+        opacity: 0;
+        width: 0; height: 0;
+    }
+
+    .cu-chip-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border: 1px solid #d3d5db;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7385;
         background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: 8px;
-        box-shadow: var(--shadow-lg);
+        transition: all .15s;
+        user-select: none;
     }
 
-    .ql-snow .ql-picker-options {
+    .cu-chip-label:hover { border-color: #7c3aed; color: #7c3aed; background: #faf5ff; }
+
+    .cu-chip-option input:checked + .cu-chip-label {
+        border-color: currentColor;
+        background: #faf5ff;
+    }
+
+    .cu-chip-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    /* chip colors */
+    .chip-not-started  .cu-chip-label { --chip-color: #6b7385; }
+    .chip-in-progress  .cu-chip-label { --chip-color: #2563eb; }
+    .chip-completed    .cu-chip-label { --chip-color: #16a34a; }
+
+    .chip-not-started .cu-chip-dot  { background: #8a8f98; }
+    .chip-in-progress .cu-chip-dot  { background: #3b66d4; }
+    .chip-completed   .cu-chip-dot  { background: #16a34a; }
+
+    .chip-not-started input:checked + .cu-chip-label  { color:#6b7385; border-color:#8a8f98; background:#f1f2f4; }
+    .chip-in-progress input:checked + .cu-chip-label  { color:#2563eb; border-color:#3b66d4; background:#e8f0fe; }
+    .chip-completed   input:checked + .cu-chip-label  { color:#16a34a; border-color:#16a34a; background:#e6f9f0; }
+
+    /* ─── Bottom Action Bar ──────────────────────────────────── */
+    .cu-action-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 12px 16px;
+        background: #fafbfc;
+        border-top: 1px solid #e3e4e8;
+    }
+
+    .cu-btn-cancel {
+        padding: 6px 16px;
+        border: 1px solid #d3d5db;
         background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: 8px;
-        box-shadow: var(--shadow-lg);
+        color: #6b7385;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .15s;
+        line-height: 1.4;
     }
 
-    .danger-zone {
-        background: rgba(239, 68, 68, 0.05);
-        border: 2px solid rgba(239, 68, 68, 0.2);
-        border-radius: 14px;
-        padding: 24px;
-        margin-top: 36px;
+    .cu-btn-cancel:hover { border-color: #adb0b8; color: #1a1d23; background: #f7f8fa; }
+
+    .cu-btn-save {
+        padding: 6px 18px;
+        background: #7c3aed;
+        border: 1px solid #7c3aed;
+        color: white;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .15s;
+        line-height: 1.4;
     }
 
-    .danger-zone h6 {
-        color: var(--error-600);
-        margin-bottom: 14px;
+    .cu-btn-save:hover { background: #6d28d9; border-color: #6d28d9; box-shadow: 0 2px 6px rgba(109,40,217,.35); }
+
+    /* ─── Danger Zone ────────────────────────────────────────── */
+    .cu-danger-section .cu-section-body {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .cu-danger-text h6 {
+        font-size: 13px;
         font-weight: 700;
-        font-size: 16px;
+        color: #1a1d23;
+        margin: 0 0 2px;
     }
 
-    .danger-zone p {
-        color: var(--gray-600);
-        margin-bottom: 18px;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    .content-header {
-        margin-bottom: 32px;
-        padding-bottom: 24px;
-        border-bottom: 2px solid var(--gray-200);
-    }
-
-    .content-title {
-        color: var(--gray-900);
-        font-weight: 700;
-        font-size: 28px;
-        margin-bottom: 4px;
-    }
-
-    .content-subtitle {
-        color: var(--gray-500);
-        font-size: 16px;
+    .cu-danger-text p {
+        font-size: 12px;
+        color: #6b7385;
         margin: 0;
-        font-weight: 500;
     }
 
-    .main-content {
-        padding: 32px;
-        background: var(--gray-25);
+    .cu-btn-danger {
+        padding: 6px 16px;
+        background: white;
+        border: 1px solid #dc2626;
+        color: #dc2626;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .15s;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
+    .cu-btn-danger:hover { background: #dc2626; color: white; }
+
+    /* ─── Responsive ─────────────────────────────────────────── */
     @media (max-width: 768px) {
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-
-        .form-body {
-            padding: 24px 20px;
-        }
-
-        .form-header {
-            padding: 24px 20px;
-        }
-
-        .status-options {
-            grid-template-columns: 1fr;
-        }
-
-        .form-actions {
-            flex-direction: column;
-        }
-
-        .main-content {
-            padding: 20px;
-        }
+        .cu-layout { grid-template-columns: 1fr; }
+        .cu-info-panel { position: static; }
+        .cu-field-row { grid-template-columns: 1fr; }
+        .cu-danger-section .cu-section-body { flex-direction: column; align-items: flex-start; }
     }
 </style>
 @endpush
 
 @section('content')
 <div class="main-content">
+
+    {{-- ── Gradient Page Header ──────────────────────────────── --}}
     <div class="content-header">
-        <div class="d-flex align-items-center">
-            <a href="{{ route('projects.show', $project->id) }}" class="me-3 text-decoration-none">
-                <i class="bi bi-arrow-left fs-4 text-secondary"></i>
+        <div class="d-flex align-items-center" style="position:relative;z-index:1;">
+            <a href="{{ route('projects.show', $project) }}" class="me-3 text-decoration-none">
+                <i class="bi bi-arrow-left fs-5" style="color:rgba(255,255,255,.8);"></i>
             </a>
             <div>
                 <h1 class="content-title mb-1">Edit Project</h1>
@@ -400,174 +465,227 @@
         </div>
     </div>
 
-    <div class="form-container">
-        <div class="form-card">
-            <div class="form-header">
-                @php
-                    $colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
-                    $colorIndex = strlen($project->name) % count($colors);
-                    $projectColor = $colors[$colorIndex];
-                @endphp
+    {{-- ── Two-Panel Layout ──────────────────────────────────── --}}
+    @php
+        $colors = ['#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899'];
+        $projectColor = $colors[strlen($project->name) % count($colors)];
+        $statusMap = [
+            'not_started' => ['label'=>'Not Started','class'=>'not-started'],
+            'in_progress' => ['label'=>'In Progress','class'=>'in-progress'],
+            'completed'   => ['label'=>'Completed',  'class'=>'completed'],
+        ];
+        $statusInfo = $statusMap[$project->status] ?? $statusMap['not_started'];
+    @endphp
 
-                <div class="project-avatar-edit">
+    <div class="cu-layout">
+
+        {{-- ── Left Info Panel ──────────────────────────────── --}}
+        <div class="cu-info-panel">
+            <div class="cu-info-panel-header">
+                <span>Project</span>
+            </div>
+            <div class="cu-info-body">
+                <div class="cu-project-avatar" style="background:{{ $projectColor }};">
                     {{ strtoupper(substr($project->name, 0, 1)) }}
                 </div>
-                <h2>{{ $project->name }}</h2>
-                <p>Update project details and configuration</p>
-            </div>
+                <div class="cu-project-name">{{ $project->name }}</div>
+                <div class="text-center mb-2">
+                    <span class="cu-status-badge {{ $statusInfo['class'] }}">
+                        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                        {{ $statusInfo['label'] }}
+                    </span>
+                </div>
 
-            <div class="form-body">
-                <form action="{{ route('projects.update', $project->id) }}" method="POST" id="editProjectForm">
-                    @csrf
-                    @method('PUT')
+                @if($project->start_date)
+                <div class="cu-meta-row">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Start&nbsp;<strong>{{ \Carbon\Carbon::parse($project->start_date)->format('M d, Y') }}</strong></span>
+                </div>
+                @endif
 
-                    <div class="form-group">
-                        <label for="name" class="form-label">Project Name *</label>
-                        <div class="input-icon">
-                            <i class="bi bi-folder"></i>
-                            <input type="text"
-                                   name="name"
-                                   id="name"
-                                   class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}"
-                                   value="{{ old('name', $project->name) }}"
-                                   placeholder="Enter project name"
-                                   required>
-                        </div>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                @if($project->end_date)
+                <div class="cu-meta-row">
+                    <i class="bi bi-calendar-x"></i>
+                    <span>Due&nbsp;<strong>{{ \Carbon\Carbon::parse($project->end_date)->format('M d, Y') }}</strong></span>
+                </div>
+                @endif
 
-                    <div class="form-group">
-                        <label for="description" class="form-label">Description</label>
-                        <div class="editor-container">
-                            <div id="quill-editor" style="height: 200px;"></div>
-                            <textarea name="description" id="description" style="display: none;">{{ old('description', $project->description) }}</textarea>
-                        </div>
-                        @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                @if($project->budget)
+                <div class="cu-meta-row">
+                    <i class="bi bi-currency-dollar"></i>
+                    <span>Budget&nbsp;<strong>${{ number_format($project->budget, 0) }}</strong></span>
+                </div>
+                @endif
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="start_date" class="form-label">Start Date</label>
-                            <div class="input-icon">
-                                <i class="bi bi-calendar-event"></i>
-                                <input type="date"
-                                       name="start_date"
-                                       id="start_date"
-                                       class="form-control {{ $errors->has('start_date') ? 'is-invalid' : '' }}"
-                                       value="{{ old('start_date', $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('Y-m-d') : '') }}">
-                            </div>
-                            @error('start_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                <div class="cu-meta-row">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Updated&nbsp;<strong>{{ $project->updated_at->diffForHumans() }}</strong></span>
+                </div>
 
-                        <div class="form-group">
-                            <label for="end_date" class="form-label">End Date</label>
-                            <div class="input-icon">
-                                <i class="bi bi-calendar-x"></i>
-                                <input type="date"
-                                       name="end_date"
-                                       id="end_date"
-                                       class="form-control {{ $errors->has('end_date') ? 'is-invalid' : '' }}"
-                                       value="{{ old('end_date', $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('Y-m-d') : '') }}">
-                            </div>
-                            @error('end_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="budget" class="form-label">Budget</label>
-                        <div class="input-icon">
-                            <i class="bi bi-currency-dollar"></i>
-                            <input type="number"
-                                   name="budget"
-                                   id="budget"
-                                   class="form-control {{ $errors->has('budget') ? 'is-invalid' : '' }}"
-                                   value="{{ old('budget', $project->budget) }}"
-                                   step="0.01"
-                                   min="0"
-                                   placeholder="0.00">
-                        </div>
-                        @error('budget')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Project Status *</label>
-                        <div class="status-options">
-                            <div class="status-option">
-                                <input type="radio"
-                                       name="status"
-                                       id="status_not_started"
-                                       value="not_started"
-                                       {{ old('status', $project->status) == 'not_started' ? 'checked' : '' }}>
-                                <label for="status_not_started" class="status-not-started">
-                                    <span class="status-dot"></span>
-                                    Not Started
-                                </label>
-                            </div>
-
-                            <div class="status-option">
-                                <input type="radio"
-                                       name="status"
-                                       id="status_in_progress"
-                                       value="in_progress"
-                                       {{ old('status', $project->status) == 'in_progress' ? 'checked' : '' }}>
-                                <label for="status_in_progress" class="status-in-progress">
-                                    <span class="status-dot"></span>
-                                    In Progress
-                                </label>
-                            </div>
-
-                            <div class="status-option">
-                                <input type="radio"
-                                       name="status"
-                                       id="status_completed"
-                                       value="completed"
-                                       {{ old('status', $project->status) == 'completed' ? 'checked' : '' }}>
-                                <label for="status_completed" class="status-completed">
-                                    <span class="status-dot"></span>
-                                    Completed
-                                </label>
-                            </div>
-                        </div>
-                        @error('status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-actions">
-                        <a href="{{ route('projects.show', $project->id) }}" class="btn-secondary">
-                            Cancel
-                        </a>
-                        <button type="submit" class="btn-primary">
-                            <i class="bi bi-check-lg me-2"></i>Update Project
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Danger Zone -->
-                <div class="danger-zone">
-                    <h6><i class="bi bi-exclamation-triangle me-2"></i>Danger Zone</h6>
-                    <p>Permanently delete this project and all associated data. This action cannot be undone.</p>
-                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="d-inline" id="deleteForm">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" class="btn-danger" onclick="confirmDelete()">
-                            <i class="bi bi-trash me-2"></i>Delete Project
-                        </button>
-                    </form>
+                <div class="cu-meta-row">
+                    <i class="bi bi-person"></i>
+                    <span>Owner&nbsp;<strong>{{ auth()->user()->name }}</strong></span>
                 </div>
             </div>
         </div>
+
+        {{-- ── Right Form Sections ───────────────────────────── --}}
+        <form action="{{ route('projects.update', $project) }}" method="POST" id="editProjectForm">
+            @csrf
+            @method('PUT')
+
+            <div class="cu-sections">
+
+                {{-- General Info --}}
+                <div class="cu-section">
+                    <div class="cu-section-header">
+                        <span class="cu-section-icon purple"><i class="bi bi-folder2-open"></i></span>
+                        <span class="cu-section-title">General Info</span>
+                    </div>
+                    <div class="cu-section-body">
+                        <div class="cu-field">
+                            <label for="name" class="cu-label">Project Name <span style="color:#dc2626;">*</span></label>
+                            <div class="cu-input-wrap">
+                                <i class="bi bi-folder"></i>
+                                <input type="text"
+                                       name="name"
+                                       id="name"
+                                       class="cu-input {{ $errors->has('name') ? 'is-invalid' : '' }}"
+                                       value="{{ old('name', $project->name) }}"
+                                       placeholder="Enter project name"
+                                       required>
+                            </div>
+                            @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+
+                        <div class="cu-field">
+                            <label class="cu-label">Description</label>
+                            <div class="cu-editor-wrap">
+                                <div id="quill-editor"></div>
+                                <textarea name="description" id="description" style="display:none;">{{ old('description', $project->description) }}</textarea>
+                            </div>
+                            @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Timeline & Budget --}}
+                <div class="cu-section">
+                    <div class="cu-section-header">
+                        <span class="cu-section-icon blue"><i class="bi bi-calendar3"></i></span>
+                        <span class="cu-section-title">Timeline &amp; Budget</span>
+                    </div>
+                    <div class="cu-section-body">
+                        <div class="cu-field-row cu-field">
+                            <div class="cu-field" style="margin-bottom:0;">
+                                <label for="start_date" class="cu-label">Start Date</label>
+                                <div class="cu-input-wrap">
+                                    <i class="bi bi-calendar-event"></i>
+                                    <input type="date"
+                                           name="start_date"
+                                           id="start_date"
+                                           class="cu-input {{ $errors->has('start_date') ? 'is-invalid' : '' }}"
+                                           value="{{ old('start_date', $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('Y-m-d') : '') }}">
+                                </div>
+                                @error('start_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="cu-field" style="margin-bottom:0;">
+                                <label for="end_date" class="cu-label">End Date</label>
+                                <div class="cu-input-wrap">
+                                    <i class="bi bi-calendar-x"></i>
+                                    <input type="date"
+                                           name="end_date"
+                                           id="end_date"
+                                           class="cu-input {{ $errors->has('end_date') ? 'is-invalid' : '' }}"
+                                           value="{{ old('end_date', $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('Y-m-d') : '') }}">
+                                </div>
+                                @error('end_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+
+                        <div class="cu-field" style="margin-bottom:0; margin-top:12px;">
+                            <label for="budget" class="cu-label">Budget (USD)</label>
+                            <div class="cu-input-wrap">
+                                <i class="bi bi-currency-dollar"></i>
+                                <input type="number"
+                                       name="budget"
+                                       id="budget"
+                                       class="cu-input {{ $errors->has('budget') ? 'is-invalid' : '' }}"
+                                       value="{{ old('budget', $project->budget) }}"
+                                       step="0.01" min="0"
+                                       placeholder="0.00">
+                            </div>
+                            @error('budget')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Status --}}
+                <div class="cu-section">
+                    <div class="cu-section-header">
+                        <span class="cu-section-icon green"><i class="bi bi-ui-checks"></i></span>
+                        <span class="cu-section-title">Status</span>
+                        <span class="cu-section-subtitle">Select current state</span>
+                    </div>
+                    <div class="cu-section-body">
+                        <div class="cu-status-chips">
+                            <div class="cu-chip-option chip-not-started">
+                                <input type="radio" name="status" id="status_not_started" value="not_started"
+                                    {{ old('status', $project->status) == 'not_started' ? 'checked' : '' }}>
+                                <label for="status_not_started" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> Not Started
+                                </label>
+                            </div>
+                            <div class="cu-chip-option chip-in-progress">
+                                <input type="radio" name="status" id="status_in_progress" value="in_progress"
+                                    {{ old('status', $project->status) == 'in_progress' ? 'checked' : '' }}>
+                                <label for="status_in_progress" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> In Progress
+                                </label>
+                            </div>
+                            <div class="cu-chip-option chip-completed">
+                                <input type="radio" name="status" id="status_completed" value="completed"
+                                    {{ old('status', $project->status) == 'completed' ? 'checked' : '' }}>
+                                <label for="status_completed" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> Completed
+                                </label>
+                            </div>
+                        </div>
+                        @error('status')<div class="invalid-feedback mt-2">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="cu-action-bar">
+                        <a href="{{ route('projects.show', $project) }}" class="cu-btn-cancel">Cancel</a>
+                        <button type="submit" class="cu-btn-save">
+                            <i class="bi bi-check-lg me-1"></i>Save Changes
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
     </div>
+
+    {{-- ── Danger Zone (full-width, below grid) ─────────────── --}}
+    <div class="cu-section cu-danger-section" style="margin-top:10px; border-color:#fecaca;">
+        <div class="cu-section-header" style="background:#fff5f5; border-bottom-color:#fecaca;">
+            <span class="cu-section-icon red"><i class="bi bi-exclamation-triangle"></i></span>
+            <span class="cu-section-title" style="color:#dc2626;">Danger Zone</span>
+        </div>
+        <div class="cu-section-body">
+            <div class="cu-danger-text">
+                <h6>Delete this project</h6>
+                <p>Permanently removes all tasks, files, and associated data. This cannot be undone.</p>
+            </div>
+            <form action="{{ route('projects.destroy', $project) }}" method="POST" id="deleteForm">
+                @csrf
+                @method('DELETE')
+                <button type="button" class="cu-btn-danger" onclick="confirmDelete()">
+                    <i class="bi bi-trash me-1"></i>Delete Project
+                </button>
+            </form>
+        </div>
+    </div>
+
 </div>
 @endsection
 

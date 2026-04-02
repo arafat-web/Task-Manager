@@ -2,459 +2,374 @@
 
 @section('title', 'Routines')
 
-@section('content')
+@push('styles')
 <style>
-    :root {
-        --routine-primary: #8b5cf6;
-        --routine-secondary: #a855f7;
-        --routine-success: #10b981;
-        --routine-warning: #f59e0b;
-        --routine-danger: #ef4444;
-        --routine-info: #3b82f6;
-        --routine-light: #faf5ff;
-        --routine-dark: #1e293b;
-        --routine-gray: #64748b;
-        --routine-border: #e2e8f0;
-        --routine-shadow: rgba(0, 0, 0, 0.1);
-        --routine-shadow-lg: rgba(0, 0, 0, 0.15);
-    }
+    /* ── Page shell ───────────────────────────────────────── */
+    .main-content { padding: 14px 16px; background: #f7f8fa; min-height: 100vh; }
 
-    .routines-header {
-        background: linear-gradient(135deg, var(--routine-primary) 0%, var(--routine-secondary) 100%);
-        color: white;
-        border-radius: 12px;
-        padding: 0.875rem 1.25rem;
-        margin-bottom: 0.875rem;
-        box-shadow: 0 4px 12px var(--routine-shadow-lg);
+    /* ── Gradient header ──────────────────────────────────── */
+    .cu-header {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        border-radius: 10px; padding: 12px 18px; color: white;
+        margin-bottom: 14px; position: relative; overflow: hidden;
+        border: 1px solid #6d28d9; box-shadow: 0 2px 8px rgba(124,58,237,.3);
     }
+    .cu-header::before {
+        content: ''; position: absolute; top: 0; right: 0;
+        width: 80px; height: 80px; background: rgba(255,255,255,.08);
+        border-radius: 50%; transform: translate(20px,-20px);
+    }
+    .cu-header-title { font-weight: 700; font-size: 17px; margin: 0; position: relative; z-index: 1; }
+    .cu-header-sub   { font-size: 12px; opacity: .8; margin: 2px 0 0; position: relative; z-index: 1; }
+    .cu-btn-new {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 14px; border-radius: 7px; background: rgba(255,255,255,.2);
+        color: white; border: 1px solid rgba(255,255,255,.3); font-size: 12px;
+        font-weight: 600; text-decoration: none;
+        transition: background .15s; position: relative; z-index: 1;
+    }
+    .cu-btn-new:hover { background: rgba(255,255,255,.3); color: white; }
 
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 0.75rem;
-        margin-bottom: 0.875rem;
+    /* ── Stats row ────────────────────────────────────────── */
+    .cu-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px; }
+    @media(max-width:700px) { .cu-stats { grid-template-columns: repeat(2,1fr); } }
+    .cu-stat {
+        background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+        padding: 12px 14px; display: flex; align-items: center; gap: 12px;
     }
+    .cu-stat-icon {
+        width: 36px; height: 36px; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 15px; flex-shrink: 0;
+    }
+    .cu-stat-label { font-size: 11px; color: #8a8f98; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .cu-stat-val   { font-size: 20px; font-weight: 800; color: #1a1d23; line-height: 1; }
 
-    .stat-card {
-        background: white;
-        border-radius: 10px;
-        padding: 0.875rem;
-        border: 1px solid var(--routine-border);
-        box-shadow: 0 2px 4px -1px var(--routine-shadow);
-        transition: all 0.2s ease;
-    }
+    /* ── Kanban grid ──────────────────────────────────────── */
+    .cu-kanban { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; align-items: start; }
+    @media(max-width:860px) { .cu-kanban { grid-template-columns: 1fr; } }
 
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px var(--routine-shadow-lg);
+    .cu-col { background: #f3f4f6; border-radius: 10px; overflow: hidden; }
+    .cu-col-head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 12px; border-bottom: 1px solid #e3e4e8;
     }
+    .cu-col-head-left { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: #1a1d23; }
+    .cu-col-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .cu-col-count {
+        background: white; border: 1px solid #e3e4e8; border-radius: 20px;
+        padding: 1px 7px; font-size: 11px; font-weight: 700; color: #8a8f98;
+    }
+    .cu-col-add {
+        width: 26px; height: 26px; border-radius: 6px; border: 1px solid #e3e4e8;
+        background: white; display: flex; align-items: center;
+        justify-content: center; color: #8a8f98; font-size: 14px;
+        transition: all .15s; text-decoration: none;
+    }
+    .cu-col-add:hover { background: #7c3aed; border-color: #7c3aed; color: white; }
+    .cu-col-body { padding: 8px; min-height: 80px; display: flex; flex-direction: column; gap: 7px; }
 
-    .stat-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.125rem;
-        margin-bottom: 0.5rem;
+    /* ── Routine card ─────────────────────────────────────── */
+    .cu-routine-card {
+        background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+        padding: 10px 12px; transition: all .15s;
     }
+    .cu-routine-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); border-color: #c4b5fd; }
+    .cu-routine-title { font-size: 13px; font-weight: 600; color: #1a1d23; margin-bottom: 4px; line-height: 1.3; }
+    .cu-routine-desc  {
+        font-size: 11px; color: #8a8f98; margin-bottom: 7px; line-height: 1.4;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .cu-routine-meta  { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .cu-meta-pill {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600;
+        background: #f3f4f6; color: #6b7385;
+    }
+    .cu-meta-pill i { font-size: 10px; }
+    .cu-routine-footer { display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+    .cu-card-btn {
+        display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px;
+        border-radius: 5px; font-size: 11px; font-weight: 600; text-decoration: none;
+        cursor: pointer; border: 1px solid transparent; transition: all .15s;
+    }
+    .cu-card-btn.edit   { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+    .cu-card-btn.edit:hover   { background: #fef3c7; }
+    .cu-card-btn.delete { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+    .cu-card-btn.delete:hover { background: #fee2e2; }
 
-    .routine-section {
-        background: white;
-        border-radius: 10px;
-        border: 1px solid var(--routine-border);
-        box-shadow: 0 2px 4px -1px var(--routine-shadow);
-        overflow: hidden;
-        margin-bottom: 0.875rem;
-    }
+    /* ── Empty state ──────────────────────────────────────── */
+    .cu-empty { text-align: center; padding: 20px 12px; color: #adb0b8; }
+    .cu-empty i { font-size: 24px; display: block; margin-bottom: 6px; opacity: .5; }
+    .cu-empty p { font-size: 12px; margin: 0; }
 
-    .section-header {
-        background: var(--routine-light);
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid var(--routine-border);
-        display: flex;
-        align-items: center;
-        justify-content: between;
-        gap: 0.5rem;
+    /* ── Column footer / view-all ─────────────────────────── */
+    .cu-col-footer { padding: 8px; border-top: 1px solid #e3e4e8; }
+    .cu-view-all {
+        display: flex; align-items: center; justify-content: center; gap: 5px;
+        width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #e3e4e8;
+        background: white; font-size: 12px; font-weight: 600; color: #6b7385;
+        text-decoration: none; transition: all .15s;
     }
-
-    .section-title {
-        font-weight: 700;
-        color: var(--routine-dark);
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .routine-card {
-        background: white;
-        border: 1px solid var(--routine-border);
-        border-radius: 6px;
-        margin-bottom: 0.5rem;
-        transition: all 0.2s ease;
-    }
-
-    .routine-card:hover {
-        border-color: var(--routine-primary);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px var(--routine-shadow);
-    }
-
-    .routine-card-body {
-        padding: 0.75rem;
-    }
-
-    .routine-title {
-        font-weight: 600;
-        color: var(--routine-dark);
-        margin-bottom: 0.25rem;
-    }
-
-    .routine-description {
-        color: var(--routine-gray);
-        font-size: 0.8125rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .routine-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-        font-size: 0.8125rem;
-    }
-
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        color: var(--routine-gray);
-    }
-
-    .routine-actions {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .btn-modern {
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        border: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        font-size: 0.875rem;
-    }
-
-    .btn-modern.btn-primary {
-        background: var(--routine-primary);
-        color: white;
-    }
-
-    .btn-modern.btn-primary:hover {
-        background: var(--routine-secondary);
-        transform: translateY(-1px);
-        color: white;
-    }
-
-    .btn-modern.btn-warning {
-        background: var(--routine-warning);
-        color: white;
-    }
-
-    .btn-modern.btn-warning:hover {
-        background: #d97706;
-        color: white;
-    }
-
-    .btn-modern.btn-danger {
-        background: var(--routine-danger);
-        color: white;
-    }
-
-    .btn-modern.btn-danger:hover {
-        background: #dc2626;
-        color: white;
-    }
-
-    .btn-modern.btn-secondary {
-        background: var(--routine-gray);
-        color: white;
-    }
-
-    .btn-modern.btn-secondary:hover {
-        background: var(--routine-dark);
-        color: white;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 1.25rem;
-        color: var(--routine-gray);
-    }
-
-    .empty-state i {
-        font-size: 1.75rem;
-        margin-bottom: 0.5rem;
-        opacity: 0.5;
-    }
-
-    .view-all-btn {
-        margin-top: 1rem;
-        width: 100%;
-        justify-content: center;
-    }
+    .cu-view-all:hover { border-color: #7c3aed; color: #7c3aed; background: #faf5ff; }
 </style>
+@endpush
 
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="routines-header">
-        <div class="d-flex justify-content-between align-items-center">
+@section('content')
+<div class="main-content">
+
+    {{-- ── Gradient Header ──────────────────────────────────── --}}
+    <div class="cu-header">
+        <div class="d-flex align-items-center justify-content-between" style="position:relative;z-index:1;">
             <div>
-                <h1 class="h2 mb-2">
-                    <i class="fas fa-sync-alt me-3"></i>Routines Dashboard
-                </h1>
-                <p class="mb-0 opacity-75">Manage your daily, weekly, and monthly routines</p>
+                <h1 class="cu-header-title"><i class="bi bi-arrow-repeat me-2"></i>Routines</h1>
+                <p class="cu-header-sub">Manage your daily, weekly, and monthly routines</p>
             </div>
-            <a href="{{ route('routines.create') }}" class="btn btn-light btn-lg">
-                <i class="fas fa-plus me-2"></i>Add New Routine
+            <a href="{{ route('routines.create') }}" class="cu-btn-new">
+                <i class="bi bi-plus-lg"></i> New Routine
             </a>
         </div>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--routine-primary);">
-                <i class="fas fa-calendar-day"></i>
+    {{-- ── Stats Row ─────────────────────────────────────────── --}}
+    @php
+        $daily   = count($upcomingDailyRoutines);
+        $weekly  = count($upcomingWeeklyRoutines);
+        $monthly = count($upcomingMonthlyRoutines);
+        $total   = $daily + $weekly + $monthly;
+    @endphp
+    <div class="cu-stats">
+        <div class="cu-stat">
+            <div class="cu-stat-icon" style="background:#ede9fe;color:#7c3aed;">
+                <i class="bi bi-sun"></i>
             </div>
-            <h3 class="h4 mb-1">{{ count($upcomingDailyRoutines) }}</h3>
-            <p class="text-muted mb-0">Daily Routines</p>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: rgba(168, 85, 247, 0.1); color: var(--routine-secondary);">
-                <i class="fas fa-calendar-week"></i>
-            </div>
-            <h3 class="h4 mb-1">{{ count($upcomingWeeklyRoutines) }}</h3>
-            <p class="text-muted mb-0">Weekly Routines</p>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--routine-warning);">
-                <i class="fas fa-calendar-alt"></i>
-            </div>
-            <h3 class="h4 mb-1">{{ count($upcomingMonthlyRoutines) }}</h3>
-            <p class="text-muted mb-0">Monthly Routines</p>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--routine-success);">
-                <i class="fas fa-chart-line"></i>
-            </div>
-            <h3 class="h4 mb-1">{{ count($upcomingDailyRoutines) + count($upcomingWeeklyRoutines) + count($upcomingMonthlyRoutines) }}</h3>
-            <p class="text-muted mb-0">Total Active</p>
-        </div>
-    </div>
-
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    <div class="row">
-        <!-- Daily Routines Section -->
-        <div class="col-lg-4">
-            <div class="routine-section">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-sun" style="color: var(--routine-primary);"></i>
-                        Daily Routines
-                    </h3>
-                </div>
-                <div class="p-3">
-                    @forelse($upcomingDailyRoutines as $routine)
-                        <div class="routine-card">
-                            <div class="routine-card-body">
-                                <h5 class="routine-title">{{ $routine->title }}</h5>
-                                @if($routine->description)
-                                    <p class="routine-description">{{ Str::limit($routine->description, 100) }}</p>
-                                @endif
-
-                                <div class="routine-meta">
-                                    <div class="meta-item">
-                                        <i class="fas fa-calendar-day"></i>
-                                        <span>{{ implode(', ', json_decode($routine->days, true) ?? []) }}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <i class="fas fa-clock"></i>
-                                        <span>{{ $routine->start_time }} - {{ $routine->end_time }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="routine-actions">
-                                    <a href="{{ route('routines.edit', $routine->id) }}" class="btn-modern btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </a>
-                                    <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" style="display: inline;"
-                                          onsubmit="return confirm('Are you sure you want to delete this routine?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-modern btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="empty-state">
-                            <i class="fas fa-sun"></i>
-                            <p class="mb-0">No daily routines scheduled</p>
-                        </div>
-                    @endforelse
-
-                    <a href="{{ route('routines.showDaily') }}" class="btn-modern btn-secondary view-all-btn">
-                        <i class="fas fa-eye"></i>
-                        View All Daily Routines
-                    </a>
-                </div>
+            <div>
+                <div class="cu-stat-val">{{ $daily }}</div>
+                <div class="cu-stat-label">Daily</div>
             </div>
         </div>
-
-        <!-- Weekly Routines Section -->
-        <div class="col-lg-4">
-            <div class="routine-section">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-calendar-week" style="color: var(--routine-secondary);"></i>
-                        Weekly Routines
-                    </h3>
-                </div>
-                <div class="p-3">
-                    @forelse($upcomingWeeklyRoutines as $routine)
-                        <div class="routine-card">
-                            <div class="routine-card-body">
-                                <h5 class="routine-title">{{ $routine->title }}</h5>
-                                @if($routine->description)
-                                    <p class="routine-description">{{ Str::limit($routine->description, 100) }}</p>
-                                @endif
-
-                                <div class="routine-meta">
-                                    <div class="meta-item">
-                                        <i class="fas fa-calendar-week"></i>
-                                        <span>{{ implode(', ', json_decode($routine->weeks, true) ?? []) }}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <i class="fas fa-clock"></i>
-                                        <span>{{ $routine->start_time }} - {{ $routine->end_time }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="routine-actions">
-                                    <a href="{{ route('routines.edit', $routine->id) }}" class="btn-modern btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </a>
-                                    <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" style="display: inline;"
-                                          onsubmit="return confirm('Are you sure you want to delete this routine?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-modern btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="empty-state">
-                            <i class="fas fa-calendar-week"></i>
-                            <p class="mb-0">No weekly routines scheduled</p>
-                        </div>
-                    @endforelse
-
-                    <a href="{{ route('routines.showWeekly') }}" class="btn-modern btn-secondary view-all-btn">
-                        <i class="fas fa-eye"></i>
-                        View All Weekly Routines
-                    </a>
-                </div>
+        <div class="cu-stat">
+            <div class="cu-stat-icon" style="background:#dbeafe;color:#2563eb;">
+                <i class="bi bi-calendar-week"></i>
+            </div>
+            <div>
+                <div class="cu-stat-val">{{ $weekly }}</div>
+                <div class="cu-stat-label">Weekly</div>
             </div>
         </div>
-
-        <!-- Monthly Routines Section -->
-        <div class="col-lg-4">
-            <div class="routine-section">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-calendar-alt" style="color: var(--routine-warning);"></i>
-                        Monthly Routines
-                    </h3>
-                </div>
-                <div class="p-3">
-                    @forelse($upcomingMonthlyRoutines as $routine)
-                        <div class="routine-card">
-                            <div class="routine-card-body">
-                                <h5 class="routine-title">{{ $routine->title }}</h5>
-                                @if($routine->description)
-                                    <p class="routine-description">{{ Str::limit($routine->description, 100) }}</p>
-                                @endif
-
-                                <div class="routine-meta">
-                                    <div class="meta-item">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <span>{{ implode(', ', array_map(function ($month) {
-                                            return DateTime::createFromFormat('!m', $month)->format('F');
-                                        }, json_decode($routine->months, true) ?? [])) }}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <i class="fas fa-clock"></i>
-                                        <span>{{ $routine->start_time }} - {{ $routine->end_time }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="routine-actions">
-                                    <a href="{{ route('routines.edit', $routine->id) }}" class="btn-modern btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </a>
-                                    <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" style="display: inline;"
-                                          onsubmit="return confirm('Are you sure you want to delete this routine?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-modern btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="empty-state">
-                            <i class="fas fa-calendar-alt"></i>
-                            <p class="mb-0">No monthly routines scheduled</p>
-                        </div>
-                    @endforelse
-
-                    <a href="{{ route('routines.showMonthly') }}" class="btn-modern btn-secondary view-all-btn">
-                        <i class="fas fa-eye"></i>
-                        View All Monthly Routines
-                    </a>
-                </div>
+        <div class="cu-stat">
+            <div class="cu-stat-icon" style="background:#fef3c7;color:#d97706;">
+                <i class="bi bi-calendar-month"></i>
+            </div>
+            <div>
+                <div class="cu-stat-val">{{ $monthly }}</div>
+                <div class="cu-stat-label">Monthly</div>
+            </div>
+        </div>
+        <div class="cu-stat">
+            <div class="cu-stat-icon" style="background:#dcfce7;color:#16a34a;">
+                <i class="bi bi-check2-circle"></i>
+            </div>
+            <div>
+                <div class="cu-stat-val">{{ $total }}</div>
+                <div class="cu-stat-label">Active Today</div>
             </div>
         </div>
     </div>
+
+    {{-- ── Kanban Columns ────────────────────────────────────── --}}
+    <div class="cu-kanban">
+
+        {{-- Daily --}}
+        <div class="cu-col">
+            <div class="cu-col-head">
+                <div class="cu-col-head-left">
+                    <span class="cu-col-dot" style="background:#7c3aed;"></span>
+                    Daily Routines
+                    <span class="cu-col-count">{{ $daily }}</span>
+                </div>
+                <a href="{{ route('routines.create') }}" class="cu-col-add" title="Add routine">
+                    <i class="bi bi-plus"></i>
+                </a>
+            </div>
+            <div class="cu-col-body">
+                @forelse($upcomingDailyRoutines as $routine)
+                <div class="cu-routine-card">
+                    <div class="cu-routine-title">{{ $routine->title }}</div>
+                    @if($routine->description)
+                    <div class="cu-routine-desc">{{ Str::limit(strip_tags($routine->description), 90) }}</div>
+                    @endif
+                    <div class="cu-routine-meta">
+                        @if($routine->days)
+                        <span class="cu-meta-pill">
+                            <i class="bi bi-calendar-day"></i>
+                            {{ implode(', ', array_map('ucfirst', json_decode($routine->days, true) ?? [])) }}
+                        </span>
+                        @endif
+                        @if($routine->start_time && $routine->end_time)
+                        <span class="cu-meta-pill">
+                            <i class="bi bi-clock"></i>
+                            {{ \Carbon\Carbon::parse($routine->start_time)->format('g:i A') }}
+                            &ndash;
+                            {{ \Carbon\Carbon::parse($routine->end_time)->format('g:i A') }}
+                        </span>
+                        @endif
+                    </div>
+                    <div class="cu-routine-footer">
+                        <a href="{{ route('routines.edit', $routine->id) }}" class="cu-card-btn edit">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" style="display:inline;"
+                              onsubmit="return confirm('Delete this routine?');">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="cu-card-btn delete">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @empty
+                <div class="cu-empty">
+                    <i class="bi bi-sun"></i>
+                    <p>No daily routines active today</p>
+                </div>
+                @endforelse
+            </div>
+            <div class="cu-col-footer">
+                <a href="{{ route('routines.showDaily') }}" class="cu-view-all">
+                    <i class="bi bi-arrow-right-circle"></i> View all daily
+                </a>
+            </div>
+        </div>
+
+        {{-- Weekly --}}
+        <div class="cu-col">
+            <div class="cu-col-head">
+                <div class="cu-col-head-left">
+                    <span class="cu-col-dot" style="background:#2563eb;"></span>
+                    Weekly Routines
+                    <span class="cu-col-count">{{ $weekly }}</span>
+                </div>
+                <a href="{{ route('routines.create') }}" class="cu-col-add" title="Add routine">
+                    <i class="bi bi-plus"></i>
+                </a>
+            </div>
+            <div class="cu-col-body">
+                @forelse($upcomingWeeklyRoutines as $routine)
+                <div class="cu-routine-card">
+                    <div class="cu-routine-title">{{ $routine->title }}</div>
+                    @if($routine->description)
+                    <div class="cu-routine-desc">{{ Str::limit(strip_tags($routine->description), 90) }}</div>
+                    @endif
+                    <div class="cu-routine-meta">
+                        @if($routine->weeks)
+                        <span class="cu-meta-pill">
+                            <i class="bi bi-calendar-week"></i>
+                            Week {{ implode(', ', json_decode($routine->weeks, true) ?? []) }}
+                        </span>
+                        @endif
+                        @if($routine->start_time && $routine->end_time)
+                        <span class="cu-meta-pill">
+                            <i class="bi bi-clock"></i>
+                            {{ \Carbon\Carbon::parse($routine->start_time)->format('g:i A') }}
+                            &ndash;
+                            {{ \Carbon\Carbon::parse($routine->end_time)->format('g:i A') }}
+                        </span>
+                        @endif
+                    </div>
+                    <div class="cu-routine-footer">
+                        <a href="{{ route('routines.edit', $routine->id) }}" class="cu-card-btn edit">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" style="display:inline;"
+                              onsubmit="return confirm('Delete this routine?');">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="cu-card-btn delete">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @empty
+                <div class="cu-empty">
+                    <i class="bi bi-calendar-week"></i>
+                    <p>No weekly routines this week</p>
+                </div>
+                @endforelse
+            </div>
+            <div class="cu-col-footer">
+                <a href="{{ route('routines.showWeekly') }}" class="cu-view-all">
+                    <i class="bi bi-arrow-right-circle"></i> View all weekly
+                </a>
+            </div>
+        </div>
+
+        {{-- Monthly --}}
+        <div class="cu-col">
+            <div class="cu-col-head">
+                <div class="cu-col-head-left">
+                    <span class="cu-col-dot" style="background:#d97706;"></span>
+                    Monthly Routines
+                    <span class="cu-col-count">{{ $monthly }}</span>
+                </div>
+                <a href="{{ route('routines.create') }}" class="cu-col-add" title="Add routine">
+                    <i class="bi bi-plus"></i>
+                </a>
+            </div>
+            <div class="cu-col-body">
+                @forelse($upcomingMonthlyRoutines as $routine)
+                <div class="cu-routine-card">
+                    <div class="cu-routine-title">{{ $routine->title }}</div>
+                    @if($routine->description)
+                    <div class="cu-routine-desc">{{ Str::limit(strip_tags($routine->description), 90) }}</div>
+                    @endif
+                    <div class="cu-routine-meta">
+                        @if($routine->months)
+                        <span class="cu-meta-pill">
+                            <i class="bi bi-calendar3"></i>
+                            @php
+                                $monthNames = array_map(fn($m) => \Carbon\Carbon::createFromDate(null, (int)$m, 1)->format('M'), json_decode($routine->months, true) ?? []);
+                            @endphp
+                            {{ implode(', ', $monthNames) }}
+                        </span>
+                        @endif
+                        @if($routine->start_time && $routine->end_time)
+                        <span class="cu-meta-pill">
+                            <i class="bi bi-clock"></i>
+                            {{ \Carbon\Carbon::parse($routine->start_time)->format('g:i A') }}
+                            &ndash;
+                            {{ \Carbon\Carbon::parse($routine->end_time)->format('g:i A') }}
+                        </span>
+                        @endif
+                    </div>
+                    <div class="cu-routine-footer">
+                        <a href="{{ route('routines.edit', $routine->id) }}" class="cu-card-btn edit">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" style="display:inline;"
+                              onsubmit="return confirm('Delete this routine?');">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="cu-card-btn delete">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @empty
+                <div class="cu-empty">
+                    <i class="bi bi-calendar3"></i>
+                    <p>No monthly routines this month</p>
+                </div>
+                @endforelse
+            </div>
+            <div class="cu-col-footer">
+                <a href="{{ route('routines.showMonthly') }}" class="cu-view-all">
+                    <i class="bi bi-arrow-right-circle"></i> View all monthly
+                </a>
+            </div>
+        </div>
+
+    </div>{{-- end .cu-kanban --}}
+
 </div>
-
 @endsection

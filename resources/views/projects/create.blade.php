@@ -4,499 +4,584 @@
 
 @push('styles')
 <style>
-    .form-container {
-        max-width: 700px;
-        margin: 0 auto;
+    /* ─── Page Shell ─────────────────────────────────────────── */
+    .main-content {
+        padding: 14px 16px;
+        background: #f7f8fa;
+        min-height: 100vh;
     }
 
-    .form-card {
-        background: white;
-        border: 2px solid var(--gray-200);
-        border-radius: 16px;
-        box-shadow: var(--shadow-lg);
-        overflow: hidden;
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-700);
-        border-color: var(--primary-700);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-    }
-
-    /* Quill Editor Styling */
-    .editor-container {
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
-        overflow: hidden;
-        transition: all 0.2s ease;
-    }
-
-    .editor-container:focus-within {
-        border-color: var(--primary-500);
-        box-shadow: 0 0 0 4px var(--primary-100);
-    }
-
-    .ql-toolbar {
-        border: none;
-        border-bottom: 1px solid var(--gray-200);
-        background: var(--gray-50);
-        padding: 12px;
-    }
-
-    .ql-container {
-        border: none;
-        font-family: inherit;
-        font-size: 14px;
-    }
-
-    .ql-editor {
-        min-height: 200px;
-        padding: 18px;
-        color: var(--gray-700);
-        line-height: 1.6;
-    }
-
-    .ql-editor.ql-blank::before {
-        color: var(--gray-400);
-        font-style: normal;
-        left: 18px;
-        right: 18px;
-    }
-
-    .ql-snow .ql-tooltip {
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: 8px;
-        box-shadow: var(--shadow-lg);
-    }
-
-    .ql-snow .ql-picker-options {
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: 8px;
-        box-shadow: var(--shadow-lg);
-    }
-
-    .form-header {
+    /* ─── Gradient Page Header ───────────────────────────────── */
+    .content-header {
         background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-        padding: 32px;
-        text-align: center;
+        border-radius: 10px;
+        padding: 12px 18px;
         color: white;
+        margin-bottom: 14px;
         position: relative;
+        overflow: hidden;
+        border: 1px solid var(--primary-500);
+        box-shadow: 0 2px 8px rgba(99,102,241,.3);
     }
 
-    .form-header::before {
+    .content-header::before {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        background: rgba(255, 255, 255, 0.1);
+        top: 0; right: 0;
+        width: 90px; height: 90px;
+        background: rgba(255,255,255,.08);
         border-radius: 50%;
-        transform: translate(20px, -20px);
+        transform: translate(22px,-22px);
     }
 
-    .form-header h2 {
-        margin: 0;
-        font-size: 28px;
+    .content-title {
+        color: white;
         font-weight: 700;
+        font-size: 17px;
+        margin-bottom: 2px;
         position: relative;
         z-index: 1;
     }
 
-    .form-header p {
-        margin: 8px 0 0;
-        opacity: 0.9;
-        font-size: 16px;
+    .content-subtitle {
+        color: rgba(255,255,255,.8);
+        font-size: 12px;
+        margin: 0;
+        font-weight: 400;
         position: relative;
         z-index: 1;
     }
 
-    .form-body {
-        padding: 32px;
+    /* ─── Two-Panel Grid ─────────────────────────────────────── */
+    .cu-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 14px;
+        align-items: start;
     }
 
-    .form-group {
-        margin-bottom: 26px;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 10px;
-        font-weight: 600;
-        color: var(--gray-700);
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .form-control, .form-select {
-        width: 100%;
-        padding: 14px 18px;
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
+    /* ─── Left Info Panel ────────────────────────────────────── */
+    .cu-info-panel {
         background: white;
-        font-size: 14px;
-        color: var(--gray-700);
-        transition: all 0.2s ease;
+        border: 1px solid #e3e4e8;
+        border-radius: 8px;
+        overflow: hidden;
+        position: sticky;
+        top: 14px;
     }
 
-    .form-control:focus, .form-select:focus {
+    .cu-info-panel-header {
+        background: #f7f8fa;
+        border-bottom: 1px solid #e3e4e8;
+        padding: 10px 14px;
+    }
+
+    .cu-info-panel-header span {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        color: #8a8f98;
+    }
+
+    .cu-info-body {
+        padding: 14px;
+    }
+
+    .cu-project-avatar-preview {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 22px;
+        color: white;
+        background: #7c3aed;
+        margin: 0 auto 10px;
+        transition: background .2s;
+    }
+
+    .cu-preview-name {
+        text-align: center;
+        font-size: 13px;
+        font-weight: 700;
+        color: #1a1d23;
+        margin-bottom: 4px;
+        word-break: break-word;
+        min-height: 18px;
+    }
+
+    .cu-preview-hint {
+        text-align: center;
+        font-size: 11px;
+        color: #adb0b8;
+        margin-bottom: 12px;
+    }
+
+    .cu-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 0;
+        border-top: 1px solid #f0f1f3;
+        font-size: 12px;
+        color: #6b7385;
+    }
+
+    .cu-meta-row i { font-size: 13px; color: #adb0b8; flex-shrink: 0; }
+    .cu-meta-row strong { color: #1a1d23; font-weight: 600; }
+
+    /* ─── Right — Form Sections ──────────────────────────────── */
+    .cu-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cu-section {
+        background: white;
+        border: 1px solid #e3e4e8;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .cu-section-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: #fafbfc;
+        border-bottom: 1px solid #e3e4e8;
+    }
+
+    .cu-section-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .cu-section-icon.purple { background: #ede9fe; color: #7c3aed; }
+    .cu-section-icon.blue   { background: #dbeafe; color: #2563eb; }
+    .cu-section-icon.green  { background: #dcfce7; color: #16a34a; }
+
+    .cu-section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1a1d23;
+        margin: 0;
+    }
+
+    .cu-section-subtitle {
+        font-size: 11px;
+        color: #8a8f98;
+        margin: 0 0 0 auto;
+    }
+
+    .cu-section-body {
+        padding: 16px;
+    }
+
+    /* ─── Field Rows ─────────────────────────────────────────── */
+    .cu-field {
+        margin-bottom: 14px;
+    }
+
+    .cu-field:last-child { margin-bottom: 0; }
+
+    .cu-field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .cu-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        color: #8a8f98;
+        margin-bottom: 5px;
+    }
+
+    .cu-input {
+        width: 100%;
+        height: 34px;
+        padding: 0 10px 0 34px;
+        border: 1px solid #d3d5db;
+        border-radius: 6px;
+        background: white;
+        font-size: 13px;
+        color: #1a1d23;
         outline: none;
-        border-color: var(--primary-500);
-        box-shadow: 0 0 0 4px var(--primary-100);
+        transition: border-color .15s, box-shadow .15s;
+        box-sizing: border-box;
     }
 
-    .form-control.is-invalid {
-        border-color: var(--error-500);
-        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    .cu-input.no-icon { padding-left: 10px; }
+
+    .cu-input:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 2px rgba(124,58,237,.15);
+    }
+
+    .cu-input.is-invalid { border-color: #dc2626; }
+
+    .cu-input-wrap {
+        position: relative;
+    }
+
+    .cu-input-wrap > i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 13px;
+        color: #adb0b8;
+        pointer-events: none;
     }
 
     .invalid-feedback {
         display: block;
-        margin-top: 8px;
-        font-size: 13px;
-        color: var(--error-600);
+        margin-top: 4px;
+        font-size: 11px;
+        color: #dc2626;
         font-weight: 500;
     }
 
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
+    /* ─── Quill Editor ───────────────────────────────────────── */
+    .cu-editor-wrap {
+        border: 1px solid #d3d5db;
+        border-radius: 6px;
+        overflow: hidden;
+        transition: border-color .15s, box-shadow .15s;
     }
 
-    .status-options {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 14px;
-        margin-top: 10px;
+    .cu-editor-wrap:focus-within {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 2px rgba(124,58,237,.15);
     }
 
-    .status-option {
-        position: relative;
+    .cu-editor-wrap .ql-toolbar {
+        border: none;
+        border-bottom: 1px solid #e3e4e8;
+        background: #fafbfc;
+        padding: 6px 10px;
     }
 
-    .status-option input {
-        position: absolute;
-        opacity: 0;
-    }
+    .cu-editor-wrap .ql-toolbar .ql-formats { margin-right: 8px; }
 
-    .status-option label {
-        display: flex;
-        align-items: center;
-        padding: 14px 18px;
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background: white;
-        font-weight: 600;
+    .cu-editor-wrap .ql-container {
+        border: none;
+        font-family: inherit;
         font-size: 13px;
     }
 
-    .status-option input:checked + label {
-        border-color: var(--primary-500);
-        background: var(--primary-50);
-        color: var(--primary-700);
-        box-shadow: var(--shadow-sm);
+    .cu-editor-wrap .ql-editor {
+        min-height: 130px;
+        padding: 10px 12px;
+        color: #1a1d23;
+        line-height: 1.6;
     }
 
-    .status-dot {
-        width: 10px;
-        height: 10px;
+    .cu-editor-wrap .ql-editor.ql-blank::before {
+        color: #b0b4be;
+        font-style: normal;
+        left: 12px;
+    }
+
+    /* ─── Status Chips ───────────────────────────────────────── */
+    .cu-status-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .cu-chip-option { position: relative; }
+
+    .cu-chip-option input {
+        position: absolute;
+        opacity: 0;
+        width: 0; height: 0;
+    }
+
+    .cu-chip-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border: 1px solid #d3d5db;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7385;
+        background: white;
+        transition: all .15s;
+        user-select: none;
+    }
+
+    .cu-chip-label:hover { border-color: #7c3aed; color: #7c3aed; background: #faf5ff; }
+
+    .cu-chip-dot {
+        width: 8px; height: 8px;
         border-radius: 50%;
-        margin-right: 10px;
         flex-shrink: 0;
     }
 
-    .status-not-started .status-dot { background: var(--gray-500); }
-    .status-in-progress .status-dot { background: var(--primary-500); }
-    .status-completed .status-dot { background: var(--success-500); }
+    .chip-not-started .cu-chip-dot  { background: #8a8f98; }
+    .chip-in-progress .cu-chip-dot  { background: #3b66d4; }
+    .chip-completed   .cu-chip-dot  { background: #16a34a; }
 
-    .form-actions {
+    .chip-not-started input:checked + .cu-chip-label  { color:#6b7385; border-color:#8a8f98; background:#f1f2f4; }
+    .chip-in-progress input:checked + .cu-chip-label  { color:#2563eb; border-color:#3b66d4; background:#e8f0fe; }
+    .chip-completed   input:checked + .cu-chip-label  { color:#16a34a; border-color:#16a34a; background:#e6f9f0; }
+
+    /* ─── Bottom Action Bar ──────────────────────────────────── */
+    .cu-action-bar {
         display: flex;
-        gap: 14px;
+        align-items: center;
         justify-content: flex-end;
-        padding-top: 28px;
-        border-top: 2px solid var(--gray-100);
-        margin-top: 28px;
+        gap: 8px;
+        padding: 12px 16px;
+        background: #fafbfc;
+        border-top: 1px solid #e3e4e8;
     }
 
-    .btn-secondary {
-        padding: 14px 26px;
-        border: 2px solid var(--gray-200);
+    .cu-btn-cancel {
+        padding: 6px 16px;
+        border: 1px solid #d3d5db;
         background: white;
-        color: var(--gray-700);
-        border-radius: 10px;
+        color: #6b7385;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
         text-decoration: none;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        font-size: 14px;
+        transition: all .15s;
+        line-height: 1.4;
     }
 
-    .btn-secondary:hover {
-        border-color: var(--gray-300);
-        background: var(--gray-50);
-        color: var(--gray-800);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-    }
+    .cu-btn-cancel:hover { border-color: #adb0b8; color: #1a1d23; background: #f7f8fa; }
 
-    .btn-primary {
-        padding: 14px 34px;
-        background: var(--primary-600);
-        border: 2px solid var(--primary-600);
+    .cu-btn-save {
+        padding: 6px 18px;
+        background: #7c3aed;
+        border: 1px solid #7c3aed;
         color: white;
-        border-radius: 10px;
+        border-radius: 6px;
+        font-size: 13px;
         font-weight: 600;
-        transition: all 0.2s ease;
         cursor: pointer;
-        font-size: 14px;
+        transition: all .15s;
+        line-height: 1.4;
     }
 
-    .btn-primary:hover {
-        background: var(--primary-700);
-        border-color: var(--primary-700);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-lg);
-    }
+    .cu-btn-save:hover { background: #6d28d9; border-color: #6d28d9; box-shadow: 0 2px 6px rgba(109,40,217,.35); }
 
-    .input-icon {
-        position: relative;
-    }
-
-    .input-icon .form-control {
-        padding-left: 50px;
-    }
-
-    .input-icon i {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--gray-400);
-        font-size: 16px;
-    }
-
-    .form-control:focus + i {
-        color: var(--primary-500);
-    }
-
-    .content-header {
-        margin-bottom: 32px;
-        padding-bottom: 24px;
-        border-bottom: 2px solid var(--gray-200);
-    }
-
-    .content-title {
-        color: var(--gray-900);
-        font-weight: 700;
-        font-size: 28px;
-        margin-bottom: 4px;
-    }
-
-    .content-subtitle {
-        color: var(--gray-500);
-        font-size: 16px;
-        margin: 0;
-        font-weight: 500;
-    }
-
-    .main-content {
-        padding: 32px;
-        background: var(--gray-25);
-    }
-
+    /* ─── Responsive ─────────────────────────────────────────── */
     @media (max-width: 768px) {
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-
-        .form-body {
-            padding: 24px 20px;
-        }
-
-        .form-header {
-            padding: 24px 20px;
-        }
-
-        .status-options {
-            grid-template-columns: 1fr;
-        }
-
-        .form-actions {
-            flex-direction: column;
-        }
-
-        .main-content {
-            padding: 20px;
-        }
+        .cu-layout { grid-template-columns: 1fr; }
+        .cu-info-panel { position: static; }
+        .cu-field-row { grid-template-columns: 1fr; }
     }
+
 </style>
 @endpush
 
 @section('content')
 <div class="main-content">
+
+    {{-- ── Gradient Page Header ──────────────────────────────── --}}
     <div class="content-header">
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center" style="position:relative;z-index:1;">
             <a href="{{ route('projects.index') }}" class="me-3 text-decoration-none">
-                <i class="bi bi-arrow-left fs-4 text-secondary"></i>
+                <i class="bi bi-arrow-left fs-5" style="color:rgba(255,255,255,.8);"></i>
             </a>
             <div>
                 <h1 class="content-title mb-1">Create New Project</h1>
-                <p class="content-subtitle">Set up a new project to organize your tasks and collaborate with your team</p>
+                <p class="content-subtitle">Set up a new project to organize your tasks and team</p>
             </div>
         </div>
     </div>
 
-    <div class="form-container">
-        <div class="form-card">
-            <div class="form-header">
-                <h2>Project Details</h2>
-                <p>Fill in the information below to create your new project</p>
+    {{-- ── Two-Panel Layout ──────────────────────────────────── --}}
+    <div class="cu-layout">
+
+        {{-- ── Left Preview Panel ───────────────────────────── --}}
+        <div class="cu-info-panel">
+            <div class="cu-info-panel-header">
+                <span>Preview</span>
             </div>
+            <div class="cu-info-body">
+                <div class="cu-project-avatar-preview" id="previewAvatar">N</div>
+                <div class="cu-preview-name" id="previewName">New Project</div>
+                <div class="cu-preview-hint">Start typing a name&hellip;</div>
 
-            <div class="form-body">
-                <form action="{{ route('projects.store') }}" method="POST" id="createProjectForm">
-                    @csrf
+                <div class="cu-meta-row">
+                    <i class="bi bi-circle-fill" style="font-size:7px; color:#8a8f98;"></i>
+                    <span id="previewStatus">Not Started</span>
+                </div>
+                <div class="cu-meta-row">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Start&nbsp;<strong id="previewStart">—</strong></span>
+                </div>
+                <div class="cu-meta-row">
+                    <i class="bi bi-calendar-x"></i>
+                    <span>Due&nbsp;<strong id="previewEnd">—</strong></span>
+                </div>
+                <div class="cu-meta-row">
+                    <i class="bi bi-currency-dollar"></i>
+                    <span>Budget&nbsp;<strong id="previewBudget">—</strong></span>
+                </div>
+                <div class="cu-meta-row">
+                    <i class="bi bi-person"></i>
+                    <span>Owner&nbsp;<strong>{{ auth()->user()->name }}</strong></span>
+                </div>
+            </div>
+        </div>
 
-                    <div class="form-group">
-                        <label for="name" class="form-label">Project Name *</label>
-                        <div class="input-icon">
-                            <i class="bi bi-folder"></i>
-                            <input type="text"
-                                   name="name"
-                                   id="name"
-                                   class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}"
-                                   value="{{ old('name') }}"
-                                   placeholder="Enter project name"
-                                   required>
-                        </div>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+        {{-- ── Right Form Sections ───────────────────────────── --}}
+        <form action="{{ route('projects.store') }}" method="POST" id="createProjectForm">
+            @csrf
+
+            <div class="cu-sections">
+
+                {{-- General Info --}}
+                <div class="cu-section">
+                    <div class="cu-section-header">
+                        <span class="cu-section-icon purple"><i class="bi bi-folder2-open"></i></span>
+                        <span class="cu-section-title">General Info</span>
                     </div>
-
-                    <div class="form-group">
-                        <label for="description" class="form-label">Description</label>
-                        <div class="editor-container">
-                            <div id="quill-editor" style="height: 200px;"></div>
-                            <textarea name="description" id="description" style="display: none;">{{ old('description') }}</textarea>
-                        </div>
-                        @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="start_date" class="form-label">Start Date</label>
-                            <div class="input-icon">
-                                <i class="bi bi-calendar-event"></i>
-                                <input type="date"
-                                       name="start_date"
-                                       id="start_date"
-                                       class="form-control {{ $errors->has('start_date') ? 'is-invalid' : '' }}"
-                                       value="{{ old('start_date', date('Y-m-d')) }}">
+                    <div class="cu-section-body">
+                        <div class="cu-field">
+                            <label for="name" class="cu-label">Project Name <span style="color:#dc2626;">*</span></label>
+                            <div class="cu-input-wrap">
+                                <i class="bi bi-folder"></i>
+                                <input type="text"
+                                       name="name"
+                                       id="name"
+                                       class="cu-input {{ $errors->has('name') ? 'is-invalid' : '' }}"
+                                       value="{{ old('name') }}"
+                                       placeholder="Enter project name"
+                                       required>
                             </div>
-                            @error('start_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="end_date" class="form-label">End Date</label>
-                            <div class="input-icon">
-                                <i class="bi bi-calendar-x"></i>
-                                <input type="date"
-                                       name="end_date"
-                                       id="end_date"
-                                       class="form-control {{ $errors->has('end_date') ? 'is-invalid' : '' }}"
-                                       value="{{ old('end_date') }}">
+                        <div class="cu-field">
+                            <label class="cu-label">Description</label>
+                            <div class="cu-editor-wrap">
+                                <div id="quill-editor"></div>
+                                <textarea name="description" id="description" style="display:none;">{{ old('description') }}</textarea>
                             </div>
-                            @error('end_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="budget" class="form-label">Budget</label>
-                        <div class="input-icon">
-                            <i class="bi bi-currency-dollar"></i>
-                            <input type="number"
-                                   name="budget"
-                                   id="budget"
-                                   class="form-control {{ $errors->has('budget') ? 'is-invalid' : '' }}"
-                                   value="{{ old('budget') }}"
-                                   step="0.01"
-                                   min="0"
-                                   placeholder="0.00">
-                        </div>
-                        @error('budget')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                {{-- Timeline & Budget --}}
+                <div class="cu-section">
+                    <div class="cu-section-header">
+                        <span class="cu-section-icon blue"><i class="bi bi-calendar3"></i></span>
+                        <span class="cu-section-title">Timeline &amp; Budget</span>
                     </div>
+                    <div class="cu-section-body">
+                        <div class="cu-field-row cu-field">
+                            <div class="cu-field" style="margin-bottom:0;">
+                                <label for="start_date" class="cu-label">Start Date</label>
+                                <div class="cu-input-wrap">
+                                    <i class="bi bi-calendar-event"></i>
+                                    <input type="date"
+                                           name="start_date"
+                                           id="start_date"
+                                           class="cu-input {{ $errors->has('start_date') ? 'is-invalid' : '' }}"
+                                           value="{{ old('start_date', date('Y-m-d')) }}">
+                                </div>
+                                @error('start_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="cu-field" style="margin-bottom:0;">
+                                <label for="end_date" class="cu-label">End Date</label>
+                                <div class="cu-input-wrap">
+                                    <i class="bi bi-calendar-x"></i>
+                                    <input type="date"
+                                           name="end_date"
+                                           id="end_date"
+                                           class="cu-input {{ $errors->has('end_date') ? 'is-invalid' : '' }}"
+                                           value="{{ old('end_date') }}">
+                                </div>
+                                @error('end_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Project Status *</label>
-                        <div class="status-options">
-                            <div class="status-option">
-                                <input type="radio"
-                                       name="status"
-                                       id="status_not_started"
-                                       value="not_started"
-                                       {{ old('status', 'not_started') == 'not_started' ? 'checked' : '' }}>
-                                <label for="status_not_started" class="status-not-started">
-                                    <span class="status-dot"></span>
-                                    Not Started
+                        <div class="cu-field" style="margin-bottom:0; margin-top:12px;">
+                            <label for="budget" class="cu-label">Budget (USD)</label>
+                            <div class="cu-input-wrap">
+                                <i class="bi bi-currency-dollar"></i>
+                                <input type="number"
+                                       name="budget"
+                                       id="budget"
+                                       class="cu-input {{ $errors->has('budget') ? 'is-invalid' : '' }}"
+                                       value="{{ old('budget') }}"
+                                       step="0.01" min="0"
+                                       placeholder="0.00">
+                            </div>
+                            @error('budget')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Status --}}
+                <div class="cu-section">
+                    <div class="cu-section-header">
+                        <span class="cu-section-icon green"><i class="bi bi-ui-checks"></i></span>
+                        <span class="cu-section-title">Status</span>
+                        <span class="cu-section-subtitle">Select initial state</span>
+                    </div>
+                    <div class="cu-section-body">
+                        <div class="cu-status-chips">
+                            <div class="cu-chip-option chip-not-started">
+                                <input type="radio" name="status" id="status_not_started" value="not_started"
+                                    {{ old('status', 'not_started') == 'not_started' ? 'checked' : '' }}>
+                                <label for="status_not_started" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> Not Started
                                 </label>
                             </div>
-
-                            <div class="status-option">
-                                <input type="radio"
-                                       name="status"
-                                       id="status_in_progress"
-                                       value="in_progress"
-                                       {{ old('status') == 'in_progress' ? 'checked' : '' }}>
-                                <label for="status_in_progress" class="status-in-progress">
-                                    <span class="status-dot"></span>
-                                    In Progress
+                            <div class="cu-chip-option chip-in-progress">
+                                <input type="radio" name="status" id="status_in_progress" value="in_progress"
+                                    {{ old('status') == 'in_progress' ? 'checked' : '' }}>
+                                <label for="status_in_progress" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> In Progress
                                 </label>
                             </div>
-
-                            <div class="status-option">
-                                <input type="radio"
-                                       name="status"
-                                       id="status_completed"
-                                       value="completed"
-                                       {{ old('status') == 'completed' ? 'checked' : '' }}>
-                                <label for="status_completed" class="status-completed">
-                                    <span class="status-dot"></span>
-                                    Completed
+                            <div class="cu-chip-option chip-completed">
+                                <input type="radio" name="status" id="status_completed" value="completed"
+                                    {{ old('status') == 'completed' ? 'checked' : '' }}>
+                                <label for="status_completed" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> Completed
                                 </label>
                             </div>
                         </div>
-                        @error('status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        @error('status')<div class="invalid-feedback mt-2">{{ $message }}</div>@enderror
                     </div>
-
-                    <div class="form-actions">
-                        <a href="{{ route('projects.index') }}" class="btn-secondary">
-                            Cancel
-                        </a>
-                        <button type="submit" class="btn-primary">
-                            <i class="bi bi-plus-lg me-2"></i>Create Project
+                    <div class="cu-action-bar">
+                        <a href="{{ route('projects.index') }}" class="cu-btn-cancel">Cancel</a>
+                        <button type="submit" class="cu-btn-save">
+                            <i class="bi bi-plus-lg me-1"></i>Create Project
                         </button>
                     </div>
-                </form>
+                </div>
+
             </div>
-        </div>
+        </form>
     </div>
+
 </div>
 @endsection
 
@@ -506,27 +591,64 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('createProjectForm');
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
+    const nameInput = document.getElementById('name');
+    const budgetInput = document.getElementById('budget');
 
-    // Auto-set minimum end date based on start date
-    startDateInput.addEventListener('change', function() {
-        if (this.value) {
-            endDateInput.min = this.value;
-            if (endDateInput.value && endDateInput.value < this.value) {
-                endDateInput.value = '';
-            }
-        }
+    // ── Live preview helpers ──────────────────────────────────
+    const avatarColors = ['#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899'];
+    const previewAvatar = document.getElementById('previewAvatar');
+    const previewName   = document.getElementById('previewName');
+    const previewStatus = document.getElementById('previewStatus');
+    const previewStart  = document.getElementById('previewStart');
+    const previewEnd    = document.getElementById('previewEnd');
+    const previewBudget = document.getElementById('previewBudget');
+
+    function fmtDate(val) {
+        if (!val) return '—';
+        const d = new Date(val + 'T00:00:00');
+        return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    }
+
+    nameInput.addEventListener('input', function() {
+        const v = this.value.trim();
+        previewName.textContent = v || 'New Project';
+        const letter = (v || 'N')[0].toUpperCase();
+        previewAvatar.textContent = letter;
+        previewAvatar.style.background = avatarColors[(v.length || 1) % avatarColors.length];
     });
 
-    // Form validation
-    form.addEventListener('submit', function(e) {
-        const name = document.getElementById('name').value.trim();
+    startDateInput.addEventListener('change', function() {
+        previewStart.textContent = fmtDate(this.value);
+        endDateInput.min = this.value;
+        if (endDateInput.value && endDateInput.value < this.value) endDateInput.value = '';
+    });
 
-        if (!name) {
+    endDateInput.addEventListener('change', function() {
+        previewEnd.textContent = fmtDate(this.value);
+    });
+
+    budgetInput.addEventListener('input', function() {
+        const v = parseFloat(this.value);
+        previewBudget.textContent = isNaN(v) ? '—' : '$' + v.toLocaleString('en-US', {maximumFractionDigits:0});
+    });
+
+    const statusLabels = { not_started:'Not Started', in_progress:'In Progress', completed:'Completed' };
+    document.querySelectorAll('input[name="status"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            previewStatus.textContent = statusLabels[this.value] || this.value;
+        });
+    });
+
+    // Initialise preview from defaults
+    previewStart.textContent = fmtDate(startDateInput.value);
+
+    // ── Validation ────────────────────────────────────────────
+    form.addEventListener('submit', function(e) {
+        if (!nameInput.value.trim()) {
             e.preventDefault();
             alert('Please enter a project name.');
             return;
         }
-
         if (startDateInput.value && endDateInput.value) {
             if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
                 e.preventDefault();
@@ -536,13 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Auto-generate project name suggestions
-    const nameInput = document.getElementById('name');
-    nameInput.addEventListener('input', function() {
-        // Add any auto-completion or validation logic here
-    });
-
-    // Initialize Quill editor
+    // ── Quill ─────────────────────────────────────────────────
     var quill = new Quill('#quill-editor', {
         theme: 'snow',
         placeholder: 'Describe your project goals, objectives, and key deliverables...',
@@ -562,18 +678,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Set initial content if available
     var initialContent = document.getElementById('description').value;
-    if (initialContent) {
-        quill.root.innerHTML = initialContent;
-    }
+    if (initialContent) quill.root.innerHTML = initialContent;
 
-    // Update hidden textarea when content changes
     quill.on('text-change', function() {
         document.getElementById('description').value = quill.root.innerHTML;
     });
 
-    // Update hidden textarea before form submission
     document.querySelector('form').addEventListener('submit', function() {
         document.getElementById('description').value = quill.root.innerHTML;
     });

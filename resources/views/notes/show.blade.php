@@ -2,366 +2,271 @@
 
 @section('title', $note->title)
 
-@section('content')
+@push('styles')
 <style>
-    :root {
-        --note-primary: #667eea;
-        --note-secondary: #764ba2;
-        --note-success: #10b981;
-        --note-warning: #f59e0b;
-        --note-danger: #ef4444;
-        --note-info: #3b82f6;
-        --note-light: #f8fafc;
-        --note-dark: #1e293b;
-        --note-gray: #64748b;
-        --note-border: #e2e8f0;
-        --note-shadow: rgba(0, 0, 0, 0.1);
-        --note-shadow-lg: rgba(0, 0, 0, 0.15);
+    .main-content { padding: 14px 16px; background: #f7f8fa; min-height: 100vh; }
+
+    /* Header */
+    .cu-header {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        border-radius: 10px; padding: 12px 18px; color: white;
+        margin-bottom: 14px; position: relative; overflow: hidden;
+        border: 1px solid #6d28d9; box-shadow: 0 2px 8px rgba(124,58,237,.3);
     }
-
-    .note-header {
-        background: linear-gradient(135deg, var(--note-primary) 0%, var(--note-secondary) 100%);
-        color: white;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 25px var(--note-shadow-lg);
+    .cu-header::before {
+        content: ''; position: absolute; top: 0; right: 0;
+        width: 80px; height: 80px; background: rgba(255,255,255,.08);
+        border-radius: 50%; transform: translate(20px,-20px);
     }
+    .cu-header-title { font-weight: 700; font-size: 17px; margin: 0; position: relative; z-index: 1; }
+    .cu-header-sub   { font-size: 12px; opacity: .8; margin: 2px 0 0; position: relative; z-index: 1; }
 
-    .note-content-card {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid var(--note-border);
-        box-shadow: 0 4px 6px -1px var(--note-shadow);
-        overflow: hidden;
+    /* Layout */
+    .cu-layout { display: grid; grid-template-columns: 220px 1fr; gap: 14px; align-items: start; }
+    @media(max-width:768px) { .cu-layout { grid-template-columns: 1fr; } }
+
+    /* Left panel */
+    .cu-info-panel {
+        background: white; border: 1px solid #e3e4e8; border-radius: 8px;
+        overflow: hidden; position: sticky; top: 14px;
     }
-
-    .note-content-body {
-        padding: 2rem;
-        line-height: 1.8;
-        color: var(--note-dark);
+    .cu-info-panel-header { background: #f7f8fa; border-bottom: 1px solid #e3e4e8; padding: 10px 14px; }
+    .cu-info-panel-header span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: #8a8f98; }
+    .cu-info-body { padding: 14px; }
+    .cu-avatar {
+        width: 48px; height: 48px; border-radius: 10px; background: #7c3aed;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 22px; color: white; margin: 0 auto 10px;
     }
-
-    .note-meta-sidebar {
-        background: var(--note-light);
-        padding: 1.5rem;
-        border-left: 1px solid var(--note-border);
+    .cu-panel-name { text-align: center; font-size: 13px; font-weight: 700; color: #1a1d23; margin-bottom: 4px; word-break: break-word; }
+    .cu-panel-sub  { text-align: center; font-size: 11px; color: #adb0b8; margin-bottom: 10px; }
+    .cu-meta-row {
+        display: flex; align-items: flex-start; gap: 8px;
+        padding: 7px 0; border-top: 1px solid #f0f1f3;
+        font-size: 12px; color: #6b7385;
     }
+    .cu-meta-row i { font-size: 13px; color: #adb0b8; flex-shrink: 0; margin-top: 1px; }
+    .cu-meta-row strong { color: #1a1d23; font-weight: 600; }
 
-    .breadcrumb-modern {
-        background: white;
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 4px var(--note-shadow);
-        border: 1px solid var(--note-border);
+    /* Action buttons in panel */
+    .cu-quick-actions { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; border-top: 1px solid #f0f1f3; padding-top: 12px; }
+    .cu-action-link {
+        display: flex; align-items: center; gap: 7px; padding: 6px 10px;
+        border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;
+        border: 1px solid transparent; cursor: pointer; transition: all .15s; background: white;
     }
-
-    .breadcrumb-modern .breadcrumb {
-        margin: 0;
+    .cu-action-link.edit   { border-color: #fde68a; color: #d97706; background: #fffbeb; }
+    .cu-action-link.edit:hover   { background: #fef3c7; }
+    .cu-action-link.copy   { border-color: #a7f3d0; color: #059669; background: #ecfdf5; }
+    .cu-action-link.copy:hover   { background: #d1fae5; }
+    .cu-action-link.del    { border-color: #fecaca; color: #dc2626; background: #fef2f2; }
+    .cu-action-link.del:hover    { background: #fee2e2; }
+    .cu-fav-btn {
+        display: flex; align-items: center; gap: 7px; padding: 6px 10px;
+        border-radius: 6px; font-size: 12px; font-weight: 600;
+        border: 1px solid #d3d5db; color: #6b7385; background: white;
+        cursor: pointer; transition: all .15s; width: 100%;
     }
+    .cu-fav-btn.active    { border-color: #f59e0b; color: #b45309; background: #fef3c7; }
+    .cu-fav-btn.active i  { color: #f59e0b; }
+    .cu-fav-btn i         { color: #d3d5db; font-size: 13px; }
 
-    .breadcrumb-modern .breadcrumb-item a {
-        color: var(--note-primary);
-        text-decoration: none;
-        font-weight: 500;
+    /* Right content area */
+    .cu-content-card {
+        background: white; border: 1px solid #e3e4e8; border-radius: 8px; overflow: hidden;
     }
-
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
+    .cu-content-header {
+        display: flex; align-items: center; gap: 8px;
+        padding: 10px 16px; background: #fafbfc; border-bottom: 1px solid #e3e4e8;
     }
-
-    .action-btn {
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
+    .cu-content-header-icon {
+        width: 26px; height: 26px; border-radius: 6px; background: #ede9fe; color: #7c3aed;
+        display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;
     }
-
-    .action-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px var(--note-shadow);
+    .cu-content-title { font-size: 13px; font-weight: 700; color: #1a1d23; margin: 0; }
+    .cu-content-body {
+        padding: 20px 24px; font-size: 14px; line-height: 1.8; color: #374151;
     }
+    /* Style rich text content */
+    .cu-content-body h1, .cu-content-body h2, .cu-content-body h3 { color: #1a1d23; margin: 1em 0 .5em; }
+    .cu-content-body p   { margin: 0 0 .75em; }
+    .cu-content-body ul, .cu-content-body ol { padding-left: 1.5em; margin-bottom: .75em; }
+    .cu-content-body blockquote { border-left: 3px solid #7c3aed; padding-left: 12px; color: #6b7385; margin: .75em 0; font-style: italic; }
+    .cu-content-body pre { background: #f7f8fa; border: 1px solid #e3e4e8; border-radius: 6px; padding: 12px; font-size: 12px; overflow-x: auto; }
+    .cu-content-body a   { color: #7c3aed; text-decoration: underline; }
+    .cu-content-body strong { color: #1a1d23; }
 
-    .note-category-badge {
-        background: var(--note-primary);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        display: inline-block;
+    /* Badges */
+    .cu-cat-badge {
+        display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px;
+        font-size: 11px; font-weight: 700; background: #ede9fe; color: #6d28d9; margin-right: 4px;
     }
-
-    .note-tag {
-        background: var(--note-light);
-        color: var(--note-gray);
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        border: 1px solid var(--note-border);
-        display: inline-block;
-        margin: 0.25rem 0.25rem 0.25rem 0;
+    .cu-tag-pill {
+        display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px;
+        font-size: 11px; font-weight: 600; background: #f3f4f6; color: #6b7385;
+        border: 1px solid #e3e4e8; margin: 2px;
     }
+    .cu-badges-row { padding: 10px 24px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 
-    .meta-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid var(--note-border);
+    /* Stats bar */
+    .cu-stats-bar {
+        display: flex; gap: 16px; padding: 8px 24px; border-top: 1px solid #f0f1f3;
+        background: #fafbfc; font-size: 11px; color: #8a8f98; flex-wrap: wrap;
     }
-
-    .meta-item:last-child {
-        border-bottom: none;
-    }
-
-    .meta-label {
-        font-weight: 600;
-        color: var(--note-gray);
-        font-size: 0.875rem;
-    }
-
-    .meta-value {
-        color: var(--note-dark);
-        font-weight: 500;
-    }
-
-    .favorite-btn {
-        background: none;
-        border: none;
-        color: var(--note-gray);
-        font-size: 1.25rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        padding: 0.5rem;
-        border-radius: 50%;
-    }
-
-    .favorite-btn.active {
-        color: var(--note-warning);
-        transform: scale(1.1);
-    }
-
-    .favorite-btn:hover {
-        background: rgba(245, 158, 11, 0.1);
-    }
-
-    @media (max-width: 768px) {
-        .note-header {
-            padding: 1.5rem;
-        }
-
-        .note-content-body {
-            padding: 1.5rem;
-        }
-
-        .note-meta-sidebar {
-            padding: 1.5rem;
-            border-left: none;
-            border-top: 1px solid var(--note-border);
-        }
-
-        .action-buttons {
-            justify-content: center;
-        }
-    }
+    .cu-stats-bar span { display: flex; align-items: center; gap: 4px; }
 </style>
+@endpush
 
-<div class="container-fluid px-4">
-    <!-- Breadcrumb -->
-    <div class="breadcrumb-modern">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{{ route('dashboard') }}">
-                        <i class="fas fa-home me-1"></i>Dashboard
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{{ route('notes.index') }}">
-                        <i class="fas fa-sticky-note me-1"></i>Notes
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    {{ Str::limit($note->title, 30) }}
-                </li>
-            </ol>
-        </nav>
-    </div>
+@section('content')
+<div class="main-content">
 
-    <!-- Note Header -->
-    <div class="note-header">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <div class="d-flex align-items-center mb-3">
-                    <h1 class="mb-0 me-3">{{ $note->title }}</h1>
-                    <button class="favorite-btn {{ $note->is_favorite ? 'active' : '' }}"
-                            data-note-id="{{ $note->id }}" title="Toggle Favorite">
-                        <i class="fas fa-star"></i>
-                    </button>
-                </div>
-
-                @if($note->category)
-                    <div class="mb-3">
-                        <span class="note-category-badge">{{ $note->category }}</span>
-                    </div>
-                @endif
-
-                @if($note->tags && count($note->tags) > 0)
-                    <div class="mb-3">
-                        @foreach($note->tags as $tag)
-                            <span class="note-tag">{{ $tag }}</span>
-                        @endforeach
-                    </div>
-                @endif
-
-                <p class="mb-0 opacity-90">
-                    <i class="fas fa-clock me-2"></i>
+    {{-- Header --}}
+    <div class="cu-header">
+        <div class="d-flex align-items-center" style="position:relative;z-index:1;">
+            <a href="{{ route('notes.index') }}" class="me-3 text-decoration-none">
+                <i class="bi bi-arrow-left fs-5" style="color:rgba(255,255,255,.8);"></i>
+            </a>
+            <div>
+                <h1 class="cu-header-title">{{ $note->title }}</h1>
+                <p class="cu-header-sub">
                     Created {{ $note->created_at->diffForHumans() }}
-                    @if($note->updated_at != $note->created_at)
-                        • Updated {{ $note->updated_at->diffForHumans() }}
+                    @if($note->updated_at->ne($note->created_at))
+                        &middot; Updated {{ $note->updated_at->diffForHumans() }}
                     @endif
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- Note Content -->
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="note-content-card">
-                <div class="note-content-body">
-                    {!! nl2br(e($note->content)) !!}
+    {{-- Layout --}}
+    <div class="cu-layout">
+
+        {{-- Left panel --}}
+        <div class="cu-info-panel">
+            <div class="cu-info-panel-header"><span>Note Details</span></div>
+            <div class="cu-info-body">
+                <div class="cu-avatar"><i class="bi bi-journal-text"></i></div>
+                <div class="cu-panel-name">{{ $note->title }}</div>
+                @if($note->category)
+                    <div class="cu-panel-sub">{{ $note->category }}</div>
+                @else
+                    <div class="cu-panel-sub">No category</div>
+                @endif
+
+                <div class="cu-meta-row">
+                    <i class="bi bi-file-text"></i>
+                    <span><strong>{{ $note->word_count }}</strong> words &middot; {{ strlen(strip_tags($note->content)) }} chars</span>
+                </div>
+                <div class="cu-meta-row">
+                    <i class="bi bi-calendar3"></i>
+                    <span>Created <strong>{{ $note->created_at->format('M d, Y') }}</strong></span>
+                </div>
+                @if($note->updated_at->ne($note->created_at))
+                <div class="cu-meta-row">
+                    <i class="bi bi-pencil"></i>
+                    <span>Modified <strong>{{ $note->updated_at->format('M d, Y') }}</strong></span>
+                </div>
+                @endif
+                @if($note->date)
+                <div class="cu-meta-row">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>{{ $note->formatted_date }}
+                        @if($note->time) &middot; {{ $note->formatted_time }} @endif
+                    </span>
+                </div>
+                @endif
+
+                {{-- Quick actions --}}
+                <div class="cu-quick-actions">
+                    <button class="cu-fav-btn {{ $note->is_favorite ? 'active' : '' }}" id="fav-btn" data-note-id="{{ $note->id }}">
+                        <i class="bi bi-star-fill"></i>
+                        <span id="fav-label">{{ $note->is_favorite ? 'Unfavourite' : 'Favourite' }}</span>
+                    </button>
+                    <a href="{{ route('notes.edit', $note->id) }}" class="cu-action-link edit">
+                        <i class="bi bi-pencil"></i> Edit Note
+                    </a>
+                    <button class="cu-action-link copy" onclick="duplicateNote({{ $note->id }})">
+                        <i class="bi bi-files"></i> Duplicate
+                    </button>
+                    <button class="cu-action-link copy" onclick="copyContent()" style="border-color:#bfdbfe;color:#2563eb;background:#eff6ff;">
+                        <i class="bi bi-clipboard"></i> Copy Text
+                    </button>
+                    <form action="{{ route('notes.destroy', $note->id) }}" method="POST" id="deleteForm">
+                        @csrf @method('DELETE')
+                        <button type="button" class="cu-action-link del" style="width:100%;" onclick="confirmDelete()">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- Meta Sidebar -->
-        <div class="col-lg-4">
-            <div class="note-content-card">
-                <div class="note-meta-sidebar">
-                    <h5 class="mb-3">
-                        <i class="fas fa-info-circle me-2"></i>Note Details
-                    </h5>
+        {{-- Note content --}}
+        <div class="cu-content-card">
+            <div class="cu-content-header">
+                <div class="cu-content-header-icon"><i class="bi bi-journal-text"></i></div>
+                <span class="cu-content-title">{{ $note->title }}</span>
+                @if($note->is_favorite)
+                <i class="bi bi-star-fill ms-auto" style="color:#f59e0b;font-size:14px;" title="Favourite"></i>
+                @endif
+            </div>
 
-                    <div class="meta-item">
-                        <span class="meta-label">Word Count</span>
-                        <span class="meta-value">{{ $note->word_count }} words</span>
-                    </div>
+            {{-- Category + tags --}}
+            @if($note->category || ($note->tags && count($note->tags)))
+            <div class="cu-badges-row">
+                @if($note->category)
+                    <span class="cu-cat-badge"><i class="bi bi-tag" style="font-size:10px;"></i> {{ $note->category }}</span>
+                @endif
+                @if($note->tags)
+                    @foreach($note->tags as $tag)
+                        <span class="cu-tag-pill">{{ $tag }}</span>
+                    @endforeach
+                @endif
+            </div>
+            @endif
 
-                    <div class="meta-item">
-                        <span class="meta-label">Character Count</span>
-                        <span class="meta-value">{{ strlen(strip_tags($note->content)) }} chars</span>
-                    </div>
+            {{-- Content body --}}
+            <div class="cu-content-body" id="note-content">
+                {!! $note->content !!}
+            </div>
 
-                    <div class="meta-item">
-                        <span class="meta-label">Created</span>
-                        <span class="meta-value">{{ $note->created_at->format('M j, Y g:i A') }}</span>
-                    </div>
-
-                    @if($note->updated_at != $note->created_at)
-                        <div class="meta-item">
-                            <span class="meta-label">Last Modified</span>
-                            <span class="meta-value">{{ $note->updated_at->format('M j, Y g:i A') }}</span>
-                        </div>
-                    @endif
-
-                    @if($note->date)
-                        <div class="meta-item">
-                            <span class="meta-label">Note Date</span>
-                            <span class="meta-value">
-                                {{ $note->formatted_date }}
-                                @if($note->time)
-                                    <br><small class="text-muted">{{ $note->formatted_time }}</small>
-                                @endif
-                            </span>
-                        </div>
-                    @endif
-
-                    <div class="meta-item">
-                        <span class="meta-label">Status</span>
-                        <span class="meta-value">
-                            @if($note->is_favorite)
-                                <span class="badge bg-warning">Favorite</span>
-                            @else
-                                <span class="badge bg-secondary">Regular</span>
-                            @endif
-                        </span>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="mt-4">
-                        <h6 class="mb-3">Quick Actions</h6>
-                        <div class="d-grid gap-2">
-                            <a href="{{ route('notes.edit', $note->id) }}" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-edit me-2"></i>Edit Note
-                            </a>
-                            <button class="btn btn-outline-success btn-sm" onclick="duplicateNote({{ $note->id }})">
-                                <i class="fas fa-copy me-2"></i>Duplicate Note
-                            </button>
-                            <button class="btn btn-outline-info btn-sm" onclick="copyToClipboard()">
-                                <i class="fas fa-clipboard me-2"></i>Copy Content
-                            </button>
-                            <form action="{{ route('notes.destroy', $note->id) }}" method="POST"
-                                  onsubmit="return confirm('Are you sure you want to delete this note?')" class="mt-2">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm w-100">
-                                    <i class="fas fa-trash me-2"></i>Delete Note
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+            {{-- Stats bar --}}
+            <div class="cu-stats-bar">
+                <span><i class="bi bi-file-text"></i> {{ $note->word_count }} words</span>
+                <span><i class="bi bi-clock"></i> {{ $note->created_at->format('M d, Y g:i A') }}</span>
+                @if($note->date)
+                <span><i class="bi bi-calendar-event"></i> {{ $note->formatted_date }}{{ $note->time ? ' at ' . $note->formatted_time : '' }}</span>
+                @endif
             </div>
         </div>
+
     </div>
 </div>
+@endsection
 
+@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Favorite toggle
-    const favoriteBtn = document.querySelector('.favorite-btn');
-    if (favoriteBtn) {
-        favoriteBtn.addEventListener('click', function() {
-            const noteId = this.dataset.noteId;
+document.addEventListener('DOMContentLoaded', function () {
+    const favBtn   = document.getElementById('fav-btn');
+    const favLabel = document.getElementById('fav-label');
 
-            fetch(`/notes/${noteId}/toggle-favorite`, {
-                method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    this.classList.toggle('active', data.is_favorite);
-
-                    // Update status badge
-                    const statusBadge = document.querySelector('.meta-value .badge');
-                    if (statusBadge) {
-                        if (data.is_favorite) {
-                            statusBadge.className = 'badge bg-warning';
-                            statusBadge.textContent = 'Favorite';
-                        } else {
-                            statusBadge.className = 'badge bg-secondary';
-                            statusBadge.textContent = 'Regular';
-                        }
-                    }
-                }
-            });
+    favBtn.addEventListener('click', function () {
+        const noteId = this.dataset.noteId;
+        fetch(`/notes/${noteId}/toggle-favorite`, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                favBtn.classList.toggle('active', data.is_favorite);
+                favLabel.textContent = data.is_favorite ? 'Unfavourite' : 'Favourite';
+            }
         });
-    }
+    });
 });
 
 function duplicateNote(noteId) {
@@ -369,49 +274,48 @@ function duplicateNote(noteId) {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
         }
     })
-    .then(() => {
+    .then(r => {
         window.location.href = '{{ route("notes.index") }}';
-    });
+    })
+    .catch(err => console.error('Duplicate failed:', err));
 }
 
-function copyToClipboard() {
-    const noteContent = `{{ $note->title }}\n\n{{ strip_tags($note->content) }}`;
+function copyContent() {
+    const text = document.getElementById('note-content').innerText;
+    const btn = document.querySelector('[onclick="copyContent()"]');
+    const orig = btn.innerHTML;
 
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(noteContent).then(() => {
-            // Show toast notification
-            const toast = document.createElement('div');
-            toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed';
-            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas fa-check me-2"></i>Note content copied to clipboard!
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            `;
-            document.body.appendChild(toast);
+    function showCopied() {
+        btn.innerHTML = '<i class="bi bi-check-lg"></i> Copied!';
+        setTimeout(() => btn.innerHTML = orig, 2000);
+    }
 
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-
-            toast.addEventListener('hidden.bs.toast', () => {
-                document.body.removeChild(toast);
-            });
-        });
+    // Modern clipboard API (HTTPS / localhost)
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(showCopied).catch(() => fallbackCopy(text, showCopied));
     } else {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = noteContent;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        alert('Note content copied to clipboard!');
+        fallbackCopy(text, showCopied);
+    }
+}
+
+function fallbackCopy(text, callback) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); callback(); } catch(e) { alert('Copy not supported in this browser.'); }
+    document.body.removeChild(ta);
+}
+
+function confirmDelete() {
+    if (confirm('Delete this note? This cannot be undone.')) {
+        document.getElementById('deleteForm').submit();
     }
 }
 </script>
-@endsection
+@endpush

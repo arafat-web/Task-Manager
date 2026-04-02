@@ -2,260 +2,166 @@
 
 @section('title', 'Daily Routines')
 
-@section('content')
+@push('styles')
 <style>
-    :root {
-        --routine-primary: #8b5cf6;
-        --routine-secondary: #a855f7;
-        --routine-success: #10b981;
-        --routine-warning: #f59e0b;
-        --routine-danger: #ef4444;
-        --routine-info: #3b82f6;
-        --routine-light: #faf5ff;
-        --routine-dark: #1e293b;
-        --routine-gray: #64748b;
-        --routine-border: #e2e8f0;
-        --routine-shadow: rgba(0, 0, 0, 0.1);
-        --routine-shadow-lg: rgba(0, 0, 0, 0.15);
+
+    /* ── Page shell ──────────────────────────────────────── */
+    .main-content { padding: 14px 16px; background: #f7f8fa; min-height: 100vh; }
+
+    /* ── Gradient header ─────────────────────────────────── */
+    .cu-header {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        border-radius: 10px; padding: 12px 18px; color: white;
+        margin-bottom: 14px; position: relative; overflow: hidden;
+        border: 1px solid #6d28d9; box-shadow: 0 2px 8px rgba(124,58,237,.3);
+    }
+    .cu-header::before {
+        content: ''; position: absolute; top: 0; right: 0;
+        width: 80px; height: 80px; background: rgba(255,255,255,.08);
+        border-radius: 50%; transform: translate(20px,-20px);
+    }
+    .cu-header-title { font-weight: 700; font-size: 17px; margin: 0; position: relative; z-index: 1; }
+    .cu-header-sub   { font-size: 12px; opacity: .8; margin: 2px 0 0; position: relative; z-index: 1; }
+    .cu-btn-glass {
+        display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+        border-radius: 7px; background: rgba(255,255,255,.2); color: white;
+        border: 1px solid rgba(255,255,255,.3); font-size: 12px; font-weight: 600;
+        text-decoration: none; transition: background .15s; position: relative; z-index: 1;
+    }
+    .cu-btn-glass:hover { background: rgba(255,255,255,.3); color: white; }
+
+    /* ── Card grid ───────────────────────────────────────── */
+    .cu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 12px;
     }
 
-    .daily-header {
-        background: linear-gradient(135deg, var(--routine-primary) 0%, var(--routine-secondary) 100%);
-        color: white;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 25px var(--routine-shadow-lg);
+    /* ── Routine card ────────────────────────────────────── */
+    .cu-card {
+        background: white; border: 1px solid #e3e4e8; border-radius: 10px;
+        overflow: hidden; transition: all .15s;
     }
+    .cu-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,.1); border-color: #c4b5fd; transform: translateY(-1px); }
+    .cu-card-accent { height: 4px; }
+    .cu-card-body   { padding: 14px 14px 10px; }
+    .cu-card-title  { font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 5px; line-height: 1.3; }
+    .cu-card-desc   {
+        font-size: 12px; color: #8a8f98; margin-bottom: 10px; line-height: 1.5;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .cu-card-meta   { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .cu-pill {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
+        background: #f3f4f6; color: #6b7385;
+    }
+    .cu-pill i { font-size: 10px; }
+    .cu-card-footer {
+        display: flex; align-items: center; justify-content: flex-end; gap: 5px;
+        padding: 8px 14px; background: #fafbfc; border-top: 1px solid #f0f1f3;
+    }
+    .cu-btn-edit {
+        display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+        border-radius: 5px; font-size: 11px; font-weight: 600; text-decoration: none;
+        background: #fffbeb; color: #d97706; border: 1px solid #fde68a; transition: all .15s;
+    }
+    .cu-btn-edit:hover { background: #fef3c7; }
+    .cu-btn-del {
+        display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+        border-radius: 5px; font-size: 11px; font-weight: 600;
+        background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;
+        cursor: pointer; transition: all .15s;
+    }
+    .cu-btn-del:hover { background: #fee2e2; }
 
-    .breadcrumb-modern {
-        background: white;
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 4px var(--routine-shadow);
-        border: 1px solid var(--routine-border);
+    /* ── Empty state ─────────────────────────────────────── */
+    .cu-empty {
+        grid-column: 1 / -1; text-align: center; padding: 48px 24px;
+        background: white; border: 1px solid #e3e4e8; border-radius: 10px; color: #adb0b8;
     }
-
-    .breadcrumb-modern .breadcrumb {
-        margin: 0;
-        background: none;
-        padding: 0;
+    .cu-empty i    { font-size: 36px; display: block; margin-bottom: 10px; opacity: .45; }
+    .cu-empty h5   { font-size: 15px; font-weight: 700; color: #6b7385; margin-bottom: 6px; }
+    .cu-empty p    { font-size: 13px; margin-bottom: 16px; }
+    .cu-btn-create {
+        display: inline-flex; align-items: center; gap: 6px; padding: 7px 18px;
+        border-radius: 7px; background: #7c3aed; color: white; font-size: 13px;
+        font-weight: 600; text-decoration: none; transition: background .15s;
     }
-
-    .breadcrumb-modern .breadcrumb-item + .breadcrumb-item::before {
-        content: "›";
-        color: var(--routine-gray);
-        font-weight: 600;
-    }
-
-    .routine-card {
-        background: white;
-        border: 1px solid var(--routine-border);
-        border-radius: 12px;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 6px -1px var(--routine-shadow);
-        margin-bottom: 1.5rem;
-    }
-
-    .routine-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px var(--routine-shadow-lg);
-        border-color: var(--routine-primary);
-    }
-
-    .routine-card-body {
-        padding: 1.5rem;
-    }
-
-    .routine-title {
-        font-weight: 700;
-        color: var(--routine-dark);
-        margin-bottom: 0.5rem;
-        font-size: 1.25rem;
-    }
-
-    .routine-description {
-        color: var(--routine-gray);
-        margin-bottom: 1rem;
-        line-height: 1.5;
-    }
-
-    .routine-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        font-size: 0.875rem;
-    }
-
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        color: var(--routine-gray);
-        padding: 0.25rem 0.5rem;
-        background: var(--routine-light);
-        border-radius: 6px;
-    }
-
-    .routine-actions {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: flex-end;
-    }
-
-    .btn-modern {
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        border: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        font-size: 0.875rem;
-    }
-
-    .btn-modern.btn-primary {
-        background: var(--routine-primary);
-        color: white;
-    }
-
-    .btn-modern.btn-primary:hover {
-        background: var(--routine-secondary);
-        transform: translateY(-1px);
-        color: white;
-    }
-
-    .btn-modern.btn-warning {
-        background: var(--routine-warning);
-        color: white;
-    }
-
-    .btn-modern.btn-warning:hover {
-        background: #d97706;
-        color: white;
-    }
-
-    .btn-modern.btn-danger {
-        background: var(--routine-danger);
-        color: white;
-    }
-
-    .btn-modern.btn-danger:hover {
-        background: #dc2626;
-        color: white;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: white;
-        border-radius: 12px;
-        border: 1px solid var(--routine-border);
-        box-shadow: 0 4px 6px -1px var(--routine-shadow);
-    }
-
-    .empty-state i {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        color: var(--routine-gray);
-        opacity: 0.5;
-    }
-
-    .empty-state h3 {
-        color: var(--routine-dark);
-        margin-bottom: 1rem;
-    }
-
-    .empty-state p {
-        color: var(--routine-gray);
-        margin-bottom: 2rem;
-    }
+    .cu-btn-create:hover { background: #6d28d9; color: white; }
 </style>
+@endpush
 
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="daily-header">
-        <div class="d-flex justify-content-between align-items-center">
+@section('content')
+<div class="main-content">
+
+    <div class="cu-header">
+        <div class="d-flex align-items-center justify-content-between" style="position:relative;z-index:1;">
             <div>
-                <h1 class="h2 mb-2">
-                    <i class="fas fa-sun me-3"></i>Daily Routines
-                </h1>
-                <p class="mb-0 opacity-75">Manage your daily recurring routines and schedules</p>
+                <h1 class="cu-header-title"><i class="bi bi-sun me-2"></i>Daily Routines</h1>
+                <p class="cu-header-sub">All your daily recurring schedules</p>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ route('routines.create') }}" class="btn btn-light btn-lg">
-                    <i class="fas fa-plus me-2"></i>Add Routine
+                <a href="{{ route('routines.create') }}" class="cu-btn-glass">
+                    <i class="bi bi-plus-lg"></i> New Routine
                 </a>
-                <a href="{{ route('routines.index') }}" class="btn btn-outline-light btn-lg">
-                    <i class="fas fa-arrow-left me-2"></i>Back
+                <a href="{{ route('routines.index') }}" class="cu-btn-glass">
+                    <i class="bi bi-arrow-left"></i> Back
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Breadcrumb -->
-    <nav class="breadcrumb-modern">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('routines.index') }}" style="color: var(--routine-primary);">Routines</a></li>
-            <li class="breadcrumb-item active">Daily Routines</li>
-        </ol>
-    </nav>
-
-    <div class="row">
+    <div class="cu-grid">
         @forelse($dailyRoutines as $routine)
-            <div class="col-xl-4 col-lg-6 col-md-6">
-                <div class="routine-card">
-                    <div class="routine-card-body">
-                        <h5 class="routine-title">{{ $routine->title }}</h5>
-                        @if($routine->description)
-                            <p class="routine-description">{{ Str::limit($routine->description, 120) }}</p>
-                        @endif
-
-                        <div class="routine-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-calendar-day"></i>
-                                <span>{{ implode(', ', json_decode($routine->days, true) ?? []) }}</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-clock"></i>
-                                <span>{{ $routine->start_time }} - {{ $routine->end_time }}</span>
-                            </div>
-                        </div>
-
-                        <div class="routine-actions">
-                            <a href="{{ route('routines.edit', $routine->id) }}" class="btn-modern btn-warning">
-                                <i class="fas fa-edit"></i>
-                                Edit
-                            </a>
-                            <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" style="display: inline;"
-                                  onsubmit="return confirm('Are you sure you want to delete this routine?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-modern btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                    Delete
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+        <div class="cu-card">
+            <div class="cu-card-accent" style="background:#7c3aed;"></div>
+            <div class="cu-card-body">
+                <div class="cu-card-title">{{ $routine->title }}</div>
+                @if($routine->description)
+                <div class="cu-card-desc">{{ Str::limit(strip_tags($routine->description), 100) }}</div>
+                @endif
+                <div class="cu-card-meta">
+                    @if($routine->days)
+                    <span class="cu-pill">
+                        <i class="bi bi-calendar-day"></i>
+                        {{ implode(', ', array_map('ucfirst', json_decode($routine->days, true) ?? [])) }}
+                    </span>
+                    @endif
+                    @if($routine->start_time && $routine->end_time)
+                    <span class="cu-pill">
+                        <i class="bi bi-clock"></i>
+                        {{ \Carbon\Carbon::parse($routine->start_time)->format('g:i A') }}
+                        &ndash;
+                        {{ \Carbon\Carbon::parse($routine->end_time)->format('g:i A') }}
+                    </span>
+                    @endif
                 </div>
             </div>
+            <div class="cu-card-footer">
+                <a href="{{ route('routines.edit', $routine->id) }}" class="cu-btn-edit">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+                <form action="{{ route('routines.destroy', $routine->id) }}" method="POST" style="display:inline;"
+                      onsubmit="return confirm('Delete this routine?');">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="cu-btn-del">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
         @empty
-            <div class="col-12">
-                <div class="empty-state">
-                    <i class="fas fa-sun"></i>
-                    <h3>No Daily Routines Found</h3>
-                    <p>You haven't created any daily routines yet. Start by adding your first routine to organize your daily schedule.</p>
-                    <a href="{{ route('routines.create') }}" class="btn-modern btn-primary btn-lg">
-                        <i class="fas fa-plus me-2"></i>Create Your First Daily Routine
-                    </a>
-                </div>
-            </div>
+        <div class="cu-empty">
+            <i class="bi bi-sun"></i>
+            <h5>No daily routines yet</h5>
+            <p>Create your first daily routine to get started.</p>
+            <a href="{{ route('routines.create') }}" class="cu-btn-create">
+                <i class="bi bi-plus-lg"></i> Create Daily Routine
+            </a>
+        </div>
         @endforelse
     </div>
+
 </div>
 @endsection
