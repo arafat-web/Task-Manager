@@ -10,23 +10,19 @@ class RoutineController extends Controller
 {
     public function index()
     {
-        $today = Carbon::today();
         $upcomingDailyRoutines = Auth::user()->routines()
             ->where('frequency', 'daily')
-            ->whereJsonContains('days', strtolower($today->format('l')))
-            ->take(2)
+            ->latest()
             ->get();
 
         $upcomingWeeklyRoutines = Auth::user()->routines()
             ->where('frequency', 'weekly')
-            ->whereJsonContains('weeks', $today->weekOfYear)
-            ->take(2)
+            ->latest()
             ->get();
 
         $upcomingMonthlyRoutines = Auth::user()->routines()
             ->where('frequency', 'monthly')
-            ->whereJsonContains('months', $today->month)
-            ->take(2)
+            ->latest()
             ->get();
 
         return view('routines.index', compact('upcomingDailyRoutines', 'upcomingWeeklyRoutines', 'upcomingMonthlyRoutines'));
