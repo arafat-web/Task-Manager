@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12">
   <img src="https://img.shields.io/github/stars/arafat-web/Task-Manager?style=for-the-badge" alt="Stars">
   <img src="https://img.shields.io/github/issues/arafat-web/Task-Manager?style=for-the-badge" alt="Issues">
-  <img src="https://img.shields.io/github/license/arafat-web/Task-Manager?style=for-the-badge" alt="License">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License"></a>
 </p>
 
 ## Introduction
@@ -158,6 +158,10 @@ Update your name, email, phone, location, website, and bio. Upload a profile ava
 - **Frontend:** Blade templates, custom `cu-*` CSS design system, Bootstrap Icons, Vite
 - **Database:** MySQL (compatible with PostgreSQL / SQLite)
 - **Storage:** Laravel filesystem (public disk) for avatar and file uploads
+
+## License
+
+This project is open-source and available under the [MIT License](LICENSE).
 
 ## Contributing
 
