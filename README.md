@@ -148,9 +148,14 @@ Upload any file — images and PDFs get a built-in preview on the detail page. F
 Update your name, email, phone, location, website, and bio. Upload a profile avatar with a live preview before saving. Change your password with a real-time strength meter that checks length, uppercase, lowercase, numbers, and special characters.
 
 ## Demo
-<img src="https://github.com/arafat-web/Task-Manager/assets/26932301/d5f6a26e-32d1-44dc-aee5-9548a44506ae" alt="Demo">
-<img src="https://github.com/arafat-web/Task-Manager/assets/26932301/8795129a-69e5-4911-bb26-caae3bca50be" alt="Demo">
-<img src="https://github.com/arafat-web/Task-Manager/assets/26932301/bd96fa3c-7f43-4ab7-8aa1-4614629d9d26" alt="Demo">
+<img width="3024" height="4104" alt="image" src="https://github.com/user-attachments/assets/ec9d3085-810a-4ef1-beaa-67cf7f53e53d" />
+<img width="3012" height="1488" alt="image" src="https://github.com/user-attachments/assets/7aa06534-30b9-41ff-a73c-394dc2760776" />
+<img width="3010" height="1500" alt="image" src="https://github.com/user-attachments/assets/f01ac561-e3b1-4d20-aaf8-d3edc728cb5e" />
+<img width="3020" height="1714" alt="image" src="https://github.com/user-attachments/assets/b1601c35-cb54-4a43-a005-7f02d127f77a" />
+<img width="3024" height="1716" alt="image" src="https://github.com/user-attachments/assets/7a4e84b5-0897-4f2e-8363-65b20fa7bffa" />
+<img width="3024" height="1718" alt="image" src="https://github.com/user-attachments/assets/ab512203-06b4-4fce-a5db-7f0f4360b21d" />
+<img width="3024" height="1712" alt="image" src="https://github.com/user-attachments/assets/c918ac9d-2631-496c-8a90-08ed38f9dc6b" />
+
 
 ## Tech Stack
 
