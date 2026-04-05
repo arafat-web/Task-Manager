@@ -81,7 +81,7 @@ class Project extends Model
         return $this->hasMany(File::class);
     }
 
-    public function getStatusAttribute()
+    public function getDerivedStatusAttribute()
     {
         $today = Carbon::now();
 

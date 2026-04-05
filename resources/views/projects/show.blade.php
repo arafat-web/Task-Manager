@@ -413,7 +413,7 @@
         $progress       = $totalTasks > 0 ? ($completedTasks / $totalTasks) * 100 : 0;
         $ringOffset     = 238.76 - (238.76 * $progress / 100);
 
-        $rawStatus = $project->getRawOriginal('status') ?? $project->status;
+        $rawStatus = $project->status;
         $chipMap = [
             'not_started' => ['label'=>'Not Started', 'class'=>'chip-not-started'],
             'in_progress' => ['label'=>'In Progress',  'class'=>'chip-in-progress'],
