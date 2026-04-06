@@ -596,9 +596,9 @@
                 <div class="nav-section-title">Intelligence</div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="toggleAiDrawer(); return false;" id="aiNavBtn">
+                        <a class="nav-link {{ request()->is('ai*') ? 'active' : '' }}" href="{{ route('ai.index') }}">
                             <i class="bi bi-stars"></i>
-                            <span>AI Assistant</span>
+                            <span>Lina AI</span>
                         </a>
                     </li>
                 </ul>
@@ -690,8 +690,6 @@
             </div>
         </footer>
     </div>
-
-    @include('layouts._ai_chat')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>

@@ -63,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('checklist-items/{checklistItem}/update-status', [ChecklistItemController::class, 'updateStatus'])->name('checklist-items.update-status');
 
     // AI Chat
+    Route::get('/ai', [AiChatController::class, 'index'])->name('ai.index');
     Route::post('/ai/chat', [AiChatController::class, 'chat'])->name('ai.chat');
 
     // Dashboard routes

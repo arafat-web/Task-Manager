@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Http;
 
 class AiChatController extends Controller
 {
+    public function index()
+    {
+        return view('ai.index');
+    }
+
     // Ordered fallback chain — best daily limits first
     private array $models = [
         'llama-3.1-8b-instant',                    // 14.4K/day
