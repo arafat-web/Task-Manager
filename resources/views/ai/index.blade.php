@@ -218,40 +218,65 @@ footer { display: none !important; }
 
 /* ── Input area ── */
 .lina-foot {
-    flex-shrink: 0; background: #fff;
-    border-top: 1px solid var(--gray-200);
-    padding: 16px 24px;
+    flex-shrink: 0;
+    padding: 12px 24px 18px;
+    background: #fff;
+    border-top: 1px solid var(--gray-100);
 }
-.lina-input-wrap {
-    display: flex; gap: 10px; align-items: flex-end;
-    background: var(--gray-50); border: 1.5px solid var(--gray-200);
-    border-radius: 14px; padding: 10px 12px;
-    transition: border-color .15s;
+.lina-input-box {
+    background: #fff;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 18px;
+    box-shadow: 0 2px 14px rgba(0,0,0,.06);
+    transition: border-color .18s, box-shadow .18s;
+    overflow: hidden;
 }
-.lina-input-wrap:focus-within { border-color: #6366f1; background: #fff; }
+.lina-input-box:focus-within {
+    border-color: #6366f1;
+    box-shadow: 0 2px 20px rgba(99,102,241,.14);
+}
 #linaInput {
-    flex: 1; border: none; background: transparent; outline: none;
-    font-size: 14px; color: var(--gray-800); resize: none;
-    line-height: 1.6; min-height: 24px; max-height: 140px;
-    font-family: inherit; overflow-y: hidden;
-    padding: 0; margin: 0;
+    display: block; width: 100%;
+    border: none; outline: none; resize: none;
+    font-size: 14.5px; line-height: 1.65;
+    color: var(--gray-800); background: transparent;
+    padding: 14px 16px 4px;
+    min-height: 52px; max-height: 180px;
+    overflow-y: hidden;
+    font-family: inherit;
 }
 #linaInput::placeholder { color: var(--gray-400); }
-.lina-send-btn {
-    width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    border: none; color: #fff; font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: opacity .15s, transform .1s;
+.lina-input-toolbar {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px 10px;
 }
-.lina-send-btn:hover:not(:disabled) { transform: scale(1.06); }
-.lina-send-btn:disabled { opacity: .45; cursor: not-allowed; }
-.lina-foot-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 8px; font-size: 11.5px; color: var(--gray-400);
+.lina-input-hints {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; color: var(--gray-400);
+}
+.lina-input-hints kbd {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: 4px; padding: 1px 6px;
+    font-size: 10.5px; font-family: inherit; color: var(--gray-500);
+}
+.lina-input-right {
+    display: flex; align-items: center; gap: 8px;
+}
+#linaCharCount {
+    font-size: 11px; color: var(--gray-300);
 }
 #linaCharCount.warn { color: #f59e0b; }
 #linaCharCount.over { color: #ef4444; }
+.lina-send-btn {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    border: none; color: #fff; font-size: 15px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity .15s, transform .12s;
+}
+.lina-send-btn:hover:not(:disabled) { opacity: .9; transform: scale(1.06); }
+.lina-send-btn:disabled { opacity: .28; cursor: not-allowed; transform: none; }
 
 /* Chips */
 .lina-chip {
@@ -326,17 +351,22 @@ footer { display: none !important; }
 
         {{-- Input --}}
         <div class="lina-foot">
-            <div class="lina-input-wrap">
+            <div class="lina-input-box">
                 <textarea id="linaInput"
-                    placeholder="Ask Lina anything about your workspace…"
-                    rows="1" maxlength="2000" style="height:24px;"></textarea>
-                <button class="lina-send-btn" id="linaSend" onclick="sendMessage()" title="Send">
-                    <i class="bi bi-send-fill"></i>
-                </button>
-            </div>
-            <div class="lina-foot-bar">
-                <span><kbd style="background:var(--gray-100);border:1px solid var(--gray-200);border-radius:4px;padding:1px 6px;">Enter</kbd> to send &nbsp;&nbsp; <kbd style="background:var(--gray-100);border:1px solid var(--gray-200);border-radius:4px;padding:1px 6px;">Shift+Enter</kbd> for new line</span>
-                <span id="linaCharCount">0 / 2000</span>
+                    placeholder="Message Lina…"
+                    rows="1" maxlength="2000"></textarea>
+                <div class="lina-input-toolbar">
+                    <div class="lina-input-hints">
+                        <span><kbd>Enter</kbd> send</span>
+                        <span><kbd>Shift+Enter</kbd> new line</span>
+                    </div>
+                    <div class="lina-input-right">
+                        <span id="linaCharCount"></span>
+                        <button class="lina-send-btn" id="linaSend" onclick="window.sendMessage()" title="Send">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -615,14 +645,15 @@ footer { display: none !important; }
     }
 
     function autoResize() {
-        input.style.height = '24px';
-        const h = Math.min(input.scrollHeight, 140);
+        input.style.height = 'auto';
+        const h = Math.min(input.scrollHeight, 180);
         input.style.height = h + 'px';
-        input.style.overflowY = input.scrollHeight > 140 ? 'auto' : 'hidden';
+        input.style.overflowY = input.scrollHeight > 180 ? 'auto' : 'hidden';
     }
 
     function updateCharCount() {
         const len = input.value.length;
+        if (len === 0) { charCount.textContent = ''; charCount.className = ''; return; }
         charCount.textContent = len + ' / ' + MAX_CHARS;
         charCount.className = len > MAX_CHARS ? 'over' : len > MAX_CHARS * 0.85 ? 'warn' : '';
     }
