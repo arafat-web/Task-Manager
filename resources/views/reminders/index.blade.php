@@ -5,7 +5,7 @@
 @push('styles')
 <style>
 /* ── cu-reminders page ── */
-.cu-rem-page { padding: 1rem 0; }
+.cu-rem-page { padding: 14px 16px; background: #f7f8fa; min-height: 100vh; }
 
 /* Header */
 .cu-header {
