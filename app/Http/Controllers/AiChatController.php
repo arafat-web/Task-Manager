@@ -40,7 +40,7 @@ PROMPT;
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey,
                 'Content-Type'  => 'application/json',
-            ])->timeout(20)->post('https://api.groq.com/openai/v1/chat/completions', [
+            ])->withOptions(['verify' => false])->timeout(20)->post('https://api.groq.com/openai/v1/chat/completions', [
                 'model'       => 'llama3-8b-8192',
                 'messages'    => [
                     ['role' => 'system', 'content' => $systemPrompt],
@@ -50,7 +50,8 @@ PROMPT;
                 'temperature' => 0.5,
             ]);
         } catch (\Exception $e) {
-            return response()->json(['reply' => 'Could not reach the AI service. Please check your internet connection or try again later.'], 200);
+            \Log::error('Groq AI error: ' . $e->getMessage());
+            return response()->json(['reply' => 'Connection error: ' . $e->getMessage()], 200);
         }
 
         if ($response->failed()) {
