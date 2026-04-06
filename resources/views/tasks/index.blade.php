@@ -207,14 +207,12 @@
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
             </select>
-            @if(!isset($project))
             <select class="cu-filter-select" id="cuProject">
                 <option value="">All projects</option>
                 @foreach($projects as $proj)
                     <option value="{{ $proj->id }}">{{ $proj->name }}</option>
                 @endforeach
             </select>
-            @endif
         </div>
         <div class="cu-toolbar-right">
             <span style="font-size:12px;color:#8a8f98;">{{ $totalCnt }} task{{ $totalCnt != 1 ? 's' : '' }}</span>
