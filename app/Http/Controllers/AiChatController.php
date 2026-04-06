@@ -82,9 +82,10 @@ PROMPT;
 
         // Notes
         $notes = Note::where('user_id', $user->id)->get(['title', 'content', 'tags']);
-        $noteLines = $notes->map(fn($n) =>
-            "- {$n->title}" . ($n->tags ? " [tags: {$n->tags}]" : '') . ": " . strip_tags(substr($n->content ?? '', 0, 120))
-        )->join("\n");
+        $noteLines = $notes->map(function ($n) {
+            $tags = is_array($n->tags) ? implode(', ', $n->tags) : ($n->tags ?? '');
+            return "- {$n->title}" . ($tags ? " [tags: {$tags}]" : '') . ": " . strip_tags(substr($n->content ?? '', 0, 120));
+        })->join("\n");
 
         // Reminders
         $reminders = Reminder::where('user_id', $user->id)->get(['title', 'remind_at', 'status']);
