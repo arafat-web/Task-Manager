@@ -95,10 +95,13 @@ PROMPT;
         })->join("\n");
 
         // Reminders
-        $reminders = Reminder::where('user_id', $user->id)->get(['title', 'remind_at', 'status']);
-        $reminderLines = $reminders->map(fn($r) =>
-            "- [{$r->status}] {$r->title}" . ($r->remind_at ? " at {$r->remind_at}" : '')
-        )->join("\n");
+        $reminders = Reminder::where('user_id', $user->id)->get(['title', 'date', 'time', 'priority', 'is_completed', 'tags']);
+        $reminderLines = $reminders->map(function ($r) {
+            $tags = is_array($r->tags) ? implode(', ', $r->tags) : ($r->tags ?? '');
+            $status = $r->is_completed ? 'done' : 'pending';
+            $when = $r->date ? $r->date->format('Y-m-d') . ($r->time ? " {$r->time}" : '') : '';
+            return "- [{$status}] {$r->title}" . ($when ? " at {$when}" : '') . ($tags ? " [tags: {$tags}]" : '');
+        })->join("\n");
 
         // Routines
         $routines = Routine::where('user_id', $user->id)->get(['title', 'frequency']);
