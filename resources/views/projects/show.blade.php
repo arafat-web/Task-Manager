@@ -109,6 +109,7 @@
     .chip-not-started  { background:#f1f5f9; color:#64748b; }
     .chip-in-progress  { background:#ede9fe; color:#7c3aed; }
     .chip-completed    { background:#dcfce7; color:#16a34a; }
+    .chip-closed       { background:#f3f4f6; color:#9ca3af; }
     .chip-pending      { background:#fef9c3; color:#a16207; }
     .chip-on-going     { background:#dbeafe; color:#1d4ed8; }
     .chip-unfinished   { background:#fee2e2; color:#dc2626; }
@@ -418,6 +419,7 @@
             'not_started' => ['label'=>'Not Started', 'class'=>'chip-not-started'],
             'in_progress' => ['label'=>'In Progress',  'class'=>'chip-in-progress'],
             'completed'   => ['label'=>'Completed',    'class'=>'chip-completed'],
+            'closed'      => ['label'=>'Closed',       'class'=>'chip-closed'],
             'pending'     => ['label'=>'Pending',      'class'=>'chip-pending'],
             'on_going'    => ['label'=>'On Going',     'class'=>'chip-on-going'],
             'unfinished'  => ['label'=>'Unfinished',   'class'=>'chip-unfinished'],

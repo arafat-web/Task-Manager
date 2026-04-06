@@ -14,24 +14,25 @@ class TaskController extends Controller
         $user = Auth::user();
 
         if ($project) {
-            // Show tasks for a specific project
+            // Show tasks for a specific project (closed projects still accessible directly)
             $tasks = Task::where('user_id', $user->id)
                         ->where('project_id', $project->id)
                         ->with('project')
                         ->get()
                         ->groupBy('status');
         } else {
-            // Show all tasks excluding those from completed projects
+            // Show all tasks — exclude tasks from completed or closed projects
             $tasks = Task::where('user_id', $user->id)
                         ->whereHas('project', function ($query) {
-                            $query->where('status', '!=', 'completed');
+                            $query->whereNotIn('status', ['completed', 'closed']);
                         })
                         ->with('project')
                         ->get()
                         ->groupBy('status');
         }
 
-        $projects = Project::all();
+        // Only show projects whose tasks are actually loaded (exclude completed & closed)
+        $projects = Project::whereNotIn('status', ['completed', 'closed'])->get();
         $users = User::all();
 
         return view('tasks.index', compact('tasks', 'projects', 'users', 'project'));

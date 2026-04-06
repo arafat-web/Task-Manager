@@ -33,7 +33,7 @@ class ProjectController extends Controller
             'description' => 'nullable|string',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
-            'status' => 'required|in:not_started,in_progress,completed',
+            'status' => 'required|in:not_started,in_progress,completed,closed',
             'budget' => 'nullable|numeric',
         ]);
 
@@ -60,7 +60,7 @@ class ProjectController extends Controller
             'description' => 'nullable|string',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
-            'status' => 'required|in:not_started,in_progress,completed',
+            'status' => 'required|in:not_started,in_progress,completed,closed',
             'budget' => 'nullable|numeric',
         ]);
 
@@ -82,7 +82,7 @@ class ProjectController extends Controller
             'project_id' => 'required|exists:projects,id',
             'user_id' => 'required|exists:users,id',
         ]);
-       
+
         $project = Project::find($request->project_id);
         $project->teamProjects()->attach($request->user_id);
         return redirect()->back()->with('success', 'User added successfully.');

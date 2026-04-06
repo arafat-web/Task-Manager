@@ -124,6 +124,7 @@
     .cu-status-badge.not-started  { background:#f1f2f4; color:#6b7385; }
     .cu-status-badge.in-progress  { background:#e8f0fe; color:#3b66d4; }
     .cu-status-badge.completed    { background:#e6f9f0; color:#1a8a56; }
+    .cu-status-badge.closed       { background:#f3f4f6; color:#9ca3af; }
 
     .cu-meta-row {
         display: flex;
@@ -351,14 +352,17 @@
     .chip-not-started  .cu-chip-label { --chip-color: #6b7385; }
     .chip-in-progress  .cu-chip-label { --chip-color: #2563eb; }
     .chip-completed    .cu-chip-label { --chip-color: #16a34a; }
+    .chip-closed       .cu-chip-label { --chip-color: #9ca3af; }
 
     .chip-not-started .cu-chip-dot  { background: #8a8f98; }
     .chip-in-progress .cu-chip-dot  { background: #3b66d4; }
     .chip-completed   .cu-chip-dot  { background: #16a34a; }
+    .chip-closed      .cu-chip-dot  { background: #d1d5db; }
 
     .chip-not-started input:checked + .cu-chip-label  { color:#6b7385; border-color:#8a8f98; background:#f1f2f4; }
     .chip-in-progress input:checked + .cu-chip-label  { color:#2563eb; border-color:#3b66d4; background:#e8f0fe; }
     .chip-completed   input:checked + .cu-chip-label  { color:#16a34a; border-color:#16a34a; background:#e6f9f0; }
+    .chip-closed      input:checked + .cu-chip-label  { color:#6b7280; border-color:#d1d5db; background:#f3f4f6; }
 
     /* ─── Bottom Action Bar ──────────────────────────────────── */
     .cu-action-bar {
@@ -473,6 +477,7 @@
             'not_started' => ['label'=>'Not Started','class'=>'not-started'],
             'in_progress' => ['label'=>'In Progress','class'=>'in-progress'],
             'completed'   => ['label'=>'Completed',  'class'=>'completed'],
+            'closed'      => ['label'=>'Closed',     'class'=>'closed'],
         ];
         $statusInfo = $statusMap[$project->status] ?? $statusMap['not_started'];
     @endphp
@@ -648,6 +653,13 @@
                                     {{ old('status', $project->status) == 'completed' ? 'checked' : '' }}>
                                 <label for="status_completed" class="cu-chip-label">
                                     <span class="cu-chip-dot"></span> Completed
+                                </label>
+                            </div>
+                            <div class="cu-chip-option chip-closed">
+                                <input type="radio" name="status" id="status_closed" value="closed"
+                                    {{ old('status', $project->status) == 'closed' ? 'checked' : '' }}>
+                                <label for="status_closed" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> Closed
                                 </label>
                             </div>
                         </div>

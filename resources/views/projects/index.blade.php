@@ -282,6 +282,7 @@
     .cu-chip.not-started { background: #f1f2f4; color: #6b7385; }
     .cu-chip.in-progress { background: #e8f0fe; color: #2563eb; }
     .cu-chip.completed   { background: #e6f9f0; color: #16a34a; }
+    .cu-chip.closed      { background: #f3f4f6; color: #9ca3af; }
 
     .cu-progress-wrap {
         margin: 8px 0;
@@ -552,7 +553,7 @@
         $totalProjects    = $projects->count();
         $activeProjects   = $projects->where('status', 'in_progress')->count();
         $doneProjects     = $projects->where('status', 'completed')->count();
-        $overdueProjects  = $projects->filter(fn($p) => $p->end_date && $p->end_date->isPast() && $p->status !== 'completed')->count();
+        $overdueProjects  = $projects->filter(fn($p) => $p->end_date && $p->end_date->isPast() && !in_array($p->status, ['completed','closed']))->count();
     @endphp
     <div class="cu-stats">
         <div class="cu-stat">
@@ -584,6 +585,7 @@
             <option value="not_started">Not Started</option>
             <option value="in_progress">In Progress</option>
             <option value="completed">Completed</option>
+            <option value="closed">Closed</option>
         </select>
         <select class="cu-filter" id="sortFilter">
             <option value="name">Name A–Z</option>
@@ -611,15 +613,17 @@
                     $chipClass      = match($project->status) {
                         'in_progress' => 'in-progress',
                         'completed'   => 'completed',
+                        'closed'      => 'closed',
                         default       => 'not-started'
                     };
                     $chipLabel = match($project->status) {
                         'in_progress' => 'In Progress',
                         'completed'   => 'Completed',
+                        'closed'      => 'Closed',
                         default       => 'Not Started'
                     };
                     $teamCount = $project->teamMembers ? $project->teamMembers->count() : 0;
-                    $isOverdue = $project->end_date && $project->end_date->isPast() && $project->status !== 'completed';
+                    $isOverdue = $project->end_date && $project->end_date->isPast() && !in_array($project->status, ['completed','closed']);
                 @endphp
                 <div class="cu-card project-item"
                      data-name="{{ strtolower($project->name) }}"
@@ -707,9 +711,9 @@
                     $progress       = $totalTasks > 0 ? ($completedTasks / $totalTasks) * 100 : 0;
                     $colors         = ['#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899'];
                     $projectColor   = $colors[strlen($project->name) % count($colors)];
-                    $chipClass      = match($project->status) { 'in_progress'=>'in-progress','completed'=>'completed',default=>'not-started'};
-                    $chipLabel      = match($project->status) { 'in_progress'=>'In Progress','completed'=>'Completed',default=>'Not Started'};
-                    $isOverdue      = $project->end_date && $project->end_date->isPast() && $project->status !== 'completed';
+                    $chipClass      = match($project->status) { 'in_progress'=>'in-progress','completed'=>'completed','closed'=>'closed',default=>'not-started'};
+                    $chipLabel      = match($project->status) { 'in_progress'=>'In Progress','completed'=>'Completed','closed'=>'Closed',default=>'Not Started'};
+                    $isOverdue      = $project->end_date && $project->end_date->isPast() && !in_array($project->status, ['completed','closed']);
                 @endphp
                 <div class="cu-list-row project-item"
                      data-name="{{ strtolower($project->name) }}"
