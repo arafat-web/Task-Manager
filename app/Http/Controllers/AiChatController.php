@@ -18,13 +18,14 @@ class AiChatController extends Controller
         return view('ai.index');
     }
 
-    // Ordered fallback chain — best daily limits first
+    // compound-beta has built-in web search (Groq agentic model)
+    // Falls back to plain LLMs when rate-limited
     private array $models = [
-        'llama-3.1-8b-instant',                    // 14.4K/day
-        'allam-2-7b',                               // 7K/day
-        'meta-llama/llama-4-scout-17b-16e-instruct',// 1K/day, 30K TPM
-        'llama-3.3-70b-versatile',                  // 1K/day, smarter
-        'qwen/qwen3-32b',                           // 1K/day, 500K TPD
+        'compound-beta',                               // web search + coding, agentic
+        'llama-3.1-8b-instant',                        // 14.4K/day fast fallback
+        'meta-llama/llama-4-scout-17b-16e-instruct',   // 1K/day
+        'llama-3.3-70b-versatile',                     // 1K/day, smarter
+        'qwen/qwen3-32b',                              // 1K/day
     ];
 
     public function chat(Request $request)
@@ -55,15 +56,25 @@ class AiChatController extends Controller
         $creatorName = $user->name;
 
         $systemPrompt = <<<PROMPT
-You are Lina, a personal AI assistant built into this Task Manager app by {$creatorName}.
+You are Lina, a smart personal AI assistant built into this Task Manager app by {$creatorName}.
 If asked your name, say your name is Lina. If asked who created or built you, say you were created by {$creatorName}.
 Today is {$today}.
-You have full access to the user's data below. Answer questions about their tasks, projects, notes, reminders, and routines clearly and concisely.
-When listing items, use short bullet points. Use markdown formatting where helpful. Do not make up data that isn't in the context.
 
---- USER DATA ---
+You can help the user with:
+- Their workspace data: tasks, projects, notes, reminders, and routines (full data provided below)
+- Coding, programming, software development, and any technical / technology questions
+- General knowledge and current information (search the web when needed for up-to-date facts)
+
+Guidelines:
+- Use markdown formatting — bullet points, code blocks, bold headings where helpful
+- For code, always use fenced code blocks with the language specified
+- For workspace data, only refer to what is in the context below — do not invent data
+- For tech/coding/general questions, use your training knowledge and web search as needed
+- Be concise and practical
+
+--- USER WORKSPACE DATA ---
 {$context}
---- END USER DATA ---
+--- END WORKSPACE DATA ---
 PROMPT;
 
         // Build multi-turn messages: system + history + new user message
@@ -81,11 +92,11 @@ PROMPT;
                 $response = Http::withHeaders([
                     'Authorization' => 'Bearer ' . $apiKey,
                     'Content-Type'  => 'application/json',
-                ])->withOptions(['verify' => false])->timeout(25)
+                ])->withOptions(['verify' => false])->timeout(40)
                   ->post('https://api.groq.com/openai/v1/chat/completions', [
                       'model'       => $model,
                       'messages'    => $messages,
-                      'max_tokens'  => 768,
+                      'max_tokens'  => 1024,
                       'temperature' => 0.5,
                   ]);
             } catch (\Exception $e) {
