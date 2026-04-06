@@ -91,9 +91,16 @@ PROMPT;
                 continue;
             }
 
+            // 400 bad-request means bad payload — no point retrying other models with same payload
+            if ($response->status() === 400) {
+                $errMsg = $response->json('error.message') ?? 'Bad request';
+                \Log::error('Groq 400 bad request', ['model' => $model, 'error' => $errMsg, 'body' => $response->body()]);
+                return response()->json(['reply' => "AI error (400): {$errMsg}"], 200);
+            }
+
             if ($response->failed()) {
-                $lastError = $response->json('error.message') ?? "Error on {$model}";
-                \Log::warning('Groq model failed', ['model' => $model, 'error' => $lastError]);
+                $lastError = $response->json('error.message') ?? "HTTP {$response->status()} on {$model}";
+                \Log::warning('Groq model failed', ['model' => $model, 'status' => $response->status(), 'error' => $lastError]);
                 continue;
             }
 
@@ -113,7 +120,7 @@ PROMPT;
         }
 
         \Log::error('All Groq models exhausted', ['user_id' => $user->id, 'last_error' => $lastError]);
-        return response()->json(['reply' => 'All AI models are currently rate limited. Please try again in a few minutes.'], 200);
+        return response()->json(['reply' => "All AI models failed. Last error: {$lastError}"], 200);
     }
 
     private function buildContext($user): string
