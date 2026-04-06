@@ -36,21 +36,26 @@ When listing items, use short bullet points. Do not make up data that isn't in t
 --- END USER DATA ---
 PROMPT;
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $apiKey,
-            'Content-Type'  => 'application/json',
-        ])->timeout(20)->post('https://api.groq.com/openai/v1/chat/completions', [
-            'model'       => 'llama3-8b-8192',
-            'messages'    => [
-                ['role' => 'system', 'content' => $systemPrompt],
-                ['role' => 'user',   'content' => $request->message],
-            ],
-            'max_tokens'  => 512,
-            'temperature' => 0.5,
-        ]);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type'  => 'application/json',
+            ])->timeout(20)->post('https://api.groq.com/openai/v1/chat/completions', [
+                'model'       => 'llama3-8b-8192',
+                'messages'    => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user',   'content' => $request->message],
+                ],
+                'max_tokens'  => 512,
+                'temperature' => 0.5,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['reply' => 'Could not reach the AI service. Please check your internet connection or try again later.'], 200);
+        }
 
         if ($response->failed()) {
-            return response()->json(['reply' => 'Sorry, the AI service is unavailable right now. Please try again later.'], 200);
+            $error = $response->json('error.message') ?? 'Unknown error';
+            return response()->json(['reply' => "AI service error: {$error}"], 200);
         }
 
         $reply = $response->json('choices.0.message.content') ?? 'No response received.';
