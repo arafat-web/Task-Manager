@@ -58,11 +58,11 @@ When listing items, use short bullet points. Use markdown formatting where helpf
 PROMPT;
 
         // Build multi-turn messages: system + history + new user message
-        $messages = [['role' => 'system', 'content' => $systemPrompt]];
+        $messages = [['role' => 'system', 'content' => $this->cleanUtf8($systemPrompt)]];
         foreach ($request->input('history', []) as $turn) {
-            $messages[] = ['role' => $turn['role'], 'content' => $turn['content']];
+            $messages[] = ['role' => $turn['role'], 'content' => $this->cleanUtf8($turn['content'])];
         }
-        $messages[] = ['role' => 'user', 'content' => $request->message];
+        $messages[] = ['role' => 'user', 'content' => $this->cleanUtf8($request->message)];
 
         $lastError = 'No models available.';
         $startedAt = microtime(true);
@@ -121,6 +121,13 @@ PROMPT;
 
         \Log::error('All Groq models exhausted', ['user_id' => $user->id, 'last_error' => $lastError]);
         return response()->json(['reply' => "All AI models failed. Last error: {$lastError}"], 200);
+    }
+
+    private function cleanUtf8(string $str): string
+    {
+        // Replace invalid UTF-8 sequences with a placeholder, then strip nulls
+        $clean = mb_convert_encoding($str, 'UTF-8', 'UTF-8');
+        return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $clean);
     }
 
     private function buildContext($user): string
