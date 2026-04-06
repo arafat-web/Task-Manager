@@ -15,6 +15,7 @@ main {
     flex-direction: column !important;
 }
 footer { display: none !important; }
+.topnav { display: none !important; }
 
 /* ── Page layout ── */
 .lina-page {
@@ -309,12 +310,6 @@ footer { display: none !important; }
             </div>
             <div class="lina-head-right">
                 <span id="linaModelPill">—</span>
-                <button class="lina-icon-btn" onclick="clearConversation()" title="Clear chat">
-                    <i class="bi bi-trash3"></i>
-                </button>
-                <button class="lina-icon-btn" onclick="exportChat()" title="Export chat">
-                    <i class="bi bi-download"></i>
-                </button>
             </div>
         </div>
 
@@ -377,11 +372,6 @@ footer { display: none !important; }
     const charCount = document.getElementById('linaCharCount');
     const modelPill = document.getElementById('linaModelPill');
     const convList  = document.getElementById('linaConvList');
-
-    /* ── Boot ── */
-    loadConversations();
-    if (!activeId) newConversation();
-    autoResize();
 
     /* ── Conversations management ── */
     function loadConversations() {
@@ -672,8 +662,13 @@ footer { display: none !important; }
 
     input.addEventListener('input', () => { autoResize(); updateCharCount(); });
     input.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.sendMessage(); }
     });
+
+    /* ── Boot (must be last — window.* assignments above are not hoisted) ── */
+    loadConversations();
+    if (!activeId) window.newConversation();
+    autoResize();
 })();
 </script>
 @endpush
