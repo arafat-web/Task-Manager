@@ -7,9 +7,18 @@
 <script>if(typeof marked!=='undefined') marked.setOptions({ breaks: true, gfm: true });</script>
 
 <style>
+/* ── Override layout shell for full-height chat ── */
+main {
+    padding: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+footer { display: none !important; }
+
 /* ── Page layout ── */
 .lina-page {
-    display: flex; height: 100%; overflow: hidden;
+    display: flex; flex: 1; overflow: hidden; height: 100%;
 }
 
 /* ── Left: conversations panel (future multi-chat) ── */
@@ -226,7 +235,9 @@
 #linaInput {
     flex: 1; border: none; background: transparent; outline: none;
     font-size: 14px; color: var(--gray-800); resize: none;
-    line-height: 1.5; max-height: 140px; font-family: inherit;
+    line-height: 1.6; min-height: 24px; max-height: 140px;
+    font-family: inherit; overflow-y: hidden;
+    padding: 0; margin: 0;
 }
 #linaInput::placeholder { color: var(--gray-400); }
 .lina-send-btn {
@@ -329,7 +340,7 @@
             <div class="lina-input-wrap">
                 <textarea id="linaInput"
                     placeholder="Ask Lina anything about your workspace…"
-                    rows="1" maxlength="2000"></textarea>
+                    rows="1" maxlength="2000" style="height:24px;"></textarea>
                 <button class="lina-send-btn" id="linaSend" onclick="sendMessage()" title="Send">
                     <i class="bi bi-send-fill"></i>
                 </button>
@@ -370,6 +381,7 @@
     /* ── Boot ── */
     loadConversations();
     if (!activeId) newConversation();
+    autoResize();
 
     /* ── Conversations management ── */
     function loadConversations() {
@@ -646,8 +658,10 @@
     }
 
     function autoResize() {
-        input.style.height = 'auto';
-        input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+        input.style.height = '24px';
+        const h = Math.min(input.scrollHeight, 140);
+        input.style.height = h + 'px';
+        input.style.overflowY = input.scrollHeight > 140 ? 'auto' : 'hidden';
     }
 
     function updateCharCount() {
