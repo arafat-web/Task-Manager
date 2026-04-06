@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ChecklistItemController;
 use App\Http\Controllers\DashboardController;
@@ -60,6 +61,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reminders-calendar', [ReminderController::class, 'calendar'])->name('reminders.calendar');
     Route::resource('checklist-items', ChecklistItemController::class);
     Route::get('checklist-items/{checklistItem}/update-status', [ChecklistItemController::class, 'updateStatus'])->name('checklist-items.update-status');
+
+    // AI Chat
+    Route::post('/ai/chat', [AiChatController::class, 'chat'])->name('ai.chat');
 
     // Dashboard routes
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
