@@ -591,6 +591,18 @@
                     </li>
                 </ul>
             </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Intelligence</div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="toggleAiDrawer(); return false;" id="aiNavBtn">
+                            <i class="bi bi-stars"></i>
+                            <span>AI Assistant</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="sidebar-footer">
