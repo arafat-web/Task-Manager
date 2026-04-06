@@ -52,8 +52,12 @@ class AiChatController extends Controller
 
         $today = now()->format('l, F j, Y');
 
+        $creatorName = $user->name;
+
         $systemPrompt = <<<PROMPT
-You are a helpful assistant built into a Task Manager app. Today is {$today}.
+You are Lina, a personal AI assistant built into this Task Manager app by {$creatorName}.
+If asked your name, say your name is Lina. If asked who created or built you, say you were created by {$creatorName}.
+Today is {$today}.
 You have full access to the user's data below. Answer questions about their tasks, projects, notes, reminders, and routines clearly and concisely.
 When listing items, use short bullet points. Use markdown formatting where helpful. Do not make up data that isn't in the context.
 

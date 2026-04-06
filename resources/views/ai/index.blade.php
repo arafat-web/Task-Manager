@@ -112,11 +112,7 @@ footer { display: none !important; }
     transition: all .15s;
 }
 .lina-icon-btn:hover { background: var(--gray-100); color: var(--gray-700); border-color: var(--gray-300); }
-#linaModelPill {
-    background: #ede9fe; border-radius: 20px; padding: 4px 12px;
-    font-size: 11px; color: #5b21b6; font-weight: 600;
-    border: 1px solid #c4b5fd; white-space: nowrap;
-}
+#linaModelPill { display: none; }
 
 /* ── Messages ── */
 .lina-messages {
@@ -308,9 +304,7 @@ footer { display: none !important; }
                     <span>Online &mdash; knows your workspace data</span>
                 </div>
             </div>
-            <div class="lina-head-right">
-                <span id="linaModelPill">—</span>
-            </div>
+            <div class="lina-head-right"></div>
         </div>
 
         {{-- Messages --}}
@@ -370,7 +364,6 @@ footer { display: none !important; }
     const input     = document.getElementById('linaInput');
     const sendBtn   = document.getElementById('linaSend');
     const charCount = document.getElementById('linaCharCount');
-    const modelPill = document.getElementById('linaModelPill');
     const convList  = document.getElementById('linaConvList');
 
     /* ── Conversations management ── */
@@ -444,13 +437,11 @@ footer { display: none !important; }
             msgsEl.appendChild(welcome);
             return;
         }
-        conv.messages.forEach(m => renderBubble(m.role, m.content, m.model, m.time, false));
-        const lastBot = [...conv.messages].reverse().find(m => m.role === 'assistant');
-        if (lastBot) updateModelPill(lastBot.model);
+        conv.messages.forEach(m => renderBubble(m.role, m.content, m.time, false));
         scrollBottom();
     }
 
-    function renderBubble(role, content, model, time, animate) {
+    function renderBubble(role, content, time, animate) {
         const wrap = document.createElement('div');
         wrap.className = 'lina-msg-wrap ' + (role === 'user' ? 'user' : 'bot');
         if (animate) { wrap.style.opacity = '0'; wrap.style.transform = 'translateY(8px)'; wrap.style.transition = 'all .2s'; }
@@ -458,12 +449,6 @@ footer { display: none !important; }
         // Meta
         const meta = document.createElement('div');
         meta.className = 'lina-msg-meta';
-        if (role !== 'user') {
-            const tag = document.createElement('span');
-            tag.className = 'lina-model-tag';
-            tag.textContent = friendlyModel(model);
-            meta.appendChild(tag);
-        }
         const ts = document.createElement('span');
         ts.textContent = formatTime(time);
         meta.appendChild(ts);
@@ -536,7 +521,7 @@ footer { display: none !important; }
             renderConvList();
         }
         saveConversations();
-        renderBubble('user', text, null, timestamp, true);
+        renderBubble('user', text, timestamp, true);
         scrollBottom();
 
         input.value = ''; autoResize(); updateCharCount();
@@ -568,8 +553,7 @@ footer { display: none !important; }
                 const ts    = new Date().toISOString();
                 conv.messages.push({ role: 'assistant', content: reply, model, time: ts });
                 saveConversations();
-                renderBubble('assistant', reply, model, ts, true);
-                updateModelPill(model);
+                renderBubble('assistant', reply, ts, true);
                 scrollBottom();
             }
         } catch (e) {
@@ -593,7 +577,6 @@ footer { display: none !important; }
         if (!confirm('Clear this conversation?')) return;
         conv.messages = []; conv.label = 'New Chat';
         saveConversations(); renderConvList(); renderMessages();
-        modelPill.textContent = '—';
     };
 
     window.exportChat = function () {
@@ -613,22 +596,6 @@ footer { display: none !important; }
 
     /* ── Helpers ── */
     function scrollBottom() { setTimeout(() => msgsEl.scrollTop = msgsEl.scrollHeight, 30); }
-
-    function updateModelPill(model) {
-        if (model) modelPill.textContent = friendlyModel(model);
-    }
-
-    function friendlyModel(model) {
-        if (!model) return 'Lina';
-        const map = {
-            'llama-3.1-8b-instant':                      'Llama 3.1 8B',
-            'llama-3.3-70b-versatile':                   'Llama 3.3 70B',
-            'allam-2-7b':                                 'Allam 7B',
-            'meta-llama/llama-4-scout-17b-16e-instruct': 'Llama 4 Scout',
-            'qwen/qwen3-32b':                             'Qwen3 32B',
-        };
-        return map[model] || model.split('/').pop();
-    }
 
     function formatTime(iso) {
         if (!iso) return '';
