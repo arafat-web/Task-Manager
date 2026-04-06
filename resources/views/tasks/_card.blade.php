@@ -9,6 +9,7 @@
      data-id="{{ $task->id }}"
      data-title="{{ strtolower($task->title) }}"
      data-priority="{{ $task->priority }}"
+     data-project="{{ $task->project_id }}"
      draggable="true"
      style="border-left:3px solid {{ $leftColor }};">
 

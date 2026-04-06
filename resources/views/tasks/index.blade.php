@@ -207,6 +207,14 @@
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
             </select>
+            @if(!isset($project))
+            <select class="cu-filter-select" id="cuProject">
+                <option value="">All projects</option>
+                @foreach($projects as $proj)
+                    <option value="{{ $proj->id }}">{{ $proj->name }}</option>
+                @endforeach
+            </select>
+            @endif
         </div>
         <div class="cu-toolbar-right">
             <span style="font-size:12px;color:#8a8f98;">{{ $totalCnt }} task{{ $totalCnt != 1 ? 's' : '' }}</span>
@@ -299,7 +307,7 @@
             <div>Assignee</div><div>Due Date</div><div></div>
         </div>
         @foreach(collect($tasks)->flatten() as $task)
-        <div class="cu-list-row" data-title="{{ strtolower($task->title) }}" data-priority="{{ $task->priority }}">
+        <div class="cu-list-row" data-title="{{ strtolower($task->title) }}" data-priority="{{ $task->priority }}" data-project="{{ $task->project_id }}">
             <div>
                 <div class="cu-list-title">{{ $task->title }}</div>
                 <div class="cu-list-sub">
@@ -452,21 +460,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const searchInput    = document.getElementById('cuSearch');
     const prioritySelect = document.getElementById('cuPriority');
+    const projectSelect  = document.getElementById('cuProject');
 
     function applyFilters() {
         const term     = (searchInput?.value || '').toLowerCase();
         const priority = prioritySelect?.value || '';
+        const project  = projectSelect?.value  || '';
         document.querySelectorAll('.cu-task-card').forEach(card => {
-            const show = card.dataset.title.includes(term) && (!priority || card.dataset.priority === priority);
+            const show = card.dataset.title.includes(term)
+                      && (!priority || card.dataset.priority === priority)
+                      && (!project  || card.dataset.project  === project);
             card.style.display = show ? '' : 'none';
         });
         document.querySelectorAll('.cu-list-row').forEach(row => {
-            const show = row.dataset.title.includes(term) && (!priority || row.dataset.priority === priority);
+            const show = row.dataset.title.includes(term)
+                      && (!priority || row.dataset.priority === priority)
+                      && (!project  || row.dataset.project  === project);
             row.style.display = show ? '' : 'none';
         });
     }
     searchInput?.addEventListener('input', applyFilters);
     prioritySelect?.addEventListener('change', applyFilters);
+    projectSelect?.addEventListener('change', applyFilters);
 
     let taskQuill = null;
     const modal = document.getElementById('createTaskModal');
