@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Http;
 
 class AiChatController extends Controller
 {
+    // Ordered fallback chain — best daily limits first
+    private array $models = [
+        'llama-3.1-8b-instant',                    // 14.4K/day
+        'allam-2-7b',                               // 7K/day
+        'meta-llama/llama-4-scout-17b-16e-instruct',// 1K/day, 30K TPM
+        'llama-3.3-70b-versatile',                  // 1K/day, smarter
+        'qwen/qwen3-32b',                           // 1K/day, 500K TPD
+    ];
+
     public function chat(Request $request)
     {
         $request->validate(['message' => 'required|string|max:1000']);
@@ -22,7 +31,7 @@ class AiChatController extends Controller
             return response()->json(['reply' => 'AI assistant is not configured. Please add GROQ_API_KEY to your environment.'], 200);
         }
 
-        $user    = Auth::user();
+        $user = Auth::user();
 
         try {
             $context = $this->buildContext($user);
@@ -31,7 +40,7 @@ class AiChatController extends Controller
             $context = '(Could not load user data)';
         }
 
-        $today   = now()->format('l, F j, Y');
+        $today = now()->format('l, F j, Y');
 
         $systemPrompt = <<<PROMPT
 You are a helpful assistant built into a Task Manager app. Today is {$today}.
@@ -43,32 +52,50 @@ When listing items, use short bullet points. Do not make up data that isn't in t
 --- END USER DATA ---
 PROMPT;
 
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Content-Type'  => 'application/json',
-            ])->withOptions(['verify' => false])->timeout(20)->post('https://api.groq.com/openai/v1/chat/completions', [
-                'model'       => 'llama-3.1-8b-instant',
-                'messages'    => [
-                    ['role' => 'system', 'content' => $systemPrompt],
-                    ['role' => 'user',   'content' => $request->message],
-                ],
-                'max_tokens'  => 512,
-                'temperature' => 0.5,
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Groq AI error: ' . $e->getMessage());
-            return response()->json(['reply' => 'Connection error: ' . $e->getMessage()], 200);
+        $messages = [
+            ['role' => 'system', 'content' => $systemPrompt],
+            ['role' => 'user',   'content' => $request->message],
+        ];
+
+        $lastError = 'No models available.';
+
+        foreach ($this->models as $model) {
+            try {
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Content-Type'  => 'application/json',
+                ])->withOptions(['verify' => false])->timeout(20)
+                  ->post('https://api.groq.com/openai/v1/chat/completions', [
+                      'model'       => $model,
+                      'messages'    => $messages,
+                      'max_tokens'  => 512,
+                      'temperature' => 0.5,
+                  ]);
+            } catch (\Exception $e) {
+                \Log::warning("Groq model {$model} connection error: " . $e->getMessage());
+                $lastError = $e->getMessage();
+                continue;
+            }
+
+            // Rate limited or overloaded — try next model
+            if ($response->status() === 429 || $response->status() === 503) {
+                \Log::info("Groq model {$model} rate limited (HTTP {$response->status()}), trying next.");
+                $lastError = $response->json('error.message') ?? "Rate limited on {$model}";
+                continue;
+            }
+
+            if ($response->failed()) {
+                $lastError = $response->json('error.message') ?? "Unknown error on {$model}";
+                \Log::warning("Groq model {$model} failed: {$lastError}");
+                continue;
+            }
+
+            $reply = $response->json('choices.0.message.content') ?? 'No response received.';
+            return response()->json(['reply' => trim($reply)]);
         }
 
-        if ($response->failed()) {
-            $error = $response->json('error.message') ?? 'Unknown error';
-            return response()->json(['reply' => "AI service error: {$error}"], 200);
-        }
-
-        $reply = $response->json('choices.0.message.content') ?? 'No response received.';
-
-        return response()->json(['reply' => trim($reply)]);
+        \Log::error("All Groq models exhausted. Last error: {$lastError}");
+        return response()->json(['reply' => 'All AI models are currently rate limited. Please try again in a few minutes.'], 200);
     }
 
     private function buildContext($user): string
