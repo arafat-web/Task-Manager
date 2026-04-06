@@ -476,6 +476,7 @@ document.addEventListener('DOMContentLoaded', function () {
                       && (!project  || row.dataset.project  === project);
             row.style.display = show ? '' : 'none';
         });
+        updateCounts();
     }
     searchInput?.addEventListener('input', applyFilters);
     prioritySelect?.addEventListener('change', applyFilters);
@@ -534,7 +535,10 @@ document.addEventListener('DOMContentLoaded', function () {
         ['to_do','in_progress','completed'].forEach(s => {
             const col = document.getElementById(`col-${s}`);
             const cnt = document.getElementById(`cnt-${s}`);
-            if (col && cnt) cnt.textContent = col.querySelectorAll('.cu-task-card').length;
+            if (col && cnt) {
+                cnt.textContent = [...col.querySelectorAll('.cu-task-card')]
+                    .filter(c => c.style.display !== 'none').length;
+            }
         });
     }
 
