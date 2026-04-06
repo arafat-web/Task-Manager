@@ -23,7 +23,14 @@ class AiChatController extends Controller
         }
 
         $user    = Auth::user();
-        $context = $this->buildContext($user);
+
+        try {
+            $context = $this->buildContext($user);
+        } catch (\Exception $e) {
+            \Log::error('Groq buildContext error: ' . $e->getMessage());
+            $context = '(Could not load user data)';
+        }
+
         $today   = now()->format('l, F j, Y');
 
         $systemPrompt = <<<PROMPT
