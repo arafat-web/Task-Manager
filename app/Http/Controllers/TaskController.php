@@ -54,7 +54,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
             'priority' => 'required|in:low,medium,high',
-            'status' => 'required|in:to_do,in_progress,completed',
+            'status' => 'required|in:to_do,in_progress,on_hold,in_review,completed',
             'estimated_hours' => 'nullable|numeric|min:0.5',
         ]);
 
@@ -89,7 +89,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
             'priority' => 'required|in:low,medium,high',
-            'status' => 'required|in:to_do,in_progress,completed',
+            'status' => 'required|in:to_do,in_progress,on_hold,in_review,completed',
             'estimated_hours' => 'nullable|numeric|min:0.5',
         ]);
 

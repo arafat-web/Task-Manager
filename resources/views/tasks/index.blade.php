@@ -50,7 +50,8 @@
     }
     .cu-btn-new:hover{background:#6d28d9;}
 
-    .cu-kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:start;}
+    .cu-kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;}
+    @media(max-width:1100px){.cu-kanban{grid-template-columns:repeat(3,1fr);}}
     @media(max-width:860px){.cu-kanban{grid-template-columns:1fr;}}
     .cu-col{background:#f3f4f6;border-radius:10px;overflow:hidden;}
     .cu-col-head{
@@ -136,6 +137,8 @@
     }
     .cu-status-chip.to_do      {background:#f1f5f9;color:#64748b;}
     .cu-status-chip.in_progress{background:#ede9fe;color:#7c3aed;}
+    .cu-status-chip.on_hold    {background:#fef3c7;color:#b45309;}
+    .cu-status-chip.in_review  {background:#dbeafe;color:#1d4ed8;}
     .cu-status-chip.completed  {background:#dcfce7;color:#16a34a;}
 
     .cu-empty{
@@ -189,8 +192,10 @@
     @php
         $todoCnt     = count($tasks['to_do'] ?? []);
         $progressCnt = count($tasks['in_progress'] ?? []);
+        $onHoldCnt   = count($tasks['on_hold'] ?? []);
+        $inReviewCnt = count($tasks['in_review'] ?? []);
         $completedCnt= count($tasks['completed'] ?? []);
-        $totalCnt    = $todoCnt + $progressCnt + $completedCnt;
+        $totalCnt    = $todoCnt + $progressCnt + $onHoldCnt + $inReviewCnt + $completedCnt;
         $hasAny      = $totalCnt > 0;
     @endphp
 
@@ -272,6 +277,46 @@
                     @include('tasks._card', ['task' => $task])
                 @empty
                     <div class="cu-col-empty"><i class="bi bi-arrow-clockwise" style="font-size:22px;display:block;margin-bottom:6px;"></i>Nothing active</div>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="cu-col">
+            <div class="cu-col-head">
+                <div class="cu-col-head-left">
+                    <span class="cu-col-dot" style="background:#b45309;"></span>
+                    On Hold
+                    <span class="cu-col-count" id="cnt-on_hold">{{ $onHoldCnt }}</span>
+                </div>
+                <button class="cu-col-add" data-bs-toggle="modal" data-bs-target="#createTaskModal" data-status="on_hold">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div>
+            <div class="cu-col-body" id="col-on_hold" data-status="on_hold">
+                @forelse($tasks['on_hold'] ?? [] as $task)
+                    @include('tasks._card', ['task' => $task])
+                @empty
+                    <div class="cu-col-empty"><i class="bi bi-pause-circle" style="font-size:22px;display:block;margin-bottom:6px;"></i>None on hold</div>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="cu-col">
+            <div class="cu-col-head">
+                <div class="cu-col-head-left">
+                    <span class="cu-col-dot" style="background:#1d4ed8;"></span>
+                    In Review
+                    <span class="cu-col-count" id="cnt-in_review">{{ $inReviewCnt }}</span>
+                </div>
+                <button class="cu-col-add" data-bs-toggle="modal" data-bs-target="#createTaskModal" data-status="in_review">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div>
+            <div class="cu-col-body" id="col-in_review" data-status="in_review">
+                @forelse($tasks['in_review'] ?? [] as $task)
+                    @include('tasks._card', ['task' => $task])
+                @empty
+                    <div class="cu-col-empty"><i class="bi bi-eye" style="font-size:22px;display:block;margin-bottom:6px;"></i>Nothing to review</div>
                 @endforelse
             </div>
         </div>
@@ -532,7 +577,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function updateCounts() {
-        ['to_do','in_progress','completed'].forEach(s => {
+        ['to_do','in_progress','on_hold','in_review','completed'].forEach(s => {
             const col = document.getElementById(`col-${s}`);
             const cnt = document.getElementById(`cnt-${s}`);
             if (col && cnt) {

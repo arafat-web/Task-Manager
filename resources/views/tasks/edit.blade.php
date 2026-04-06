@@ -91,6 +91,8 @@
     }
     .cu-status-badge.to-do       { background:#f3f4f6; color:#374151; }
     .cu-status-badge.in-progress { background:#ede9fe; color:#5b21b6; }
+    .cu-status-badge.on-hold     { background:#fef3c7; color:#b45309; }
+    .cu-status-badge.in-review   { background:#dbeafe; color:#1d4ed8; }
     .cu-status-badge.completed   { background:#dcfce7; color:#15803d; }
 
     .cu-priority-badge {
@@ -190,9 +192,13 @@
     /* Status chips */
     .chip-to-do       .cu-chip-dot { background: #9ca3af; }
     .chip-in-progress .cu-chip-dot { background: #7c3aed; }
+    .chip-on-hold     .cu-chip-dot { background: #b45309; }
+    .chip-in-review   .cu-chip-dot { background: #1d4ed8; }
     .chip-completed   .cu-chip-dot { background: #16a34a; }
     .chip-to-do       input:checked + .cu-chip-label { color:#374151; border-color:#9ca3af; background:#f3f4f6; }
     .chip-in-progress input:checked + .cu-chip-label { color:#5b21b6; border-color:#7c3aed; background:#ede9fe; }
+    .chip-on-hold     input:checked + .cu-chip-label { color:#b45309; border-color:#b45309; background:#fef3c7; }
+    .chip-in-review   input:checked + .cu-chip-label { color:#1d4ed8; border-color:#1d4ed8; background:#dbeafe; }
     .chip-completed   input:checked + .cu-chip-label { color:#15803d; border-color:#16a34a; background:#dcfce7; }
 
     /* Priority chips */
@@ -263,8 +269,10 @@
     {{-- ── Two-Panel Layout ──────────────────────────────────── --}}
     @php
         $statusMap = [
-            'to_do'       => ['label'=>'To Do',      'class'=>'to-do'],
+            'to_do'       => ['label'=>'To Do',       'class'=>'to-do'],
             'in_progress' => ['label'=>'In Progress', 'class'=>'in-progress'],
+            'on_hold'     => ['label'=>'On Hold',     'class'=>'on-hold'],
+            'in_review'   => ['label'=>'In Review',   'class'=>'in-review'],
             'completed'   => ['label'=>'Completed',   'class'=>'completed'],
         ];
         $priorityMap = [
@@ -464,6 +472,20 @@
                                     {{ old('status', $task->status) == 'in_progress' ? 'checked' : '' }}>
                                 <label for="status_in_progress" class="cu-chip-label">
                                     <span class="cu-chip-dot"></span> In Progress
+                                </label>
+                            </div>
+                            <div class="cu-chip-option chip-on-hold">
+                                <input type="radio" name="status" id="status_on_hold" value="on_hold"
+                                    {{ old('status', $task->status) == 'on_hold' ? 'checked' : '' }}>
+                                <label for="status_on_hold" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> On Hold
+                                </label>
+                            </div>
+                            <div class="cu-chip-option chip-in-review">
+                                <input type="radio" name="status" id="status_in_review" value="in_review"
+                                    {{ old('status', $task->status) == 'in_review' ? 'checked' : '' }}>
+                                <label for="status_in_review" class="cu-chip-label">
+                                    <span class="cu-chip-dot"></span> In Review
                                 </label>
                             </div>
                             <div class="cu-chip-option chip-completed">

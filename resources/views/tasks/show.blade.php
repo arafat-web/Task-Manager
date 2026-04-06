@@ -102,10 +102,14 @@
 .ts-status:hover { opacity:.8; }
 .ts-status.to_do    { background:#f3f4f6; color:#374151; }
 .ts-status.in_progress { background:#ede9fe; color:#5b21b6; }
+.ts-status.on_hold  { background:#fef3c7; color:#b45309; }
+.ts-status.in_review { background:#dbeafe; color:#1d4ed8; }
 .ts-status.completed { background:#dcfce7; color:#15803d; }
 .ts-status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 .ts-status.to_do    .ts-status-dot { background:#9ca3af; }
 .ts-status.in_progress .ts-status-dot { background:#7c3aed; }
+.ts-status.on_hold  .ts-status-dot { background:#b45309; }
+.ts-status.in_review .ts-status-dot { background:#1d4ed8; }
 .ts-status.completed .ts-status-dot { background:#16a34a; }
 
 /* Priority chip */
@@ -259,6 +263,8 @@
 }
 .ts-status-chip.to_do    { background:#f3f4f6; color:#374151; }
 .ts-status-chip.in_progress { background:#ede9fe; color:#5b21b6; }
+.ts-status-chip.on_hold  { background:#fef3c7; color:#b45309; }
+.ts-status-chip.in_review { background:#dbeafe; color:#1d4ed8; }
 .ts-status-chip.completed { background:#dcfce7; color:#15803d; }
 .ts-modal-foot {
     padding:12px 20px; border-top:1px solid #f3f4f6;
@@ -302,7 +308,9 @@
         && $task->status !== 'completed';
 
     $progressPct = $task->status === 'completed' ? 100
-        : ($task->status === 'in_progress' ? 50 : 0);
+        : ($task->status === 'in_review'  ? 80
+        : ($task->status === 'in_progress' ? 50
+        : ($task->status === 'on_hold'    ? 30 : 0)));
 @endphp
 
 <div class="ts-wrap">
@@ -589,16 +597,20 @@
             <button onclick="closeStatusModal()" style="background:rgba(255,255,255,.2); border:none; color:#fff; border-radius:6px; width:28px; height:28px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;"><i class="bi bi-x"></i></button>
         </div>
         <div class="ts-modal-body">
-            @foreach(['to_do' => 'To Do', 'in_progress' => 'In Progress', 'completed' => 'Completed'] as $val => $lbl)
+            @foreach([
+                'to_do'       => ['label'=>'To Do',       'dot'=>'#9ca3af', 'desc'=>'Task is ready to start'],
+                'in_progress' => ['label'=>'In Progress', 'dot'=>'#7c3aed', 'desc'=>'Currently being worked on'],
+                'on_hold'     => ['label'=>'On Hold',     'dot'=>'#b45309', 'desc'=>'Paused, waiting on a blocker'],
+                'in_review'   => ['label'=>'In Review',   'dot'=>'#1d4ed8', 'desc'=>'Awaiting review or approval'],
+                'completed'   => ['label'=>'Completed',   'dot'=>'#16a34a', 'desc'=>'Task is finished'],
+            ] as $val => $opt)
             <div class="ts-status-opt {{ $task->status === $val ? 'selected' : '' }}" onclick="selectStatus('{{ $val }}', this)" data-status="{{ $val }}">
                 <input type="radio" name="status" value="{{ $val }}" {{ $task->status === $val ? 'checked' : '' }}>
                 <span class="ts-status-chip {{ $val }}">
-                    <span style="width:7px;height:7px;border-radius:50%;background:{{ $val==='to_do'?'#9ca3af':($val==='in_progress'?'#7c3aed':'#16a34a') }};display:inline-block;"></span>
-                    {{ $lbl }}
+                    <span style="width:7px;height:7px;border-radius:50%;background:{{ $opt['dot'] }};display:inline-block;"></span>
+                    {{ $opt['label'] }}
                 </span>
-                <span style="font-size:12px; color:#6b7280;">
-                    {{ $val==='to_do'?'Task is ready to start':($val==='in_progress'?'Currently being worked on':'Task is finished') }}
-                </span>
+                <span style="font-size:12px; color:#6b7280;">{{ $opt['desc'] }}</span>
             </div>
             @endforeach
         </div>

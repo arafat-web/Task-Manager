@@ -36,6 +36,10 @@ class Task extends Model
                 return 'primary';
             case 'in_progress':
                 return 'warning';
+            case 'on_hold':
+                return 'secondary';
+            case 'in_review':
+                return 'info';
             case 'completed':
                 return 'success';
             default:
