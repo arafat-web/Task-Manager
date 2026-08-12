@@ -35,8 +35,20 @@ return [
         ],
     ],
 
-    'groq' => [
-        'key' => env('GROQ_API_KEY'),
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+    ],
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+    ],
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+    ],
+    'deepseek' => [
+        'key' => env('DEEPSEEK_API_KEY'),
+    ],
+    'meta' => [
+        'key' => env('META_API_KEY'),
     ],
 
 ];

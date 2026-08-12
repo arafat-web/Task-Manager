@@ -624,9 +624,15 @@
                 <div class="nav-section-title">Intelligence</div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('ai*') ? 'active' : '' }}" href="{{ route('ai.index') }}">
+                        <a class="nav-link {{ request()->is('ai') || request()->is('ai/conversations*') || request()->is('ai/chat*') || request()->is('ai/stream*') ? 'active' : '' }}" href="{{ route('ai.index') }}">
                             <i class="bi bi-stars"></i>
                             <span>Lina AI</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('ai/settings*') ? 'active' : '' }}" href="{{ route('ai.settings') }}">
+                            <i class="bi bi-sliders"></i>
+                            <span>AI Settings</span>
                         </a>
                     </li>
                 </ul>

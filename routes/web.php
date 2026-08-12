@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\AiSettingsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ChecklistItemController;
 use App\Http\Controllers\DashboardController;
@@ -64,6 +65,10 @@ Route::middleware(['auth'])->group(function () {
 
     // AI Chat
     Route::get('/ai', [AiChatController::class, 'index'])->name('ai.index');
+    Route::get('/ai/status', [AiChatController::class, 'status'])->name('ai.status');
+    Route::get('/ai/settings', [AiSettingsController::class, 'index'])->name('ai.settings');
+    Route::put('/ai/settings', [AiSettingsController::class, 'update'])->name('ai.settings.update');
+    Route::post('/ai/settings/switch', [AiSettingsController::class, 'quickSwitch'])->name('ai.settings.switch');
     Route::post('/ai/chat', [AiChatController::class, 'chat'])->name('ai.chat');
     Route::post('/ai/stream', [AiChatController::class, 'stream'])->name('ai.stream');
     // AI Conversations (DB-backed)
