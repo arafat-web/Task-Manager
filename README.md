@@ -36,7 +36,58 @@ Task Manager **v2.0** is an open-source Laravel 12 application for managing proj
 | **Reminders** | Priority, category, recurrence, snooze, overdue/due-soon detection |
 | **Routines** | Daily / weekly / monthly frequency views |
 | **Files** | Upload, type badges, image & PDF preview, detail view |
+| **AI — Lina** | Multi-provider chat (OpenAI, Gemini, Claude, DeepSeek, Meta) with streaming, conversations, and workspace-aware context |
+| **AI Settings** | Per-user encrypted keys, default provider/model, auto-enable by adding a key |
 | **Profile** | Avatar, bio, contact info, password with strength meter |
+
+### AI — Lina (Multi-Provider Chat)
+
+**Lina** is the built-in workspace-aware AI assistant. It sees your tasks, projects, notes, reminders, routines, and files, and streams replies from **one active provider at a time** — auto-enabled by adding an API key. Groq (`GROQ_API_KEY` / `compound-beta`) has been removed.
+
+#### Supported Providers (latest models — Aug 2026)
+
+| Provider | Env Key | Default Model | Available Models |
+|---|---|---|---|
+| **OpenAI** | `OPENAI_API_KEY` | `gpt-5.6-terra` | `gpt-5.6-sol` / `terra` / `luna`, `gpt-5` / `mini` / `nano`, `gpt-4.1` / `mini`, `o3`, `o4-mini`, `gpt-4o` / `mini` |
+| **Gemini** | `GEMINI_API_KEY` | `gemini-3.6-flash` | `gemini-3.6-flash` (flagship), `3.5-flash` / `flash-lite`, `3.1-flash-lite`, `2.5-pro` / `flash` / `lite` |
+| **Claude (Anthropic)** | `ANTHROPIC_API_KEY` | `claude-sonnet-5` | `claude-fable-5`, `opus-5`, `sonnet-5`, `haiku-4-5`, `opus-4-8` / `4-7`, `sonnet-4-6` |
+| **DeepSeek** | `DEEPSEEK_API_KEY` | `deepseek-v4-flash` | `deepseek-v4-flash` / `v4-pro` (current), legacy `deepseek-chat` / `reasoner` |
+| **Meta** | `META_API_KEY` | `muse-spark-1.2` | `muse-spark-1.2` (Contributor — active), `Llama-4-Maverick/Scout 17B`, `Llama-3.3-70B`, `Llama-3.1-405B` |
+
+#### How It Works
+
+* **One active provider:** `ai_settings.default_provider` + `default_model` pick the provider for chat. If that provider has no key, the app auto-falls back to the first enabled provider.
+* **Auto-enable:** Adding an API key for a provider (via UI or `.env`) immediately enables it — no code change.
+* **Key resolution:** Per-user encrypted `ai_settings.*_key` (Laravel `encrypted` cast) → `config/services.php` → `env()` fallback.
+* **Chat modes:** OpenAI-compatible providers (OpenAI / DeepSeek / Meta) stream via SSE on `POST /ai/stream`. Gemini & Anthropic run sync then chunked stream. No provider → offline `LinaFallbackBrain`.
+* **Conversations:** Persisted in `ai_conversations` / `ai_messages` with multi-turn history and `GET /ai/status`.
+
+#### Configure
+
+**Option A — Per-user UI (recommended, encrypted):** `Intelligence → AI Settings` in the sidebar → paste key(s), choose default provider & model → Save. Keys are shown masked (`••••…last4`) and can be cleared per-provider.
+
+**Option B — Global env fallback** — add to `.env`:
+
+```env
+OPENAI_API_KEY=
+GEMINI_API_KEY=
+ANTHROPIC_API_KEY=
+DEEPSEEK_API_KEY=
+META_API_KEY=
+AI_DEFAULT_PROVIDER=openai   # openai | gemini | anthropic | deepseek | meta
+AI_DEFAULT_MODEL=             # optional override
+```
+
+Run `php artisan config:clear` after editing `.env`. Full catalog lives in `config/ai.php`.
+
+#### Routes & Files
+
+* UI: `resources/views/ai/index.blade.php`, `resources/views/ai/settings.blade.php`
+* Config: `config/ai.php`, `config/services.php`
+* Service: `app/Services/AiProviderService.php`
+* Models: `app/Models/AiSetting.php`, `AiConversation`, `AiMessage`
+* Controllers: `AiChatController`, `AiSettingsController`
+* Routes: `GET /ai`, `GET /ai/settings`, `PUT /ai/settings`, `POST /ai/settings/switch`, `POST /ai/stream`, `GET /ai/status`, `POST /ai/chat`
 
 ### Prerequisites
 
@@ -143,6 +194,9 @@ Define habits or recurring work blocks with daily, weekly, or monthly frequencie
 
 ### Files
 Upload any file — images and PDFs get a built-in preview on the detail page. Files are tagged by type and can be downloaded or replaced at any time.
+
+### AI — Lina & AI Settings
+Open Lina from the **Intelligence** section in the sidebar. Each conversation is saved — create, rename, and delete via the left panel; chat streams live with markdown + code blocks. Go to **AI Settings** to paste per-provider API keys (encrypted), pick the default provider and model, or clear a key. Adding a key auto-enables that provider; the selected default is used if it has a key, otherwise the first enabled provider is chosen automatically. See the AI section above for the full model list.
 
 ### Profile
 Update your name, email, phone, location, website, and bio. Upload a profile avatar with a live preview before saving. Change your password with a real-time strength meter that checks length, uppercase, lowercase, numbers, and special characters.
